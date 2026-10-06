@@ -57,7 +57,7 @@
       var w = C.D.map(function (d) { return p.w[d] || 0; });
       var s = w.reduce(function (a, b) { return a + b; }, 0) || 1;
       C.players[p.id] = {
-        id: p.id, src: p, power: p.power, inertia: p.inertia || 0, veto: !!p.veto,
+        id: p.id, src: p, power: p.power, inertia: p.inertia || 0, veto: !!p.veto, lean: p.lean || 0,
         ideal: C.D.map(function (d) { return p.ideal[d] === undefined ? 50 : p.ideal[d]; }),
         w: w.map(function (v) { return v / s; })
       };
@@ -71,6 +71,13 @@
     return C;
   };
 
+  /* Is a move conciliatory (+1), confrontational (-1) or neither? Read from
+     what it does to the settlement track, trust and stability. */
+  function tone(fx) { var v = (fx.settle || 0) + (fx.trust || 0) + (fx.stability || 0); return v > 3 ? 1 : v < -3 ? -1 : 0; }
+  /* A government whose recent public statements lean one way is a little
+     more inclined to moves of the same kind. */
+  function leaning(C, pid, m) { return 0.4 * C.players[pid].lean * m.tone; }
+
   function addMove(C, m) {
     if (!C.players[m.p]) throw new Error('Unknown player on move ' + m.id);
     if (C.moves[m.id]) throw new Error('Duplicate move ' + m.id);
@@ -80,6 +87,7 @@
       ps: m.ps === undefined ? 0.8 : m.ps, cost: (m.cost || 0) * (C.M.costScale || 1),
       req: conds(C, m.req), once: m.once !== false && !m.hold, after: m.after || [],
       not: m.not || [], any: m.any || [], decay: m.decay || 0.55,
+      tone: tone(m.fx || {}),
       mods: (m.mods || []).map(function (md) { return { c: conds(C, md.when), u: md.used || null, fx: sparse(C, md.fx) }; }),
       commit: m.commit || null
     };
@@ -159,7 +167,7 @@
   function greedy(C, S, x, pid, avail) {
     var ms = avail[pid], best = ms[0], bv = -1e9;
     for (var i = 0; i < ms.length; i++) {
-      var v = E.utility(C, pid, E.apply(C, x, ms[i], S.used, 'exp')) - ms[i].cost + bound(ms[i], S.used) + (ms[i].hold ? C.players[pid].inertia : 0);
+      var v = E.utility(C, pid, E.apply(C, x, ms[i], S.used, 'exp')) - ms[i].cost + bound(ms[i], S.used) + leaning(C, pid, ms[i]) + (ms[i].hold ? C.players[pid].inertia : 0);
       if (v > bv) { bv = v; best = ms[i]; }
     }
     return best;
@@ -181,7 +189,7 @@
       var m = ms[i], y = E.apply(C, x, m, S.used, 'exp');
       var direct = E.utility(C, pid, y);
       if (deep) for (j = 0; j < rest.length; j++) y = E.apply(C, y, greedy(C, S, y, rest[j], avail), S.used, 'exp');
-      var v = (deep ? 0.5 * direct + 0.5 * E.utility(C, pid, y) : direct) - m.cost + bound(m, S.used) + (m.hold ? C.players[pid].inertia : 0);
+      var v = (deep ? 0.5 * direct + 0.5 * E.utility(C, pid, y) : direct) - m.cost + bound(m, S.used) + leaning(C, pid, m) + (m.hold ? C.players[pid].inertia : 0);
       out.push({ m: m, v: v, direct: direct });
     }
     var mx = Math.max.apply(null, out.map(function (o) { return o.v; })), z = 0;
@@ -243,7 +251,7 @@
         if (m.hold || (m.once && S.used[m.id])) continue;
         var y = E.apply(C, S.x, m, S.used, 'exp'), d = E.utility(C, pid, y) - u0;
         if (d > -0.4 && d < 0.4) continue;
-        var net = E.utility(C, q, y) - uq - m.cost + bound(m, S.used) - C.players[q].inertia;
+        var net = E.utility(C, q, y) - uq - m.cost + bound(m, S.used) + leaning(C, q, m) - C.players[q].inertia;
         var pr = 1 / (1 + Math.exp(-net / 0.5));
         tot += d * pr * (E.blocked(C, S, m) ? 0.3 : 1);
       }

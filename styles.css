@@ -260,3 +260,24 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .pager .pg:hover i::before{border-color:var(--accent-ink)}
 .pager .pg:active{transform:scale(.98)}
 @media print{.pager{display:none}}
+
+/* use the width: no card is left with a blank lower half */
+.stcol{display:flex;flex-direction:column;gap:14px;min-width:0}
+.stcol>.card{margin-bottom:0}
+.stcol>.card:last-child{flex:1}
+.status{align-items:stretch;margin-bottom:14px}
+.status>.card{margin-bottom:0}
+.grid.two{align-items:stretch}
+.grid.two>.card{margin-bottom:0}
+.grid.two{margin-bottom:14px}
+@media (min-width:1000px){
+  .status{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+  .pick{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+  .moves{grid-template-columns:1fr 1fr}
+  body.has-sheet .moves{grid-template-columns:1fr}
+  .guide-sec p,.guide-sec .list{max-width:90ch}
+}
+@media (min-width:1300px){main{max-width:1320px}}
+.rec-desk{display:none}
+.card.intro .lead{max-width:none}
+@media (min-width:1000px){.rec-desk{display:block}.rec-mob{display:none}}

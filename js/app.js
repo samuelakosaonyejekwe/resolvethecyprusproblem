@@ -95,6 +95,8 @@
       if (k === 'rising') mv.ps = Math.min(0.95, ps + 0.05);
       else if (k === 'fading') mv.ps = Math.max(0.05, ps - 0.03);
     });
+    /* What each government has been saying lately tilts its choices a little. */
+    if (A.live && !A.sigOff.voices) { var vs = L.voices(); m.players.forEach(function (pl) { pl.lean = vs[pl.id] ? vs[pl.id].lean : 0; }); }
     C = E.compile(m);
     replay();
   }
@@ -112,8 +114,8 @@
   function evidence(m) {
     if (m.hold || !m.src.topic) return '';
     var id = m.src.topic, tp = M.topics[id], ag = L.agenda(id), rp = L.reports(id, tp), base = M0move(m.id), d = L.get() || {};
-    var h = '<section class="card"><h3>' + T('Live evidence: {0}', esc(tp.name)) + '</h3><p class="help">' + T('What the world is paying attention to on the subject of this move right now: how many people a day are reading the reference articles on it (Wikimedia), and the current headlines on it (GDELT news index). Fetched by your device and renewed every few hours.') + '</p>';
-    if (!ag && !rp.length && !d.attn && !d.news) return h + '<p class="help">' + (navigator.onLine === false ? T('You are offline and no evidence on this subject has been saved yet.') : T('Fetching current evidence… it appears here in a few seconds.')) + '</p></section>';
+    var h = '<section class="card"><h3>' + T('Live evidence: {0}', esc(tp.name)) + '</h3><p class="help">' + T('What the world is paying attention to on the subject of this move right now: how many people a day are reading the reference articles on it (Wikimedia), and the current headlines on it, read directly from Greek Cypriot, Turkish Cypriot and Greek newspapers and from the GDELT news index. Fetched by your device and renewed every few hours.') + '</p>';
+    if (!ag && !rp.length && !d.attn && !d.news && !d.press) return h + '<p class="help">' + (navigator.onLine === false ? T('You are offline and no evidence on this subject has been saved yet.') : T('Fetching current evidence… it appears here in a few seconds.')) + '</p></section>';
     if (ag) {
       h += '<div class="kv"><div><b>' + ag.r7.toLocaleString(locale()) + '</b><span>' + T('readers a day, last 7 days') + '</span></div><div><b>' + ag.r28.toLocaleString(locale()) + '</b><span>' + T('readers a day, 4 weeks before') + '</span></div><div><b class="' + cls(ag.ratio - 1, 0.2) + '">' + sgn((ag.ratio - 1) * 100, 0) + '%</b><span>' + T('change in attention') + ' ' + momentumTag(ag.k) + '</span></div></div>' + spark(ag.series, 'var(--info)');
       var eff = !A.live || A.sigOff.momentum ? T('Live adjustment is switched off, so the chance of success is unchanged.') :
@@ -122,13 +124,14 @@
         T('Attention is steady: chance of success unchanged at {0}.', pct(m.ps));
       h += '<p style="margin-top:8px"><b>' + T('Effect on the result:') + '</b> ' + eff + '</p>';
     } else h += '<p class="help">' + T('Readership figures for this subject are not available yet; the chance of success is unchanged.') + '</p>';
-    function items(f, n) { return rp.filter(f).slice(0, n).map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.title) + '</a> <span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + '</span></li>'; }).join(''); }
+    function items(f, n) { return rp.filter(f).slice(0, n).map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener" lang="' + a.lang + '">' + esc(a.title) + '</a> <span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + '</span></li>'; }).join(''); }
+    rp = rp.slice().sort(function (x, y) { return (y.lang === I18N.lang) - (x.lang === I18N.lang) || (x.date < y.date ? 1 : x.date > y.date ? -1 : 0); });
     var said = items(function (a) { return a.said; }, 3), meet = items(function (a) { return a.meet && !a.said; }, 3), rest = items(function (a) { return !a.said && !a.meet; }, 3);
     if (said) h += '<h3>' + T('What is being said') + '</h3><ul class="news">' + said + '</ul>';
     if (meet) h += '<h3>' + T('Meetings and conferences') + '</h3><ul class="news">' + meet + '</ul>';
     if (rest) h += '<h3>' + T('Other current reports') + '</h3><ul class="news">' + rest + '</ul>';
     if (!rp.length) h += '<p class="help">' + (tp.own && L.pending(id) ? T('Looking for current headlines on this subject…') : T('No headlines plainly on this subject in the last 21 days.')) + '</p>';
-    else h += '<p class="help">' + T('{0} headlines on this subject in the last 21 days. Headlines are in English, as published.', rp.length) + '</p>';
+    else h += '<p class="help">' + T('{0} headlines on this subject in the last 21 days, from newspapers and the news index. Headlines are shown as published, those in your language first.', rp.length) + '</p>';
     return h + '</section>';
   }
   function M0move(id) { var r = M.moves.filter(function (x) { return x.id === id; })[0]; return r && r.ps !== undefined ? r.ps : 0.8; }
@@ -169,10 +172,20 @@
     return f;
   }
 
+  /* The step-by-step guide on each page is open the first time the page is
+     visited and folded away afterwards, to leave the room to the content. */
+  function seenPage(title) {
+    var k = 'cy.seen.' + A.tab, was = false;
+    try { was = localStorage.getItem(k) === '1'; localStorage.setItem(k, '1'); } catch (e) {}
+    if (seenPage.now === A.tab) return false;      /* still on the first visit */
+    if (!was) seenPage.now = A.tab;
+    return was;
+  }
+
   /* Every page opens with what it shows and how to use it. */
   function intro(title, lead, steps) {
     return '<section class="card intro"><h1>' + title + '</h1><p class="lead">' + lead + '</p>' +
-      (steps ? '<details class="explain" open><summary>' + T('How to use this page') + '</summary><ol class="list">' + steps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol></details>' : '') + '</section>';
+      (steps ? '<details class="explain"' + (seenPage(title) ? '' : ' open') + '><summary>' + T('How to use this page') + '</summary><ol class="list">' + steps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol></details>' : '') + '</section>';
   }
 
   /* ---------- small renderers ---------- */
@@ -282,12 +295,19 @@
     var cats = ['all'].concat(Object.keys(M.cats).filter(function (c) { return C.byPlayer[A.pid].some(function (m) { return m.src.cat === c; }); }));
     var locked = C.byPlayer[A.pid].filter(function (m) { return E.blocked(C, S, m); });
 
+    var rec = '<section class="card REC"><div class="row between"><h2>' + T('Game record') + '</h2><div class="row"><button class="btn small" data-a="undo"' + (stack.length ? '' : ' disabled') + '>' + T('Undo round') + '</button><button class="btn small" data-a="reset"' + (stack.length ? '' : ' disabled') + '>' + T('New game') + '</button><button class="btn small" data-a="share">' + T('Share') + '</button></div></div>';
+    rec += stack.length ? '<ol class="history">' + stack.map(function (s) {
+      var r = s.r, acts = r.replies.filter(function (y) { return !y.chosen.m.hold; });
+      return '<li>' + (r.manual ? '<span class="tag info">' + T('manual') + '</span> ' : '') + '<b>' + esc(P(A.pid).short) + ': ' + esc(r.move.src.name) + '</b> → ' + (acts.length ? acts.map(function (y) { return esc(P(y.pid).short) + ': ' + esc(y.chosen.m.src.name); }).join(' · ') : T('all others hold')) +
+        ' <span class="tag" style="color:' + outcomeOf(r.after).color + '">' + esc(outcomeOf(r.after).name) + '</span></li>';
+    }).join('') + '</ol>' : '<p class="help">' + T('No moves played yet. Select a move above to preview the predicted replies, then play it to advance the board one round (roughly six months).') + '</p>';
+    rec += '</section>';
     var h = intro(T('The board'), T('You are playing <b>{0}</b>. This page shows where the Cyprus question stands, who is with you and against you, and every move open to you. Each round stands for roughly six months.', esc(P(A.pid).name)), [
       T('Read <b>Current position</b> and <b>The position</b>: ten bars describe the situation today; the ▼ on each bar is where you would like it to be.'),
       T('Choose under <b>Who plays the other stakeholders?</b> whether the computer answers for them or you pick their moves yourself.'),
       T('Under <b>Your move</b>, tap any move to preview it: what it does, how the others answer, and who gains or loses.'),
       T('Press <b>Play this move</b> to commit. The board advances one round and the <b>Game record</b> keeps the history. <b>Undo</b> takes a round back.')]) +
-      '<div class="status"><section class="card"><div class="outcome"><div class="badge" style="color:' + o.color + '">' + o.icon + '</div><div>' +
+      '<div class="status"><div class="stcol"><section class="card"><div class="outcome"><div class="badge" style="color:' + o.color + '">' + o.icon + '</div><div>' +
       '<span class="tag">' + T('Round {0} · current position', S.round + 1) + '</span><h2 style="margin:.15em 0">' + esc(o.name) + '</h2><span class="help">' + esc(o.desc) + '</span></div></div>' +
       '<div style="margin-top:12px"><div class="row between help"><span>' + T('Coalition weight with you <b class="num">{0}</b>', pct(bal)) + '</span><span>' + T('Your payoff <b class="num">{0}</b>/100', u[A.pid].toFixed(0)) + '</span></div>' +
       '<div class="evalbar" role="img" aria-label="' + esc(T('Balance of power between your coalition and opponents')) + '"><i style="width:' + (bal * 100) + '%"></i></div></div>' +
@@ -297,12 +317,11 @@
         return '<button class="chip ' + st + '" style="--c:' + P(q).color + '" data-a="player" data-v="' + q + '" title="' + esc(T('Payoff {0}/100', u[q].toFixed(0))) + '"><i>' + esc(P(q).short) + '</i>' + esc(P(q).name) + ' <em>' + STANCE(st) + '</em></button>';
       }).join('') + '</div>' +
       '<details class="explain"><summary>' + T('How "with you / against you" is worked out') + '</summary>' + T('Each player wants the position to move in a particular direction. If that direction overlaps with yours, they are with you on the present board; if it runs opposite, they are against you. It changes as the position changes — today\'s opponent can become tomorrow\'s partner once the trade-offs shift.') + '</details></section>' +
-      '<section class="card"><div class="row between"><h2>' + T('The position') + '</h2><span class="help">' + (ghost ? T('▼ = your ideal · coloured band = after this round') : T('▼ = your ideal')) + '</span></div><p class="help">' + T('Ten measures of the Cyprus question, each scored 0–100 between the two descriptions under its bar. The facts behind today\'s scores are listed under Library → Assumptions.') + '</p>' + gauges(x, ghost, A.pid) + '</section></div>';
-
-    h += '<section class="card"><h2>' + T('Who plays the other stakeholders?') + '</h2><div class="seg" role="group" aria-label="' + esc(T('Who plays the other stakeholders')) + '">' +
+      ('<section class="card"><h2>' + T('Who plays the other stakeholders?') + '</h2><div class="seg" role="group" aria-label="' + esc(T('Who plays the other stakeholders')) + '">' +
       '<button data-a="playmode" data-v="auto" aria-pressed="' + (A.play === 'auto') + '">' + T('Computer plays them') + '</button><button data-a="playmode" data-v="manual" aria-pressed="' + man + '">' + T('I choose their moves') + '</button></div>' +
       '<p class="help" style="margin-top:8px">' + (A.play === 'auto' ? T('<b>Computer mode.</b> After your move, the app plays the other nine stakeholders: each answers with the reply that serves its own interests best, and you see the probability of each reply. Use this to find out what is likely to happen.') :
-        T('<b>Manual mode.</b> After your move, you decide what each of the other nine stakeholders does. Nothing is predicted for you; every stakeholder starts on "Hold position" until you choose otherwise. Use this to test a "what if", replay real events, or play with other people around a table.')) + '</p></section>';
+        T('<b>Manual mode.</b> After your move, you decide what each of the other nine stakeholders does. Nothing is predicted for you; every stakeholder starts on "Hold position" until you choose otherwise. Use this to test a "what if", replay real events, or play with other people around a table.')) + '</p></section>') + rec.replace('card REC', 'card rec-desk') + '</div>' +
+      '<section class="card"><div class="row between"><h2>' + T('The position') + '</h2><span class="help">' + (ghost ? T('▼ = your ideal · coloured band = after this round') : T('▼ = your ideal')) + '</span></div><p class="help">' + T('Ten measures of the Cyprus question, each scored 0–100 between the two descriptions under its bar. The facts behind today\'s scores are listed under Library → Assumptions.') + '</p>' + gauges(x, ghost, A.pid) + '</section></div>';
 
     h += '<section class="card"><div class="row between"><h2>' + T('Your move') + '</h2><div class="seg" role="group" aria-label="' + esc(T('Objective')) + '">' +
       Object.keys(MD).map(function (k) { return '<button data-a="mode" data-v="' + k + '" aria-pressed="' + (A.mode === k) + '" title="' + esc(MD[k][1]) + '">' + MD[k][0] + '</button>'; }).join('') + '</div></div>' +
@@ -320,13 +339,7 @@
     }).join('') + '</div></details>';
     h += '</section>';
 
-    h += '<section class="card"><div class="row between"><h2>' + T('Game record') + '</h2><div class="row"><button class="btn small" data-a="undo"' + (stack.length ? '' : ' disabled') + '>' + T('Undo round') + '</button><button class="btn small" data-a="reset"' + (stack.length ? '' : ' disabled') + '>' + T('New game') + '</button><button class="btn small" data-a="share">' + T('Share') + '</button></div></div>';
-    h += stack.length ? '<ol class="history">' + stack.map(function (s) {
-      var r = s.r, acts = r.replies.filter(function (y) { return !y.chosen.m.hold; });
-      return '<li>' + (r.manual ? '<span class="tag info">' + T('manual') + '</span> ' : '') + '<b>' + esc(P(A.pid).short) + ': ' + esc(r.move.src.name) + '</b> → ' + (acts.length ? acts.map(function (y) { return esc(P(y.pid).short) + ': ' + esc(y.chosen.m.src.name); }).join(' · ') : T('all others hold')) +
-        ' <span class="tag" style="color:' + outcomeOf(r.after).color + '">' + esc(outcomeOf(r.after).name) + '</span></li>';
-    }).join('') + '</ol>' : '<p class="help">' + T('No moves played yet. Select a move above to preview the predicted replies, then play it to advance the board one round (roughly six months).') + '</p>';
-    return h + '</section>';
+    return h + rec.replace('card REC', 'card rec-mob');
   }
 
   /* ---------- move detail ---------- */
@@ -527,7 +540,7 @@
       var x = 30 + (al[q] + 1) / 2 * (W - 50), y = H - 26 - C.players[q].power / 100 * (H - 46);
       return '<circle cx="' + x.toFixed(0) + '" cy="' + y.toFixed(0) + '" r="11" fill="' + P(q).color + '"/><text x="' + x.toFixed(0) + '" y="' + (y + 3).toFixed(0) + '" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">' + esc(P(q).short) + '</text>';
     }).join('');
-    return '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;max-width:560px;height:auto" role="img" aria-label="' + esc(T('Stakeholder map: power against alignment with you')) + '">' +
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;max-width:760px;height:auto;display:block;margin:0 auto" role="img" aria-label="' + esc(T('Stakeholder map: power against alignment with you')) + '">' +
       '<rect x="30" y="10" width="' + (W - 50) / 2 + '" height="' + (H - 36) + '" fill="var(--opp)" opacity=".08"/><rect x="' + (30 + (W - 50) / 2) + '" y="10" width="' + (W - 50) / 2 + '" height="' + (H - 36) + '" fill="var(--ally)" opacity=".08"/>' +
       '<line x1="30" y1="' + (H - 26) + '" x2="' + (W - 20) + '" y2="' + (H - 26) + '" stroke="var(--mute)"/><line x1="30" y1="10" x2="30" y2="' + (H - 26) + '" stroke="var(--mute)"/>' +
       '<text x="34" y="' + (H - 8) + '" font-size="9" fill="var(--mute)">' + T('against you') + '</text><text x="' + (W - 22) + '" y="' + (H - 8) + '" font-size="9" fill="var(--mute)" text-anchor="end">' + T('with you') + '</text>' +
@@ -614,6 +627,26 @@
         return '<tr><td>' + esc(M.topics[t].name) + '</td>' + (ag ? '<td class="c">' + ag.r7.toLocaleString(loc) + '</td><td class="c">' + ag.r28.toLocaleString(loc) + '</td><td class="c ' + cls(ag.ratio - 1, 0.2) + '">' + sgn((ag.ratio - 1) * 100, 0) + '%</td>' : '<td class="c mute" colspan="3">' + T('not yet fetched') + '</td>') + '<td class="c">' + n + '</td><td class="c">' + (ag ? momentumTag(ag.k) : '') + '</td></tr>';
       }).join('') + '</tbody></table></div></section>';
 
+    var vs = L.voices(), any = M.players.some(function (pl) { return vs[pl.id] && vs[pl.id].n; });
+    h += '<section class="card"><div class="row between"><h2>' + T('What each government is saying') + '</h2><label class="row help"><input type="checkbox" data-c="sig" data-v="voices"' + (A.sigOff.voices ? '' : ' checked') + (A.live ? '' : ' disabled') + '> ' + T('Let statements tilt predictions') + '</label></div>' +
+      '<p class="help">' + T('Readership shows attention, not intent. For intent the tool reads what leaders and governments have actually said. Current headlines that report a named leader or office speaking about the Cyprus question are attributed to that stakeholder and read as conciliatory or hard-line from their wording. When a stakeholder has at least three such statements, the balance between the two tilts its predicted choices slightly toward moves of the same kind. This is a reading of public words, which can differ from private intentions.') + '</p>' +
+      (any ? '<div class="tblwrap"><table><thead><tr><th>' + T('Stakeholder') + '</th><th>' + T('Conciliatory') + '</th><th>' + T('Hard-line') + '</th><th>' + T('Tilt') + '</th><th>' + T('Latest statement reported') + '</th></tr></thead><tbody>' + M.players.map(function (pl) {
+        var v = vs[pl.id] || { soft: 0, hard: 0, n: 0, lean: 0, items: [] }, it = v.items[0];
+        return '<tr><td>' + esc(pl.name) + '</td><td class="c good">' + v.soft + '</td><td class="c bad">' + v.hard + '</td><td class="c">' + (v.lean > 0.05 ? '<span class="tag good">' + T('conciliatory') + '</span>' : v.lean < -0.05 ? '<span class="tag bad">' + T('hard-line') + '</span>' : '<span class="tag">' + T('no tilt') + '</span>') + '</td><td>' + (it ? '<a href="' + esc(it.url) + '" target="_blank" rel="noopener" lang="' + (it.lang || '') + '">' + esc(it.title) + '</a> <span class="help">' + esc(it.domain) + ' · ' + esc(it.date) + '</span>' : '<span class="mute">' + T('none found') + '</span>') + '</td></tr>';
+      }).join('') + '</tbody></table></div>' : '<p class="help">' + T('No statements found yet. They appear after the newspaper feeds have been read.') + '</p>') + '</section>';
+
+    var of = d.official || {};
+    if ((of.uk && of.uk.length) || (of.us && of.us.length)) {
+      h += '<section class="card"><h2>' + T('On the official record') + '</h2><p class="help">' + T('What governments have formally stated or done, from primary sources. These are for your own reading and do not change the model.') + '</p>';
+      if (of.uk && of.uk.length) h += '<h3>' + T('United Kingdom: ministers\' written answers to Parliament') + '</h3>' + of.uk.map(function (x) {
+        return '<details class="lib-item"><summary>' + esc(x.q) + '</summary><p class="meta">' + esc(x.body) + ' · ' + esc(x.date) + '</p><p>' + esc(x.a) + ' <a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + T('Full answer') + '</a></p></details>';
+      }).join('');
+      if (of.us && of.us.length) h += '<h3 style="margin-top:12px">' + T('United States: Federal Register notices and rules') + '</h3><ul class="news">' + of.us.map(function (x) {
+        return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.title) + '</a><br><span class="help">' + esc(x.body) + ' · ' + esc(x.type) + ' · ' + esc(x.date) + '</span></li>';
+      }).join('') + '</ul>';
+      h += '</section>';
+    }
+
     h += '<div class="grid two">';
     if (d.fx) h += '<section class="card"><h2>' + T('Lira against the euro') + '</h2><div class="kv"><div><b>₺' + d.fx.try.toFixed(2) + '</b><span>' + T('per €1 on {0}', esc(d.fx.date)) + '</span></div><div><b class="' + (d.fx.change > 0 ? 'bad' : 'good') + '">' + sgn(d.fx.change) + '%</b><span>' + T('euro price in lira, 12 months') + '</span></div></div>' + spark(d.fx.series, 'var(--accent)') + '<p class="help">' + T('<b>Why this is here.</b> Türkiye is the player whose decision matters most, and its economy is where outside incentives and pressure bite. The lira is the one daily, public, hard number that shows how exposed that economy is. When it has fallen a lot over twelve months, Ankara needs foreign capital, trade access and investor confidence more, so offers such as a customs-union upgrade, and threats to them, weigh more in its calculation. The model therefore raises the weight Türkiye gives to its Western ties and to the economy, by at most 40%. The north of Cyprus also uses the lira, so the same slide erodes Turkish Cypriot living standards. Untick the lira signal above to switch this off.') + '</p></section>';
     if (d.tone) h += '<section class="card"><h2>' + T('Tone of Cyprus–Türkiye coverage') + '</h2><div class="kv"><div><b>' + d.tone.recent.toFixed(2) + '</b><span>' + T('last two weeks') + '</span></div><div><b>' + d.tone.base.toFixed(2) + '</b><span>' + T('four-month average') + '</span></div></div>' + spark(d.tone.series, 'var(--info)') + '<p class="help">' + T('<b>Why this is here.</b> It is an early-warning gauge. GDELT scores the language of worldwide news coverage: below zero is negative, and a falling line means more hostile reporting about Cyprus and Türkiye. If the last two weeks are clearly worse than the four-month average, the model starts with slightly lower stability.') + '</p></section>';
@@ -628,6 +661,10 @@
 
     if (d.research && d.research.length) h += '<section class="card"><h2>' + T('Latest research') + '</h2><p class="help">' + T('The most recent scholarly articles on the Cyprus question, from the OpenAlex index of world research, newest first. For background reading; they do not change the model.') + '</p><ul class="news">' +
       d.research.map(function (w) { return '<li><a href="' + esc(w.url) + '" target="_blank" rel="noopener">' + esc(w.title) + '</a><br><span class="help">' + esc(w.venue) + (w.venue ? ' · ' : '') + esc(w.date) + '</span></li>'; }).join('') + '</ul></section>';
+
+    var pr = ((d.press || {}).items || []).slice().sort(function (x, y) { return (y.lang === I18N.lang) - (x.lang === I18N.lang) || (x.date < y.date ? 1 : x.date > y.date ? -1 : 0); }).slice(0, 15);
+    if (pr.length) h += '<section class="card"><h2>' + T('From the newspapers') + '</h2><p class="help">' + T('The newest headlines on the Cyprus question read directly from {0} newspapers that publish an open feed ({1}), those in your language first. {2} headlines from the last 21 days are held on this device and sorted by subject for the board.', (d.press || {}).n || 0, esc(L.pressNames.join(', ')), ((d.press || {}).items || []).length) + '</p><ul class="news">' +
+      pr.map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener" lang="' + a.lang + '">' + esc(a.title) + '</a><br><span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + '</span></li>'; }).join('') + '</ul></section>';
 
     var themes = ['all'].concat(L.themes), news = (d.news || []).filter(function (a) { return A.newsTheme === 'all' || a.themes.indexOf(A.newsTheme) >= 0; });
     h += '<section class="card"><h2>' + T('Latest headlines') + '</h2><p class="help">' + T('News from the last three weeks that mentions the Cyprus question, newest first. Filter by theme; tap a headline to read it at its source. The mix of themes feeds the signals above.') + '</p><div class="filter">' + themes.map(function (t) { return '<button data-a="ntheme" data-v="' + t + '" aria-pressed="' + (A.newsTheme === t) + '">' + (t === 'all' ? T('All') : L.themeName(t)) + '</button>'; }).join('') + '</div>' +
@@ -890,7 +927,7 @@
   var lastSig = '';
   L.onChange(function (d, busy) {
     net();
-    var sig = JSON.stringify((d && d.signals) || []) + Object.keys((d && d.attn) || {}).map(function (t) { return t + ((L.agenda(t) || {}).k || ''); }).join(',') + ((d && d.feed) || []).length;
+    var sig = JSON.stringify((d && d.signals) || []) + Object.keys((d && d.attn) || {}).map(function (t) { return t + ((L.agenda(t) || {}).k || ''); }).join(',') + ((d && d.feed) || []).length + '/' + (((d && d.press) || {}).items || []).length;
     if (sig !== lastSig) {
       lastSig = sig;
       var el = document.activeElement, busyEl = el && (el.tagName === 'SELECT' || el.tagName === 'INPUT');

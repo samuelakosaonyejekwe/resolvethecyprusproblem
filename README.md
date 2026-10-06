@@ -13,7 +13,7 @@ Choose the stakeholder you are deciding for. Pick a move. The board predicts how
 - **Prediction:** after your move, every other player answers in turn with its best reply, anticipating the replies still to come. Probabilities reflect how close each player's options are.
 - **Best path:** a multi-round search for the line of play that serves your objective: your own payoff, a sustainable outcome no veto player wants to overturn, or collective welfare.
 - **Odds and robustness:** hundreds of simulated futures, and stress tests of every assumption.
-- **Live intelligence:** headlines, news tone, exchange rates and economic indicators are fetched by each user's own browser from open public sources (GDELT, European Central Bank reference rates via Frankfurter, World Bank, Wikipedia) and feed small, visible adjustments into the model.
+- **Live intelligence:** headlines, news tone, exchange rates and economic indicators are fetched by each user's own browser from open public sources (newspapers' own feeds in Greek, Turkish and English, GDELT, Wikimedia readership figures, UK Parliament, US Federal Register, OpenAlex, European Central Bank reference rates via Frankfurter, World Bank, Wikipedia) and feed small, visible adjustments into the model.
 - **Library:** the strategies of the source blueprints, stakeholder profiles, and precedents that worked or failed.
 - **Open assumptions:** every weight and starting value can be inspected and changed.
 - **Two ways to play:** let the computer play the other nine stakeholders, or choose every stakeholder's reply yourself.

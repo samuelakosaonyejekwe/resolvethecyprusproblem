@@ -273,6 +273,27 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .pager .pg:hover i::before{border-color:var(--accent-ink)}
 .pager .pg:active{transform:scale(.98)}
 @media print{.pager{display:none}}
+
+/* use the width: no card is left with a blank lower half */
+.stcol{display:flex;flex-direction:column;gap:14px;min-width:0}
+.stcol>.card{margin-bottom:0}
+.stcol>.card:last-child{flex:1}
+.status{align-items:stretch;margin-bottom:14px}
+.status>.card{margin-bottom:0}
+.grid.two{align-items:stretch}
+.grid.two>.card{margin-bottom:0}
+.grid.two{margin-bottom:14px}
+@media (min-width:1000px){
+  .status{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+  .pick{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+  .moves{grid-template-columns:1fr 1fr}
+  body.has-sheet .moves{grid-template-columns:1fr}
+  .guide-sec p,.guide-sec .list{max-width:90ch}
+}
+@media (min-width:1300px){main{max-width:1320px}}
+.rec-desk{display:none}
+.card.intro .lead{max-width:none}
+@media (min-width:1000px){.rec-desk{display:block}.rec-mob{display:none}}
 </style>
 </head>
 <body>
@@ -1286,7 +1307,33 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     'change in attention': 'μεταβολή της προσοχής',
     'readers a day, 4 weeks before': 'αναγνώστες την ημέρα, 4 εβδομάδες πριν',
     'readers a day, last 7 days': 'αναγνώστες την ημέρα, τελευταίες 7 ημέρες',
-    '{0} headlines on this subject in the last 21 days. Headlines are in English, as published.': '{0} τίτλοι για αυτό το θέμα τις τελευταίες 21 ημέρες. Οι τίτλοι είναι στα αγγλικά, όπως δημοσιεύτηκαν.'
+    '{0} headlines on this subject in the last 21 days. Headlines are in English, as published.': '{0} τίτλοι για αυτό το θέμα τις τελευταίες 21 ημέρες. Οι τίτλοι είναι στα αγγλικά, όπως δημοσιεύτηκαν.',
+    'Conciliatory': 'Διαλλακτικές',
+    'From the newspapers': 'Από τις εφημερίδες',
+    'Full answer': 'Πλήρης απάντηση',
+    'Hard-line': 'Σκληρές',
+    'Headlines read directly from Greek Cypriot, Turkish Cypriot, Greek and regional newspapers, in their own languages (last 21 days)': 'Τίτλοι που διαβάζονται απευθείας από ελληνοκυπριακές, τουρκοκυπριακές, ελληνικές και περιφερειακές εφημερίδες, στη γλώσσα της καθεμίας (τελευταίες 21 ημέρες)',
+    'Latest statement reported': 'Τελευταία δήλωση που μεταδόθηκε',
+    'Let statements tilt predictions': 'Οι δηλώσεις να επηρεάζουν την κλίση των προβλέψεων',
+    'Newspapers\' own feeds': 'Ροές ειδήσεων των ίδιων των εφημερίδων',
+    'No statements found yet. They appear after the newspaper feeds have been read.': 'Δεν έχουν βρεθεί ακόμη δηλώσεις. Εμφανίζονται αφού διαβαστούν οι ροές των εφημερίδων.',
+    'On the official record': 'Στα επίσημα αρχεία',
+    'Readership shows attention, not intent. For intent the tool reads what leaders and governments have actually said. Current headlines that report a named leader or office speaking about the Cyprus question are attributed to that stakeholder and read as conciliatory or hard-line from their wording. When a stakeholder has at least three such statements, the balance between the two tilts its predicted choices slightly toward moves of the same kind. This is a reading of public words, which can differ from private intentions.': 'Η αναγνωσιμότητα δείχνει προσοχή, όχι πρόθεση. Για την πρόθεση το εργαλείο διαβάζει τι έχουν πράγματι πει ηγέτες και κυβερνήσεις. Οι τρέχοντες τίτλοι που μεταφέρουν δηλώσεις κατονομαζόμενου ηγέτη ή αξιώματος για το Κυπριακό αποδίδονται στο αντίστοιχο ενδιαφερόμενο μέρος και χαρακτηρίζονται, από τη διατύπωσή τους, διαλλακτικές ή σκληρές. Όταν ένα μέρος έχει τουλάχιστον τρεις τέτοιες δηλώσεις, η αναλογία ανάμεσα στα δύο είδη δίνει στις προβλεπόμενες επιλογές του ελαφρά κλίση προς κινήσεις του ίδιου είδους. Πρόκειται για ανάγνωση δημόσιων λόγων, που μπορεί να διαφέρουν από τις ιδιωτικές προθέσεις.',
+    'Stakeholder': 'Ενδιαφερόμενο μέρος',
+    'The newest headlines on the Cyprus question read directly from {0} newspapers that publish an open feed ({1}), those in your language first. {2} headlines from the last 21 days are held on this device and sorted by subject for the board.': 'Οι πιο πρόσφατοι τίτλοι για το Κυπριακό, όπως διαβάζονται απευθείας από {0} εφημερίδες που δημοσιεύουν ανοικτή ροή ειδήσεων ({1}), με πρώτους όσους είναι στη γλώσσα σας. Στη συσκευή αυτή φυλάσσονται {2} τίτλοι των τελευταίων 21 ημερών, ταξινομημένοι ανά θέμα για το ταμπλό.',
+    'Tilt': 'Κλίση',
+    'UK Parliament and US Federal Register': 'Βρετανικό Κοινοβούλιο και Federal Register των ΗΠΑ',
+    'United Kingdom: ministers\' written answers to Parliament': 'Ηνωμένο Βασίλειο: γραπτές απαντήσεις υπουργών στο Κοινοβούλιο',
+    'United States: Federal Register notices and rules': 'Ηνωμένες Πολιτείες: ανακοινώσεις και κανονισμοί του Federal Register',
+    'What each government is saying': 'Τι λέει κάθε κυβέρνηση',
+    'What governments have formally stated or done, from primary sources. These are for your own reading and do not change the model.': 'Τι έχουν δηλώσει ή πράξει επισήμως οι κυβερνήσεις, από πρωτογενείς πηγές. Προορίζονται για τη δική σας ανάγνωση και δεν αλλάζουν το μοντέλο.',
+    'What governments have put on the record: ministers\' written answers on Cyprus, and US government notices and rules': 'Τι έχουν καταθέσει επισήμως οι κυβερνήσεις: γραπτές απαντήσεις υπουργών για την Κύπρο, και ανακοινώσεις και κανονισμοί της κυβέρνησης των ΗΠΑ',
+    'What the world is paying attention to on the subject of this move right now: how many people a day are reading the reference articles on it (Wikimedia), and the current headlines on it, read directly from Greek Cypriot, Turkish Cypriot and Greek newspapers and from the GDELT news index. Fetched by your device and renewed every few hours.': 'Σε τι στρέφει αυτή τη στιγμή την προσοχή του ο κόσμος σχετικά με το θέμα αυτής της κίνησης: πόσοι άνθρωποι την ημέρα διαβάζουν τα λήμματα αναφοράς για αυτό (Wikimedia) και οι τρέχοντες τίτλοι για αυτό, όπως διαβάζονται απευθείας από ελληνοκυπριακές, τουρκοκυπριακές και ελληνικές εφημερίδες και από το ευρετήριο ειδήσεων GDELT. Τα δεδομένα αντλούνται από τη συσκευή σας και ανανεώνονται κάθε λίγες ώρες.',
+    'conciliatory': 'διαλλακτική',
+    'hard-line': 'σκληρή',
+    'no tilt': 'καμία κλίση',
+    'none found': 'δεν βρέθηκε',
+    '{0} headlines on this subject in the last 21 days, from newspapers and the news index. Headlines are shown as published, those in your language first.': '{0} τίτλοι για αυτό το θέμα τις τελευταίες 21 ημέρες, από εφημερίδες και από το ευρετήριο ειδήσεων. Οι τίτλοι εμφανίζονται όπως δημοσιεύτηκαν, με πρώτους όσους είναι στη γλώσσα σας.'
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -1470,7 +1517,13 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     '<b>Wikimedia pageviews</b>: the public count of how many people read each Wikipedia article each day. Used to measure world attention to the subject of every move.': '<b>Προβολές σελίδων Wikimedia</b>: η δημόσια καταμέτρηση του πόσοι άνθρωποι διαβάζουν κάθε λήμμα της Wikipedia κάθε ημέρα. Χρησιμοποιείται για τη μέτρηση της παγκόσμιας προσοχής στο θέμα κάθε κίνησης.',
     'Every move belongs to a subject, such as settlement talks, offshore gas, sanctions or the crossings. For each subject the tool gathers two kinds of current evidence. The first is attention: how many people a day are reading the reference articles on that subject on Wikipedia, taken from Wikimedia\'s public readership figures for the last five weeks. The second is headlines: the current news feeds are sorted on your device by subject, and reports of what leaders have said and of summits, conferences and meetings are picked out. Only headlines plainly about the subject are counted.': 'Κάθε κίνηση ανήκει σε ένα θέμα, όπως οι συνομιλίες για λύση, το υπεράκτιο φυσικό αέριο, οι κυρώσεις ή τα σημεία διέλευσης. Για κάθε θέμα το εργαλείο συγκεντρώνει δύο είδη τρεχόντων τεκμηρίων. Το πρώτο είναι η προσοχή: πόσοι άνθρωποι την ημέρα διαβάζουν στη Wikipedia τα λήμματα αναφοράς για το θέμα αυτό, με βάση τα δημόσια στοιχεία αναγνωσιμότητας του Wikimedia για τις τελευταίες πέντε εβδομάδες. Το δεύτερο είναι οι τίτλοι: οι τρέχουσες ροές ειδήσεων ταξινομούνται στη συσκευή σας ανά θέμα, και ξεχωρίζονται τα δημοσιεύματα για δηλώσεις ηγετών και για συνόδους κορυφής, διασκέψεις και συναντήσεις. Μετρούν μόνο οι τίτλοι που αφορούν σαφώς το θέμα.',
     'When you select a move, in computer mode or manual mode, the panel shows this evidence under the heading "Live evidence": readers a day in the last week and in the four weeks before, the change between them, a small chart, and the latest statements, meetings and reports with links to their sources. The same card appears on the Analysis page.': 'Όταν επιλέγετε μια κίνηση, στον τρόπο υπολογιστή ή στον χειροκίνητο τρόπο, το πλαίσιο δείχνει τα τεκμήρια αυτά κάτω από την επικεφαλίδα «Ζωντανά τεκμήρια»: τους αναγνώστες την ημέρα την τελευταία εβδομάδα και τις τέσσερις προηγούμενες εβδομάδες, τη μεταβολή ανάμεσά τους, ένα μικρό γράφημα, και τις τελευταίες δηλώσεις, συναντήσεις και δημοσιεύματα με συνδέσμους προς τις πηγές τους. Η ίδια κάρτα εμφανίζεται στη σελίδα Ανάλυση.',
-    'The evidence also enters the calculation. When attention to a subject has risen by a quarter or more, 5 percentage points are added to the chance of success of its moves, because attention gives decision-makers reason and cover to act. When attention has dropped by a fifth or more, 3 points are taken off. Otherwise nothing changes. This applies to every stakeholder\'s moves, so the predicted replies, the scores, the best path and the odds all reflect the present state of the world. The rule can be switched off under Live intel → Evidence by subject.': 'Τα τεκμήρια μπαίνουν και στον υπολογισμό. Όταν η προσοχή σε ένα θέμα έχει αυξηθεί κατά ένα τέταρτο ή περισσότερο, προστίθενται 5 ποσοστιαίες μονάδες στην πιθανότητα επιτυχίας των κινήσεών του, επειδή η προσοχή δίνει σε όσους αποφασίζουν λόγο και κάλυψη για να ενεργήσουν. Όταν η προσοχή έχει μειωθεί κατά ένα πέμπτο ή περισσότερο, αφαιρούνται 3 μονάδες. Διαφορετικά δεν αλλάζει τίποτα. Αυτό ισχύει για τις κινήσεις κάθε ενδιαφερόμενου μέρους, άρα οι προβλεπόμενες απαντήσεις, οι βαθμολογίες, η βέλτιστη πορεία και οι πιθανότητες αποτυπώνουν όλες την παρούσα κατάσταση του κόσμου. Ο κανόνας μπορεί να απενεργοποιηθεί στα Ζωντανά δεδομένα → Τεκμήρια ανά θέμα.'
+    'The evidence also enters the calculation. When attention to a subject has risen by a quarter or more, 5 percentage points are added to the chance of success of its moves, because attention gives decision-makers reason and cover to act. When attention has dropped by a fifth or more, 3 points are taken off. Otherwise nothing changes. This applies to every stakeholder\'s moves, so the predicted replies, the scores, the best path and the odds all reflect the present state of the world. The rule can be switched off under Live intel → Evidence by subject.': 'Τα τεκμήρια μπαίνουν και στον υπολογισμό. Όταν η προσοχή σε ένα θέμα έχει αυξηθεί κατά ένα τέταρτο ή περισσότερο, προστίθενται 5 ποσοστιαίες μονάδες στην πιθανότητα επιτυχίας των κινήσεών του, επειδή η προσοχή δίνει σε όσους αποφασίζουν λόγο και κάλυψη για να ενεργήσουν. Όταν η προσοχή έχει μειωθεί κατά ένα πέμπτο ή περισσότερο, αφαιρούνται 3 μονάδες. Διαφορετικά δεν αλλάζει τίποτα. Αυτό ισχύει για τις κινήσεις κάθε ενδιαφερόμενου μέρους, άρα οι προβλεπόμενες απαντήσεις, οι βαθμολογίες, η βέλτιστη πορεία και οι πιθανότητες αποτυπώνουν όλες την παρούσα κατάσταση του κόσμου. Ο κανόνας μπορεί να απενεργοποιηθεί στα Ζωντανά δεδομένα → Τεκμήρια ανά θέμα.',
+    '<b>Newspapers\' own feeds</b>: headlines read directly from Greek Cypriot, Turkish Cypriot, Greek and regional newspapers that publish an open feed, in their own languages.': '<b>Ροές ειδήσεων των ίδιων των εφημερίδων</b>: τίτλοι που διαβάζονται απευθείας από ελληνοκυπριακές, τουρκοκυπριακές, ελληνικές και περιφερειακές εφημερίδες που δημοσιεύουν ανοικτή ροή ειδήσεων, στη γλώσσα της καθεμίας.',
+    '<b>UK Parliament and US Federal Register</b>: the official record of ministers\' answers on Cyprus and of United States government notices and rules.': '<b>Βρετανικό Κοινοβούλιο και Federal Register των ΗΠΑ</b>: τα επίσημα αρχεία των απαντήσεων υπουργών για την Κύπρο και των ανακοινώσεων και κανονισμών της κυβέρνησης των Ηνωμένων Πολιτειών.',
+    'What governments are saying, and what they have put on record': 'Τι λένε οι κυβερνήσεις και τι έχουν καταθέσει επισήμως',
+    'Attention is not intent. To get closer to intent, the tool reads current headlines directly from newspapers on both sides of the island and in Greece, in Greek, Turkish and English, as well as from the news index. A headline that reports a named leader or office speaking about the Cyprus question is attributed to that stakeholder and read, from its wording, as conciliatory or hard-line.': 'Η προσοχή δεν είναι πρόθεση. Για να πλησιάσει την πρόθεση, το εργαλείο διαβάζει τρέχοντες τίτλους απευθείας από εφημερίδες και των δύο πλευρών του νησιού και της Ελλάδας, στα ελληνικά, τα τουρκικά και τα αγγλικά, καθώς και από το ευρετήριο ειδήσεων. Ένας τίτλος που μεταφέρει δηλώσεις κατονομαζόμενου ηγέτη ή αξιώματος για το Κυπριακό αποδίδεται στο αντίστοιχο ενδιαφερόμενο μέρος και χαρακτηρίζεται, από τη διατύπωσή του, διαλλακτικός ή σκληρός.',
+    'When a stakeholder has at least three such statements in the last three weeks, the balance between conciliatory and hard-line ones tilts its predicted choices slightly toward moves of the same kind. A government that has been talking about dialogue is judged a little more likely to choose a cooperative reply; one that has been issuing warnings, a little more likely to choose a confrontational one. The table under Live intel → "What each government is saying" shows the counts and the latest statement for each stakeholder, and the tilt can be switched off there.': 'Όταν ένα ενδιαφερόμενο μέρος έχει τουλάχιστον τρεις τέτοιες δηλώσεις τις τελευταίες τρεις εβδομάδες, η αναλογία ανάμεσα στις διαλλακτικές και στις σκληρές δίνει στις προβλεπόμενες επιλογές του ελαφρά κλίση προς κινήσεις του ίδιου είδους. Μια κυβέρνηση που μιλά για διάλογο κρίνεται λίγο πιθανότερο να επιλέξει απάντηση συνεργασίας· μια κυβέρνηση που εκδίδει προειδοποιήσεις, λίγο πιθανότερο να επιλέξει απάντηση αντιπαράθεσης. Ο πίνακας στα Ζωντανά δεδομένα → «Τι λέει κάθε κυβέρνηση» δείχνει τους αριθμούς και την τελευταία δήλωση για κάθε μέρος, και η κλίση μπορεί να απενεργοποιηθεί εκεί.',
+    'The Live intel page also shows the official record from primary sources: written answers given by United Kingdom ministers to Parliament on Cyprus, and notices and rules published by the United States government. Public words and official records are evidence of stated policy. They can still differ from what a government privately intends, which no tool can observe.': 'Η σελίδα Ζωντανά δεδομένα δείχνει επίσης τα επίσημα αρχεία από πρωτογενείς πηγές: γραπτές απαντήσεις υπουργών του Ηνωμένου Βασιλείου στο Κοινοβούλιο για την Κύπρο, και ανακοινώσεις και κανονισμούς που δημοσιεύει η κυβέρνηση των Ηνωμένων Πολιτειών. Οι δημόσιοι λόγοι και τα επίσημα αρχεία είναι τεκμήρια της δηλωμένης πολιτικής. Μπορεί ωστόσο να διαφέρουν από όσα σκοπεύει ιδιωτικά μια κυβέρνηση, τα οποία κανένα εργαλείο δεν μπορεί να παρατηρήσει.'
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -2701,7 +2754,33 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     'change in attention': 'ilgideki değişim',
     'readers a day, 4 weeks before': 'günlük okur, önceki 4 hafta',
     'readers a day, last 7 days': 'günlük okur, son 7 gün',
-    '{0} headlines on this subject in the last 21 days. Headlines are in English, as published.': 'Son 21 günde bu konuda {0} başlık. Başlıklar yayımlandığı gibi İngilizcedir.'
+    '{0} headlines on this subject in the last 21 days. Headlines are in English, as published.': 'Son 21 günde bu konuda {0} başlık. Başlıklar yayımlandığı gibi İngilizcedir.',
+    'Conciliatory': 'Uzlaşmacı',
+    'From the newspapers': 'Gazetelerden',
+    'Full answer': 'Yanıtın tamamı',
+    'Hard-line': 'Sert',
+    'Headlines read directly from Greek Cypriot, Turkish Cypriot, Greek and regional newspapers, in their own languages (last 21 days)': 'Kıbrıs Rum, Kıbrıs Türk, Yunan ve bölge gazetelerinden kendi dillerinde doğrudan okunan başlıklar (son 21 gün)',
+    'Latest statement reported': 'Haberlere yansıyan son açıklama',
+    'Let statements tilt predictions': 'Açıklamalar öngörülere eğilim versin',
+    'Newspapers\' own feeds': 'Gazetelerin kendi akışları',
+    'No statements found yet. They appear after the newspaper feeds have been read.': 'Henüz açıklama bulunamadı. Gazete akışları okunduktan sonra görünürler.',
+    'On the official record': 'Resmî kayıtlarda',
+    'Readership shows attention, not intent. For intent the tool reads what leaders and governments have actually said. Current headlines that report a named leader or office speaking about the Cyprus question are attributed to that stakeholder and read as conciliatory or hard-line from their wording. When a stakeholder has at least three such statements, the balance between the two tilts its predicted choices slightly toward moves of the same kind. This is a reading of public words, which can differ from private intentions.': 'Okur sayısı niyeti değil, ilgiyi gösterir. Niyet için araç, liderlerin ve hükûmetlerin fiilen söylediklerini okur. Adı belirtilen bir liderin veya makamın Kıbrıs sorunu hakkında konuştuğunu aktaran güncel başlıklar o paydaşa atfedilir ve ifadelerine göre uzlaşmacı veya sert olarak okunur. Bir paydaşın bu türden en az üç açıklaması olduğunda, ikisi arasındaki denge o paydaşın öngörülen tercihlerine aynı türden hamleler yönünde hafif bir eğilim verir. Bu, kamuya açık sözlerin bir okumasıdır; bu sözler gizli niyetlerden farklı olabilir.',
+    'Stakeholder': 'Paydaş',
+    'The newest headlines on the Cyprus question read directly from {0} newspapers that publish an open feed ({1}), those in your language first. {2} headlines from the last 21 days are held on this device and sorted by subject for the board.': 'Kıbrıs sorununa ilişkin en yeni başlıklar, açık akış yayımlayan {0} gazeteden ({1}) doğrudan okunur; kendi dilinizdekiler önce gelir. Son 21 güne ait {2} başlık bu cihazda tutulur ve tahta için konulara göre ayrılır.',
+    'Tilt': 'Eğilim',
+    'UK Parliament and US Federal Register': 'Birleşik Krallık Parlamentosu ve ABD Federal Register',
+    'United Kingdom: ministers\' written answers to Parliament': 'Birleşik Krallık: bakanların Parlamento\'ya verdiği yazılı yanıtlar',
+    'United States: Federal Register notices and rules': 'Amerika Birleşik Devletleri: Federal Register duyuruları ve kuralları',
+    'What each government is saying': 'Her hükûmet ne diyor',
+    'What governments have formally stated or done, from primary sources. These are for your own reading and do not change the model.': 'Hükûmetlerin resmen beyan ettikleri veya yaptıkları, birincil kaynaklardan. Bunlar kendi okumanız içindir ve modeli değiştirmez.',
+    'What governments have put on the record: ministers\' written answers on Cyprus, and US government notices and rules': 'Hükûmetlerin kayda geçirdikleri: bakanların Kıbrıs\'a ilişkin yazılı yanıtları ile ABD hükûmetinin duyuruları ve kuralları',
+    'What the world is paying attention to on the subject of this move right now: how many people a day are reading the reference articles on it (Wikimedia), and the current headlines on it, read directly from Greek Cypriot, Turkish Cypriot and Greek newspapers and from the GDELT news index. Fetched by your device and renewed every few hours.': 'Dünyanın şu anda bu hamlenin konusunda neye ilgi gösterdiği: konuyla ilgili başvuru maddelerini günde kaç kişinin okuduğu (Wikimedia) ve Kıbrıs Rum, Kıbrıs Türk ve Yunan gazetelerinden ve GDELT haber dizininden doğrudan okunan, konuya ilişkin güncel başlıklar. Cihazınız tarafından çekilir ve birkaç saatte bir yenilenir.',
+    'conciliatory': 'uzlaşmacı',
+    'hard-line': 'sert',
+    'no tilt': 'eğilim yok',
+    'none found': 'bulunamadı',
+    '{0} headlines on this subject in the last 21 days, from newspapers and the news index. Headlines are shown as published, those in your language first.': 'Son 21 günde gazetelerden ve haber dizininden bu konuda {0} başlık. Başlıklar yayımlandığı gibi gösterilir; kendi dilinizdekiler önce gelir.'
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -2885,7 +2964,13 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     '<b>Wikimedia pageviews</b>: the public count of how many people read each Wikipedia article each day. Used to measure world attention to the subject of every move.': '<b>Wikimedia sayfa görüntülemeleri</b>: her Wikipedia maddesini her gün kaç kişinin okuduğuna ilişkin kamuya açık sayım. Her hamlenin konusuna dünyanın gösterdiği ilgiyi ölçmek için kullanılır.',
     'Every move belongs to a subject, such as settlement talks, offshore gas, sanctions or the crossings. For each subject the tool gathers two kinds of current evidence. The first is attention: how many people a day are reading the reference articles on that subject on Wikipedia, taken from Wikimedia\'s public readership figures for the last five weeks. The second is headlines: the current news feeds are sorted on your device by subject, and reports of what leaders have said and of summits, conferences and meetings are picked out. Only headlines plainly about the subject are counted.': 'Her hamle, çözüm görüşmeleri, açık deniz doğal gazı, yaptırımlar veya geçiş kapıları gibi bir konuya aittir. Araç her konu için iki tür güncel kanıt toplar. Birincisi ilgidir: o konunun Wikipedia\'daki başvuru maddelerini günde kaç kişinin okuduğu; bu, Wikimedia\'nın son beş haftaya ait kamuya açık okur sayılarından alınır. İkincisi başlıklardır: güncel haber akışları cihazınızda konulara göre ayrılır ve liderlerin söylediklerine ve zirvelere, konferanslara ve toplantılara ilişkin haberler seçilip çıkarılır. Yalnızca açıkça konuyla ilgili başlıklar sayılır.',
     'When you select a move, in computer mode or manual mode, the panel shows this evidence under the heading "Live evidence": readers a day in the last week and in the four weeks before, the change between them, a small chart, and the latest statements, meetings and reports with links to their sources. The same card appears on the Analysis page.': 'Bilgisayar modunda veya elle modunda bir hamle seçtiğinizde panel bu kanıtı "Canlı kanıt" başlığı altında gösterir: son haftadaki ve önceki dört haftadaki günlük okur sayısı, aralarındaki değişim, küçük bir grafik ve kaynaklarına bağlantılarla birlikte en son açıklamalar, toplantılar ve haberler. Aynı kart Analiz sayfasında da görünür.',
-    'The evidence also enters the calculation. When attention to a subject has risen by a quarter or more, 5 percentage points are added to the chance of success of its moves, because attention gives decision-makers reason and cover to act. When attention has dropped by a fifth or more, 3 points are taken off. Otherwise nothing changes. This applies to every stakeholder\'s moves, so the predicted replies, the scores, the best path and the odds all reflect the present state of the world. The rule can be switched off under Live intel → Evidence by subject.': 'Kanıt hesaplamaya da girer. Bir konuya ilgi dörtte bir veya daha fazla arttığında hamlelerinin başarı şansına 5 yüzde puanı eklenir, çünkü ilgi karar vericilere harekete geçmek için gerekçe ve siyasi zemin sağlar. İlgi beşte bir veya daha fazla düştüğünde 3 puan düşülür. Aksi hâlde hiçbir şey değişmez. Bu, her paydaşın hamleleri için geçerlidir; dolayısıyla öngörülen karşılıklar, puanlar, en iyi yol ve olasılıkların tümü dünyanın bugünkü durumunu yansıtır. Kural, Canlı bilgi → Konulara göre kanıt bölümünden kapatılabilir.'
+    'The evidence also enters the calculation. When attention to a subject has risen by a quarter or more, 5 percentage points are added to the chance of success of its moves, because attention gives decision-makers reason and cover to act. When attention has dropped by a fifth or more, 3 points are taken off. Otherwise nothing changes. This applies to every stakeholder\'s moves, so the predicted replies, the scores, the best path and the odds all reflect the present state of the world. The rule can be switched off under Live intel → Evidence by subject.': 'Kanıt hesaplamaya da girer. Bir konuya ilgi dörtte bir veya daha fazla arttığında hamlelerinin başarı şansına 5 yüzde puanı eklenir, çünkü ilgi karar vericilere harekete geçmek için gerekçe ve siyasi zemin sağlar. İlgi beşte bir veya daha fazla düştüğünde 3 puan düşülür. Aksi hâlde hiçbir şey değişmez. Bu, her paydaşın hamleleri için geçerlidir; dolayısıyla öngörülen karşılıklar, puanlar, en iyi yol ve olasılıkların tümü dünyanın bugünkü durumunu yansıtır. Kural, Canlı bilgi → Konulara göre kanıt bölümünden kapatılabilir.',
+    '<b>Newspapers\' own feeds</b>: headlines read directly from Greek Cypriot, Turkish Cypriot, Greek and regional newspapers that publish an open feed, in their own languages.': '<b>Gazetelerin kendi akışları</b>: açık akış yayımlayan Kıbrıs Rum, Kıbrıs Türk, Yunan ve bölge gazetelerinden kendi dillerinde doğrudan okunan başlıklar.',
+    '<b>UK Parliament and US Federal Register</b>: the official record of ministers\' answers on Cyprus and of United States government notices and rules.': '<b>Birleşik Krallık Parlamentosu ve ABD Federal Register</b>: bakanların Kıbrıs\'a ilişkin yanıtlarının ve Amerika Birleşik Devletleri hükûmetinin duyurularının ve kurallarının resmî kaydı.',
+    'What governments are saying, and what they have put on record': 'Hükûmetler ne diyor ve neyi kayda geçirdiler',
+    'Attention is not intent. To get closer to intent, the tool reads current headlines directly from newspapers on both sides of the island and in Greece, in Greek, Turkish and English, as well as from the news index. A headline that reports a named leader or office speaking about the Cyprus question is attributed to that stakeholder and read, from its wording, as conciliatory or hard-line.': 'İlgi niyet değildir. Niyete yaklaşmak için araç, güncel başlıkları haber dizininin yanı sıra adanın iki yanındaki ve Yunanistan\'daki gazetelerden Yunanca, Türkçe ve İngilizce olarak doğrudan okur. Adı belirtilen bir liderin veya makamın Kıbrıs sorunu hakkında konuştuğunu aktaran bir başlık o paydaşa atfedilir ve ifadesine göre uzlaşmacı veya sert olarak okunur.',
+    'When a stakeholder has at least three such statements in the last three weeks, the balance between conciliatory and hard-line ones tilts its predicted choices slightly toward moves of the same kind. A government that has been talking about dialogue is judged a little more likely to choose a cooperative reply; one that has been issuing warnings, a little more likely to choose a confrontational one. The table under Live intel → "What each government is saying" shows the counts and the latest statement for each stakeholder, and the tilt can be switched off there.': 'Bir paydaşın son üç haftada bu türden en az üç açıklaması olduğunda, uzlaşmacı ve sert olanlar arasındaki denge o paydaşın öngörülen tercihlerine aynı türden hamleler yönünde hafif bir eğilim verir. Diyalogdan söz etmekte olan bir hükûmetin iş birliğine dönük bir karşılık seçmesi biraz daha olası sayılır; uyarılar yayımlamakta olan bir hükûmetin ise çatışmacı bir karşılık seçmesi biraz daha olası sayılır. Canlı bilgi → "Her hükûmet ne diyor" altındaki tablo her paydaş için sayıları ve son açıklamayı gösterir; eğilim de oradan kapatılabilir.',
+    'The Live intel page also shows the official record from primary sources: written answers given by United Kingdom ministers to Parliament on Cyprus, and notices and rules published by the United States government. Public words and official records are evidence of stated policy. They can still differ from what a government privately intends, which no tool can observe.': 'Canlı bilgi sayfası ayrıca birincil kaynaklardan resmî kayıtları gösterir: Birleşik Krallık bakanlarının Kıbrıs konusunda Parlamento\'ya verdiği yazılı yanıtlar ve Amerika Birleşik Devletleri hükûmetinin yayımladığı duyurular ve kurallar. Kamuya açık sözler ve resmî kayıtlar, beyan edilen politikanın kanıtıdır. Yine de bir hükûmetin gizlice niyet ettiğinden farklı olabilirler; bunu ise hiçbir araç gözlemleyemez.'
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -3569,7 +3654,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       var w = C.D.map(function (d) { return p.w[d] || 0; });
       var s = w.reduce(function (a, b) { return a + b; }, 0) || 1;
       C.players[p.id] = {
-        id: p.id, src: p, power: p.power, inertia: p.inertia || 0, veto: !!p.veto,
+        id: p.id, src: p, power: p.power, inertia: p.inertia || 0, veto: !!p.veto, lean: p.lean || 0,
         ideal: C.D.map(function (d) { return p.ideal[d] === undefined ? 50 : p.ideal[d]; }),
         w: w.map(function (v) { return v / s; })
       };
@@ -3583,6 +3668,13 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     return C;
   };
 
+  /* Is a move conciliatory (+1), confrontational (-1) or neither? Read from
+     what it does to the settlement track, trust and stability. */
+  function tone(fx) { var v = (fx.settle || 0) + (fx.trust || 0) + (fx.stability || 0); return v > 3 ? 1 : v < -3 ? -1 : 0; }
+  /* A government whose recent public statements lean one way is a little
+     more inclined to moves of the same kind. */
+  function leaning(C, pid, m) { return 0.4 * C.players[pid].lean * m.tone; }
+
   function addMove(C, m) {
     if (!C.players[m.p]) throw new Error('Unknown player on move ' + m.id);
     if (C.moves[m.id]) throw new Error('Duplicate move ' + m.id);
@@ -3592,6 +3684,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       ps: m.ps === undefined ? 0.8 : m.ps, cost: (m.cost || 0) * (C.M.costScale || 1),
       req: conds(C, m.req), once: m.once !== false && !m.hold, after: m.after || [],
       not: m.not || [], any: m.any || [], decay: m.decay || 0.55,
+      tone: tone(m.fx || {}),
       mods: (m.mods || []).map(function (md) { return { c: conds(C, md.when), u: md.used || null, fx: sparse(C, md.fx) }; }),
       commit: m.commit || null
     };
@@ -3671,7 +3764,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   function greedy(C, S, x, pid, avail) {
     var ms = avail[pid], best = ms[0], bv = -1e9;
     for (var i = 0; i < ms.length; i++) {
-      var v = E.utility(C, pid, E.apply(C, x, ms[i], S.used, 'exp')) - ms[i].cost + bound(ms[i], S.used) + (ms[i].hold ? C.players[pid].inertia : 0);
+      var v = E.utility(C, pid, E.apply(C, x, ms[i], S.used, 'exp')) - ms[i].cost + bound(ms[i], S.used) + leaning(C, pid, ms[i]) + (ms[i].hold ? C.players[pid].inertia : 0);
       if (v > bv) { bv = v; best = ms[i]; }
     }
     return best;
@@ -3693,7 +3786,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       var m = ms[i], y = E.apply(C, x, m, S.used, 'exp');
       var direct = E.utility(C, pid, y);
       if (deep) for (j = 0; j < rest.length; j++) y = E.apply(C, y, greedy(C, S, y, rest[j], avail), S.used, 'exp');
-      var v = (deep ? 0.5 * direct + 0.5 * E.utility(C, pid, y) : direct) - m.cost + bound(m, S.used) + (m.hold ? C.players[pid].inertia : 0);
+      var v = (deep ? 0.5 * direct + 0.5 * E.utility(C, pid, y) : direct) - m.cost + bound(m, S.used) + leaning(C, pid, m) + (m.hold ? C.players[pid].inertia : 0);
       out.push({ m: m, v: v, direct: direct });
     }
     var mx = Math.max.apply(null, out.map(function (o) { return o.v; })), z = 0;
@@ -3755,7 +3848,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         if (m.hold || (m.once && S.used[m.id])) continue;
         var y = E.apply(C, S.x, m, S.used, 'exp'), d = E.utility(C, pid, y) - u0;
         if (d > -0.4 && d < 0.4) continue;
-        var net = E.utility(C, q, y) - uq - m.cost + bound(m, S.used) - C.players[q].inertia;
+        var net = E.utility(C, q, y) - uq - m.cost + bound(m, S.used) + leaning(C, q, m) - C.players[q].inertia;
         var pr = 1 / (1 + Math.exp(-net / 0.5));
         tot += d * pr * (E.blocked(C, S, m) ? 0.3 : 1);
       }
@@ -4087,6 +4180,75 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     });
   }
 
+  /* ---------- the press itself ----------
+     Newspapers that publish an open headline feed are read directly, in their
+     own language: Greek Cypriot, Turkish Cypriot, Greek and regional titles.
+     This does not pass through any news index. */
+  var PRESS = [
+    { name: 'Financial Mirror', host: 'www.financialmirror.com', lang: 'en', cy: true, q: ['Cyprus problem', 'Turkish Cypriot', 'Turkey'] },
+    { name: 'Philenews', host: 'philenews.com', lang: 'el', cy: true, q: ['Κυπριακό', 'κατεχόμενα', 'Τουρκία'] },
+    { name: 'Havadis', host: 'www.havadiskibris.com', lang: 'tr', cy: true, q: ['Kıbrıs sorunu', 'Erhürman', 'müzakere'] },
+    { name: 'Kıbrıs Gazetesi', host: 'kibrisgazetesi.com', lang: 'tr', cy: true, q: ['Kıbrıs sorunu', 'Erhürman', 'müzakere'] },
+    { name: 'Greek City Times', host: 'greekcitytimes.com', lang: 'en', q: ['Cyprus'] },
+    { name: 'Balkan Insight', host: 'balkaninsight.com', lang: 'en', q: ['Cyprus'] }
+  ];
+  function plain(h) {
+    return String(h || '').replace(/<[^>]+>/g, '').replace(/&#(\d+);/g, function (m, n) { return String.fromCharCode(+n); })
+      .replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+  function press() {
+    var after = new Date(Date.now() - 21 * 864e5).toISOString().slice(0, 19), out = [], seen = {}, okSources = 0;
+    var jobs = [];
+    PRESS.forEach(function (src) { src.q.forEach(function (q) { jobs.push({ src: src, q: q }); }); });
+    var i = 0;
+    function one(job) {
+      return get('https://' + job.src.host + '/wp-json/wp/v2/posts?per_page=50&_fields=title,link,date&after=' + after + '&search=' + encodeURIComponent(job.q), 20000).then(function (list) {
+        if (!Array.isArray(list)) return;
+        job.src.ok = true;
+        list.forEach(function (x) {
+          var t = plain((x.title || {}).rendered), k = t.toLowerCase().slice(0, 70);
+          if (!t || seen[k]) return;
+          seen[k] = 1;
+          out.push({ title: t, url: x.link, domain: job.src.name, date: String(x.date || '').slice(0, 10), lang: job.src.lang, cy: !!job.src.cy });
+        });
+      }).catch(function () {});
+    }
+    function worker() { return i < jobs.length ? one(jobs[i++]).then(worker) : Promise.resolve(); }
+    return Promise.all([worker(), worker(), worker()]).then(function () {
+      PRESS.forEach(function (x) { if (x.ok) okSources += 1; });
+      if (!out.length) throw new Error('no newspaper feed answered');
+      out.sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+      out = out.slice(0, 600);
+      out.sources = okSources;
+      return { n: okSources, items: out };
+    });
+  }
+  L.pressNames = PRESS.map(function (x) { return x.name; });
+
+  /* ---------- official records ----------
+     What governments have put on the record: answers given by UK ministers to
+     Parliament, and notices and rules published by the US government. */
+  function official() {
+    var out = { uk: [], us: [] };
+    var uk = get('https://questions-statements-api.parliament.uk/api/writtenquestions/questions?searchTerm=Cyprus&take=20&answered=Answered', 20000).then(function (j) {
+      out.uk = (j.results || []).map(function (r) { return r.value || {}; }).filter(function (v) { return v.answerText && /cypr/i.test(v.questionText + ' ' + v.answerText); })
+        .sort(function (a, b) { return String(a.dateAnswered || a.dateTabled) < String(b.dateAnswered || b.dateTabled) ? 1 : -1; }).slice(0, 6).map(function (v) {
+          var d = String(v.dateTabled || '').slice(0, 10), ans = plain(v.answerText);
+          return { date: String(v.dateAnswered || v.dateTabled || '').slice(0, 10), body: v.answeringBodyName || '', q: plain(v.questionText).slice(0, 260), a: ans.length > 420 ? ans.slice(0, ans.lastIndexOf(' ', 420)) + '…' : ans,
+            url: 'https://questions-statements.parliament.uk/written-questions/detail/' + d + '/' + encodeURIComponent(v.uin || '') };
+        });
+    }).catch(function () {});
+    var us = get('https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=Cyprus&per_page=40&order=newest', 20000).then(function (j) {
+      out.us = (j.results || []).filter(function (r) { return /cyprus|turkey|türkiye|arms regulations|mediterranean|sanction/i.test(r.title || ''); }).slice(0, 6).map(function (r) {
+        return { date: r.publication_date, title: r.title, body: ((r.agencies || [])[0] || {}).name || '', type: r.type || '', url: r.html_url };
+      });
+    }).catch(function () {});
+    return Promise.all([uk, us]).then(function () {
+      if (!out.uk.length && !out.us.length) throw new Error('no official records');
+      return out;
+    });
+  }
+
   function tone() {
     return get('https://api.gdeltproject.org/api/v2/doc/doc?query=' + encodeURIComponent('cyprus (turkey OR turkish) sourcelang:english') + '&mode=timelinetone&timespan=4m&format=json', 20000).then(function (j) {
       var pts = ((j.timeline || [])[0] || {}).data || [];
@@ -4268,17 +4430,93 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     var ratio = o.r7 / o.r28;
     return { r7: o.r7, r28: o.r28, ratio: ratio, series: o.series, k: ratio >= 1.25 ? 'rising' : ratio <= 0.8 ? 'fading' : 'steady' };
   };
-  /* Current headlines on a subject: the general feeds sorted on the device,
-     plus the subject's own search where it has one. */
+  /* Subject words for the Greek- and Turkish-language press. */
+  var SUB_EL = {
+    talks: 'το κυπριακό|του κυπριακού|στο κυπριακό|συνομιλ|διαπραγματ|επανένωσ|ομοσπονδ|χόλγκιν|ολγκίν|άτυπη διάσκεψη|διευρυμέν|επίλυση|κοινή συνάντηση', security: 'εγγυήσ|εγγυησ|ειρηνευτικ|ουνφικυπ|ουδετερότ|αποχώρηση στρατ',
+    troops: 'κατοχικός στρατός|κατοχικού στρατού|κατοχικά στρατεύματα|κατοχικές δυνάμεις|τουρκικά στρατεύματα|τούρκοι στρατιώτες', property: 'περιουσι|εκτοπισμ|επιτροπή αγνοουμένων|σφετερισ',
+    cbm: 'οδόφραγμα|οδοφράγμ|μέτρα οικοδόμησης|νεκρή ζώνη|νεκρής ζώνης|δικοινοτικ', trade: 'πράσινης γραμμής|πράσινη γραμμή|χαλλούμι|απευθείας πτήσ|τουρκοκυπριακή οικονομ',
+    gas: 'φυσικό αέριο|φυσικού αερίου|γεώτρησ|γεωτρήσ|αοζ|κοίτασμα|κοιτάσμ|chevron|exxon', grid: 'διασύνδεσ|διασυνδέσ|καλώδιο|καλωδίου|great sea',
+    euturkey: 'τελωνειακή ένωση|τελωνειακής ένωσης|ενταξιακ|ευρωτουρκικ|βίζα|safe', sanctions: 'κυρώσ', uscyprus: '(ηπα|αμερικ|ρούμπιο|τραμπ).{0,60}(κύπρ|κυπρ|χριστοδουλίδ)|(κύπρ|κυπρ|χριστοδουλίδ).{0,60}(ηπα|αμερικ|ρούμπιο|τραμπ)',
+    usturkey: 'f-?35|f-?16|s-?400|caatsa', courts: 'εδαδ|εδδα|ευρωπαϊκό δικαστήριο|διεθνές δικαστήριο|συμβούλιο της ευρώπης', maritime: 'navtex|πολεμικό πλοίο|πολεμικά πλοία|ναυτικ|γαλάζια πατρίδα|θαλάσσι',
+    varosha: 'βαρώσι|βαρωσί|αμμόχωστ|αμμοχώστ', recognition: 'δύο κράτ|δύο κρατ|αναγνώρισ|αναγνωρίσ|κυριαρχική ισότητα|κυριαρχικής ισότητας|ψευδοκράτ',
+    defence: 'εθνική φρουρά|εθνικής φρουράς|αμυντική θωράκιση|εξοπλισ|αντιαεροπορικ|στρατιωτική άσκηση|στρατιωτική παρέλαση', regional: 'ισραήλ|αίγυπτ|αιγύπτ|εμιράτ|ινδία|τριμερ|imec',
+    greeceturkey: 'ελληνοτουρκικ|μητσοτάκ|γεραπετρίτ|αιγαίο', britain: 'βρετανικ|βάσεις|βάσεων|ακρωτήρι', un: 'γκουτέρες.{0,80}(κυπρ|κύπρ|χριστοδουλίδ|έρχιουρμαν)|(κυπρ|κύπρ|χριστοδουλίδ|έρχιουρμαν).{0,80}(οηε|γκουτέρες|συμβούλιο ασφαλείας)|χόλγκιν|ολγκίν|ουνφικυπ',
+    russia: 'ρωσία|ρωσίας|ρωσικ|πούτιν|λαβρόφ', society: 'δημοψήφισμ|δημοσκόπησ|διασπορά|κοινωνία των πολιτών|κοινωνίας των πολιτών'
+  };
+  var SUB_TR = {
+    talks: 'kıbrıs sorunu|müzakere|çözüm|federasyon|holguin|gayriresmi|5\\+1|genişletilmiş|üçlü görüşme', security: 'garanti|garantör|barış gücü|unficyp|tarafsızlık',
+    troops: 'türk askeri|işgal|barış harekâtı|barış harekatı', property: 'mülkiyet|taşınmaz mal|\\btmk\\b|kayıp şahıs|tazminat|göçmen',
+    cbm: 'geçiş kapı|sınır kapı|kapıların|güven artırıcı|ara bölge|iki toplumlu', trade: 'yeşil hat|hellim|ercan|doğrudan uçuş|doğrudan ticaret',
+    gas: 'doğal gaz|doğalgaz|sondaj|\\bmeb\\b|hidrokarbon|chevron|exxon', grid: 'enterkonnekt|elektrik kablosu|great sea',
+    euturkey: 'gümrük birliği|üyelik müzakere|vize serbest|ab-türkiye|\\bsafe\\b', sanctions: 'yaptırım', uscyprus: '(\\babd\\b|amerika|rubio|trump).{0,60}(kıbrıs|rum|hristodulidis)|(kıbrıs|rum|hristodulidis).{0,60}(\\babd\\b|amerika|rubio|trump)',
+    usturkey: 'f-?35|f-?16|s-?400|caatsa', courts: 'aihm|avrupa insan hakları|uluslararası adalet', maritime: 'navtex|savaş gemisi|donanma|mavi vatan|deniz yetki',
+    varosha: 'maraş', recognition: 'iki devlet|tanınma|tanınması|egemen eşit', defence: 'milli muhafız|savunma|tatbikat|silahlan|nato',
+    regional: 'israil|mısır|\\bbae\\b|hindistan|üçlü', greeceturkey: 'yunanistan|miçotakis|\\bege\\b', britain: 'ingiliz|ingiltere|üsler|ağrotur|dikelya',
+    un: '(guterres|\\bbm\\b|güvenlik konseyi|birleşmiş milletler).{0,80}(kıbrıs|erhürman|müzakere)|(kıbrıs|erhürman).{0,80}(guterres|\\bbm\\b|güvenlik konseyi)|holguin|unficyp', russia: 'rusya|putin|lavrov', society: 'referandum|anket|diaspora|sivil toplum'
+  };
+  var SAID_ANY = /\b(says?|said|tells?|told|interview|speech|remarks|statement|warns?|urges?|calls? (for|on)|vows?|pledges?|rejects?|insists?|accuses?|announces?)\b|δήλωσ|δηλώσ|είπε|ανέφερε|τόνισε|προειδοπ|κάλεσε|απάντησε|μήνυμα|συνέντευξη|dedi|açıkla|söyledi|belirtti|vurgula|uyardı|çağrı|röportaj|mesaj/i;
+  var MEET_ANY = /\b(summit|conference|council|meeting|meets?|talks|forum|assembly|visit|session|dialogue|trilateral)\b|συνάντησ|συναντήσ|σύνοδ|συνόδ|διάσκεψ|συνέδρι|επίσκεψ|τριμερ|görüş|toplantı|zirve|konferans|ziyaret|buluş/i;
+
+  /* Current headlines on a subject: news-index feeds and newspaper feeds, sorted
+     on the device, plus the subject's own search where it has one. */
   L.reports = function (id, def) {
-    var d = load() || {}, own = tload()[id], seen = {}, about = def.must ? new RegExp(def.must, 'i') : null, on = def.sub ? new RegExp(def.sub, 'i') : null;
-    var all = (d.news || []).concat(d.feed || [], own && own.items ? own.items : []);
+    var d = load() || {}, own = tload()[id], seen = {};
+    var re = { must: def.must ? new RegExp(def.must, 'i') : null, en: def.sub ? new RegExp(def.sub, 'i') : null, el: SUB_EL[id] ? new RegExp(SUB_EL[id], 'i') : null, tr: SUB_TR[id] ? new RegExp(SUB_TR[id], 'i') : null };
+    var all = (d.news || []).concat(d.feed || [], own && own.items ? own.items : [], (d.press || {}).items || []);
     return all.filter(function (a) {
-      var k = (a.title || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').slice(0, 60);
-      if (!a.title || seen[k] || (about && !about.test(a.title)) || (on && !on.test(a.title))) return false;
+      var k = (a.title || '').toLowerCase().replace(/\s+/g, ' ').slice(0, 60), on = re[a.lang || 'en'];
+      if (!a.title || seen[k] || !on || !on.test(a.title)) return false;
+      if ((!a.cy || def.own) && re.must && !re.must.test(a.title)) return false;
       seen[k] = 1; return true;
-    }).map(function (a) { return { title: a.title, url: a.url, domain: a.domain, date: a.date, said: SAID.test(a.title), meet: MEET.test(a.title) }; })
+    }).map(function (a) { return { title: a.title, url: a.url, domain: a.domain, date: a.date, lang: a.lang || 'en', said: SAID_ANY.test(a.title), meet: MEET_ANY.test(a.title) }; })
       .sort(function (x, y) { return x.date < y.date ? 1 : x.date > y.date ? -1 : 0; });
+  };
+
+  /* ---------- what governments are saying ----------
+     Headlines that report a named leader or office speaking are attributed to
+     that stakeholder and read as conciliatory or hard-line from their wording. */
+  var VOICE = {
+    ROC: 'christodoulid|χριστοδουλίδ|hristodulidis|kombos|κόμπος|κόμπου|letymbiot|λετυμπιώτ|cyprus government|κυπριακή κυβέρνηση|rum lider|rum yönetimi',
+    TC: 'erh[uü]rman|ερχιουρμάν|ερχουρμάν|\\btatar\\b|τατάρ|üstel|ertuğruloğlu|turkish cypriot leader',
+    TR: 'erdo[gğ]an|ερντογάν|\\bfidan\\b|φιντάν|cevdet yılmaz|yaşar güler|ankara says|turkish (president|foreign minister|defen[cs]e ministry|government)|\\bmsb\\b|τουρκικό υπεξ|türkiye dışişleri',
+    GR: 'mitsotak|μητσοτάκ|miçotakis|gerapetrit|γεραπετρίτ|dendias|δένδια|greek (prime minister|foreign minister|government)',
+    EU: 'von der leyen|φον ντερ λάιεν|antónio costa|antonio costa|kallas|κάλας|european commission|κομισιόν|european council|ab komisyon|eu envoy|johannes hahn',
+    US: '\\btrump\\b|τραμπ|rubio|ρούμπιο|state department|στέιτ ντιπάρτμεντ|white house|λευκός οίκος|us ambassador|u\\.s\\. ambassador|abd büyükelçi|beyaz saray',
+    UK: 'starmer|στάρμερ|burnham|lammy|foreign office|british (high commissioner|government|prime minister)|ingiltere başbakan',
+    UN: 'guterres|γκουτέρες|holgu[ií]n|χόλγκιν|ολγκίν|unficyp|ουνφικυπ|security council|συμβούλιο ασφαλείας|güvenlik konseyi|un envoy|un chief',
+    RU: '\\bputin\\b|πούτιν|lavrov|λαβρόφ|zakharova|ζαχάροβα|kremlin|κρεμλίν|russian (foreign ministry|ambassador)',
+    REG: 'netanyahu|νετανιάχου|\\bsisi\\b|σίσι|herzog|bin zayed|israeli (prime minister|foreign minister)|egyptian (president|foreign minister)|\\bmodi\\b'
+  };
+  var SOFT = /\b(talks?|dialogue|ready|open to|agree|cooperat|welcom|supports?|window|solution|peace|resum|bridge|trust|progress|constructive|commit|meets?|meeting)\b|διάλογ|συνομιλ|έτοιμ|λύση|συνεργασ|καλωσόρι|στήριξ|πρόοδο|ειρήν|επανέναρξ|εποικοδομ|συνάντησ|diyalog|görüşme|hazır|çözüm|iş ?birliği|destek|barış|ilerleme|yapıcı|uzlaş/i;
+  var HARD = /\b(rejects?|warns?|threat|condemn|illegal|never|two-state|sovereign equality|accus|slams?|violat|provoc|occup|red line|not accept|refus|blames?|sanction)|απορρίπτ|απέρριψ|προειδοπ|απειλ|καταδικ|παράνομ|ποτέ|δύο κράτ|κυριαρχική ισότητα|κατηγορ|παραβίασ|πρόκλησ|προκλητικ|κατοχ|κόκκινη γραμμή|δεν δεχ|tanınması|tanınmalı|recognition of the|αναγνώριση του ψευδοκράτους|reddet|uyardı|tehdit|kınadı|kınıyor|yasa dışı|asla|iki devlet|egemen eşit|suçla|ihlal|provokasyon|işgal|kırmızı çizgi|kabul etme/i;
+  /* Only statements about the Cyprus question itself are counted. */
+  var CORE = /cyprus (problem|issue|talks|settlement|solution)|negotiat|two-state|federa|sovereign|recogni|reunif|guarant|troops|occup|turkish cypriot|greek cypriot|northern cyprus|το κυπριακό|του κυπριακού|στο κυπριακό|συνομιλ|διαπραγματ|δύο κράτ|ομοσπονδ|κατοχ|εγγυήσ|επανένωσ|τουρκοκύπρι|κοινή συνάντηση|kıbrıs sorunu|müzakere|iki devlet|federasyon|egemen eşit|tanınma|garanti|kıbrıs türk|rum lider|çözüm/i;
+  L.voices = function () {
+    var d = load() || {}, seen = {}, out = {};
+    var all = (d.news || []).concat(d.feed || [], (d.press || {}).items || []);
+    Object.keys(tload()).forEach(function (t) { all = all.concat((topics[t] || {}).items || []); });
+    var res = {};
+    Object.keys(VOICE).forEach(function (pid) { res[pid] = new RegExp(VOICE[pid], 'i'); });
+    /* a headline belongs to whoever is named first in it */
+    function speaker(t) { var best = null, at = 1e9; Object.keys(res).forEach(function (q) { var m = res[q].exec(t); if (m && m.index < at) { at = m.index; best = q; } }); return best; }
+    Object.keys(VOICE).forEach(function (pid) {
+      var o = { soft: 0, hard: 0, n: 0, items: [] };
+      all.forEach(function (a) {
+        var k = pid + (a.title || '').toLowerCase().slice(0, 60);
+        if (!a.title || seen[k] || !CORE.test(a.title) || speaker(a.title) !== pid) return;
+        var hard = HARD.test(a.title), soft = SOFT.test(a.title);
+        if (!hard && !soft && !SAID_ANY.test(a.title)) return;
+        seen[k] = 1;
+        var tone = hard ? 'hard' : soft ? 'soft' : 'plain';
+        if (tone === 'hard') o.hard += 1; else if (tone === 'soft') o.soft += 1;
+        o.n += 1;
+        o.items.push({ title: a.title, url: a.url, domain: a.domain, date: a.date, lang: a.lang || 'en', tone: tone });
+      });
+      o.items.sort(function (x, y) { return x.date < y.date ? 1 : -1; });
+      o.lean = o.soft + o.hard >= 3 ? (o.soft - o.hard) / (o.soft + o.hard + 3) : 0;
+      out[pid] = o;
+    });
+    return out;
   };
 
   /* Convert raw feeds into small, capped, transparent adjustments of the model.
@@ -4351,7 +4589,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     /* GDELT asks for at most one request every five seconds. */
     function retry(f) { return gate().then(f).catch(function () { return gate().then(f); }); }
     var gd = part('news', retry(news)).then(function () { return part('tone', retry(tone)); });
-    return Promise.all([gd, part('fx', lira()), part('wb', worldBank()), part('wiki', wiki(wikiTitles || [])), part('research', research()), part('attn', attention(pvMap || {})), gd.then(function () { return part('feed', retry(feed)); })]).then(function () {
+    return Promise.all([gd, part('fx', lira()), part('wb', worldBank()), part('wiki', wiki(wikiTitles || [])), part('research', research()), part('attn', attention(pvMap || {})), part('press', press()), part('official', official()), gd.then(function () { return part('feed', retry(feed)); })]).then(function () {
       var ok = Object.keys(d.status).some(function (k) { return d.status[k].ok && Date.now() - d.status[k].t < 60000; });
       if (ok) d.t = Date.now();
       L.data = d; L.busy = false; save(); emit();
@@ -4363,6 +4601,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     return [
       { id: 'research', name: 'OpenAlex', what: T('Recent scholarly articles on the Cyprus question'), url: 'https://openalex.org/' },
       { id: 'attn', name: T('Wikimedia pageviews'), what: T('Daily readership of the reference articles for each subject: a measure of world attention (last five weeks)'), url: 'https://wikimedia.org/api/rest_v1/' },
+      { id: 'press', name: T('Newspapers\' own feeds'), what: T('Headlines read directly from Greek Cypriot, Turkish Cypriot, Greek and regional newspapers, in their own languages (last 21 days)'), url: 'https://philenews.com/' },
+      { id: 'official', name: T('UK Parliament and US Federal Register'), what: T('What governments have put on the record: ministers\' written answers on Cyprus, and US government notices and rules'), url: 'https://questions-statements.parliament.uk/' },
       { id: 'feed', name: T('GDELT Project'), what: T('Current headlines, statements and meetings sorted by the subject of each move (last 21 days)'), url: 'https://www.gdeltproject.org/' },
       { id: 'news', name: T('GDELT Project'), what: T('Worldwide news index: headlines mentioning the Cyprus question (last 21 days)'), url: 'https://www.gdeltproject.org/' },
       { id: 'tone', name: T('GDELT Project'), what: T('Average tone of Cyprus–Türkiye coverage (four months)'), url: 'https://www.gdeltproject.org/' },
@@ -4495,6 +4735,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         T('<b>European Central Bank reference rates</b> (through the Frankfurter service): the euro–lira exchange rate over the last twelve months.'),
         T('<b>World Bank Open Data</b>: GDP, growth, inflation, military spending and population for Cyprus, Türkiye and Greece.'),
         T('<b>Wikipedia</b>: current summaries for the precedents in the Library.'),
+        T('<b>Newspapers\' own feeds</b>: headlines read directly from Greek Cypriot, Turkish Cypriot, Greek and regional newspapers that publish an open feed, in their own languages.'),
+        T('<b>UK Parliament and US Federal Register</b>: the official record of ministers\' answers on Cyprus and of United States government notices and rules.'),
         T('<b>Wikimedia pageviews</b>: the public count of how many people read each Wikipedia article each day. Used to measure world attention to the subject of every move.'),
         T('<b>OpenAlex</b>: an open index of the world\'s scholarly research. Used for the most recent articles on the Cyprus question.')]) +
       h(T('How live data changes the model')) +
@@ -4509,6 +4751,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       p(T('Every move belongs to a subject, such as settlement talks, offshore gas, sanctions or the crossings. For each subject the tool gathers two kinds of current evidence. The first is attention: how many people a day are reading the reference articles on that subject on Wikipedia, taken from Wikimedia\'s public readership figures for the last five weeks. The second is headlines: the current news feeds are sorted on your device by subject, and reports of what leaders have said and of summits, conferences and meetings are picked out. Only headlines plainly about the subject are counted.')) +
       p(T('When you select a move, in computer mode or manual mode, the panel shows this evidence under the heading "Live evidence": readers a day in the last week and in the four weeks before, the change between them, a small chart, and the latest statements, meetings and reports with links to their sources. The same card appears on the Analysis page.')) +
       p(T('The evidence also enters the calculation. When attention to a subject has risen by a quarter or more, 5 percentage points are added to the chance of success of its moves, because attention gives decision-makers reason and cover to act. When attention has dropped by a fifth or more, 3 points are taken off. Otherwise nothing changes. This applies to every stakeholder\'s moves, so the predicted replies, the scores, the best path and the odds all reflect the present state of the world. The rule can be switched off under Live intel → Evidence by subject.')) +
+      h(T('What governments are saying, and what they have put on record')) +
+      p(T('Attention is not intent. To get closer to intent, the tool reads current headlines directly from newspapers on both sides of the island and in Greece, in Greek, Turkish and English, as well as from the news index. A headline that reports a named leader or office speaking about the Cyprus question is attributed to that stakeholder and read, from its wording, as conciliatory or hard-line.')) +
+      p(T('When a stakeholder has at least three such statements in the last three weeks, the balance between conciliatory and hard-line ones tilts its predicted choices slightly toward moves of the same kind. A government that has been talking about dialogue is judged a little more likely to choose a cooperative reply; one that has been issuing warnings, a little more likely to choose a confrontational one. The table under Live intel → "What each government is saying" shows the counts and the latest statement for each stakeholder, and the tilt can be switched off there.')) +
+      p(T('The Live intel page also shows the official record from primary sources: written answers given by United Kingdom ministers to Parliament on Cyprus, and notices and rules published by the United States government. Public words and official records are evidence of stated policy. They can still differ from what a government privately intends, which no tool can observe.')) +
       p(T('The Live intel page also lists the most recent scholarly articles on the Cyprus question from the OpenAlex index of world research, for background reading.')) +
       h(T('Why the lira is there')) +
       p(T('Türkiye\'s decision is the one on which the outcome turns, and most of the levers available to others are economic: a customs-union upgrade, investment, sanctions, access to markets and capital. How heavily such levers weigh depends on how much Türkiye\'s economy needs outside money and confidence at that moment. The lira\'s exchange rate is the one hard, public, daily number that shows this. A sharply weaker lira means incentives and pressure count for more in Ankara. The north of Cyprus also uses the lira, so the same slide erodes living standards there.')) +
@@ -4682,6 +4928,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       if (k === 'rising') mv.ps = Math.min(0.95, ps + 0.05);
       else if (k === 'fading') mv.ps = Math.max(0.05, ps - 0.03);
     });
+    /* What each government has been saying lately tilts its choices a little. */
+    if (A.live && !A.sigOff.voices) { var vs = L.voices(); m.players.forEach(function (pl) { pl.lean = vs[pl.id] ? vs[pl.id].lean : 0; }); }
     C = E.compile(m);
     replay();
   }
@@ -4699,8 +4947,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   function evidence(m) {
     if (m.hold || !m.src.topic) return '';
     var id = m.src.topic, tp = M.topics[id], ag = L.agenda(id), rp = L.reports(id, tp), base = M0move(m.id), d = L.get() || {};
-    var h = '<section class="card"><h3>' + T('Live evidence: {0}', esc(tp.name)) + '</h3><p class="help">' + T('What the world is paying attention to on the subject of this move right now: how many people a day are reading the reference articles on it (Wikimedia), and the current headlines on it (GDELT news index). Fetched by your device and renewed every few hours.') + '</p>';
-    if (!ag && !rp.length && !d.attn && !d.news) return h + '<p class="help">' + (navigator.onLine === false ? T('You are offline and no evidence on this subject has been saved yet.') : T('Fetching current evidence… it appears here in a few seconds.')) + '</p></section>';
+    var h = '<section class="card"><h3>' + T('Live evidence: {0}', esc(tp.name)) + '</h3><p class="help">' + T('What the world is paying attention to on the subject of this move right now: how many people a day are reading the reference articles on it (Wikimedia), and the current headlines on it, read directly from Greek Cypriot, Turkish Cypriot and Greek newspapers and from the GDELT news index. Fetched by your device and renewed every few hours.') + '</p>';
+    if (!ag && !rp.length && !d.attn && !d.news && !d.press) return h + '<p class="help">' + (navigator.onLine === false ? T('You are offline and no evidence on this subject has been saved yet.') : T('Fetching current evidence… it appears here in a few seconds.')) + '</p></section>';
     if (ag) {
       h += '<div class="kv"><div><b>' + ag.r7.toLocaleString(locale()) + '</b><span>' + T('readers a day, last 7 days') + '</span></div><div><b>' + ag.r28.toLocaleString(locale()) + '</b><span>' + T('readers a day, 4 weeks before') + '</span></div><div><b class="' + cls(ag.ratio - 1, 0.2) + '">' + sgn((ag.ratio - 1) * 100, 0) + '%</b><span>' + T('change in attention') + ' ' + momentumTag(ag.k) + '</span></div></div>' + spark(ag.series, 'var(--info)');
       var eff = !A.live || A.sigOff.momentum ? T('Live adjustment is switched off, so the chance of success is unchanged.') :
@@ -4709,13 +4957,14 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         T('Attention is steady: chance of success unchanged at {0}.', pct(m.ps));
       h += '<p style="margin-top:8px"><b>' + T('Effect on the result:') + '</b> ' + eff + '</p>';
     } else h += '<p class="help">' + T('Readership figures for this subject are not available yet; the chance of success is unchanged.') + '</p>';
-    function items(f, n) { return rp.filter(f).slice(0, n).map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.title) + '</a> <span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + '</span></li>'; }).join(''); }
+    function items(f, n) { return rp.filter(f).slice(0, n).map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener" lang="' + a.lang + '">' + esc(a.title) + '</a> <span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + '</span></li>'; }).join(''); }
+    rp = rp.slice().sort(function (x, y) { return (y.lang === I18N.lang) - (x.lang === I18N.lang) || (x.date < y.date ? 1 : x.date > y.date ? -1 : 0); });
     var said = items(function (a) { return a.said; }, 3), meet = items(function (a) { return a.meet && !a.said; }, 3), rest = items(function (a) { return !a.said && !a.meet; }, 3);
     if (said) h += '<h3>' + T('What is being said') + '</h3><ul class="news">' + said + '</ul>';
     if (meet) h += '<h3>' + T('Meetings and conferences') + '</h3><ul class="news">' + meet + '</ul>';
     if (rest) h += '<h3>' + T('Other current reports') + '</h3><ul class="news">' + rest + '</ul>';
     if (!rp.length) h += '<p class="help">' + (tp.own && L.pending(id) ? T('Looking for current headlines on this subject…') : T('No headlines plainly on this subject in the last 21 days.')) + '</p>';
-    else h += '<p class="help">' + T('{0} headlines on this subject in the last 21 days. Headlines are in English, as published.', rp.length) + '</p>';
+    else h += '<p class="help">' + T('{0} headlines on this subject in the last 21 days, from newspapers and the news index. Headlines are shown as published, those in your language first.', rp.length) + '</p>';
     return h + '</section>';
   }
   function M0move(id) { var r = M.moves.filter(function (x) { return x.id === id; })[0]; return r && r.ps !== undefined ? r.ps : 0.8; }
@@ -4756,10 +5005,20 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     return f;
   }
 
+  /* The step-by-step guide on each page is open the first time the page is
+     visited and folded away afterwards, to leave the room to the content. */
+  function seenPage(title) {
+    var k = 'cy.seen.' + A.tab, was = false;
+    try { was = localStorage.getItem(k) === '1'; localStorage.setItem(k, '1'); } catch (e) {}
+    if (seenPage.now === A.tab) return false;      /* still on the first visit */
+    if (!was) seenPage.now = A.tab;
+    return was;
+  }
+
   /* Every page opens with what it shows and how to use it. */
   function intro(title, lead, steps) {
     return '<section class="card intro"><h1>' + title + '</h1><p class="lead">' + lead + '</p>' +
-      (steps ? '<details class="explain" open><summary>' + T('How to use this page') + '</summary><ol class="list">' + steps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol></details>' : '') + '</section>';
+      (steps ? '<details class="explain"' + (seenPage(title) ? '' : ' open') + '><summary>' + T('How to use this page') + '</summary><ol class="list">' + steps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol></details>' : '') + '</section>';
   }
 
   /* ---------- small renderers ---------- */
@@ -4869,12 +5128,19 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     var cats = ['all'].concat(Object.keys(M.cats).filter(function (c) { return C.byPlayer[A.pid].some(function (m) { return m.src.cat === c; }); }));
     var locked = C.byPlayer[A.pid].filter(function (m) { return E.blocked(C, S, m); });
 
+    var rec = '<section class="card REC"><div class="row between"><h2>' + T('Game record') + '</h2><div class="row"><button class="btn small" data-a="undo"' + (stack.length ? '' : ' disabled') + '>' + T('Undo round') + '</button><button class="btn small" data-a="reset"' + (stack.length ? '' : ' disabled') + '>' + T('New game') + '</button><button class="btn small" data-a="share">' + T('Share') + '</button></div></div>';
+    rec += stack.length ? '<ol class="history">' + stack.map(function (s) {
+      var r = s.r, acts = r.replies.filter(function (y) { return !y.chosen.m.hold; });
+      return '<li>' + (r.manual ? '<span class="tag info">' + T('manual') + '</span> ' : '') + '<b>' + esc(P(A.pid).short) + ': ' + esc(r.move.src.name) + '</b> → ' + (acts.length ? acts.map(function (y) { return esc(P(y.pid).short) + ': ' + esc(y.chosen.m.src.name); }).join(' · ') : T('all others hold')) +
+        ' <span class="tag" style="color:' + outcomeOf(r.after).color + '">' + esc(outcomeOf(r.after).name) + '</span></li>';
+    }).join('') + '</ol>' : '<p class="help">' + T('No moves played yet. Select a move above to preview the predicted replies, then play it to advance the board one round (roughly six months).') + '</p>';
+    rec += '</section>';
     var h = intro(T('The board'), T('You are playing <b>{0}</b>. This page shows where the Cyprus question stands, who is with you and against you, and every move open to you. Each round stands for roughly six months.', esc(P(A.pid).name)), [
       T('Read <b>Current position</b> and <b>The position</b>: ten bars describe the situation today; the ▼ on each bar is where you would like it to be.'),
       T('Choose under <b>Who plays the other stakeholders?</b> whether the computer answers for them or you pick their moves yourself.'),
       T('Under <b>Your move</b>, tap any move to preview it: what it does, how the others answer, and who gains or loses.'),
       T('Press <b>Play this move</b> to commit. The board advances one round and the <b>Game record</b> keeps the history. <b>Undo</b> takes a round back.')]) +
-      '<div class="status"><section class="card"><div class="outcome"><div class="badge" style="color:' + o.color + '">' + o.icon + '</div><div>' +
+      '<div class="status"><div class="stcol"><section class="card"><div class="outcome"><div class="badge" style="color:' + o.color + '">' + o.icon + '</div><div>' +
       '<span class="tag">' + T('Round {0} · current position', S.round + 1) + '</span><h2 style="margin:.15em 0">' + esc(o.name) + '</h2><span class="help">' + esc(o.desc) + '</span></div></div>' +
       '<div style="margin-top:12px"><div class="row between help"><span>' + T('Coalition weight with you <b class="num">{0}</b>', pct(bal)) + '</span><span>' + T('Your payoff <b class="num">{0}</b>/100', u[A.pid].toFixed(0)) + '</span></div>' +
       '<div class="evalbar" role="img" aria-label="' + esc(T('Balance of power between your coalition and opponents')) + '"><i style="width:' + (bal * 100) + '%"></i></div></div>' +
@@ -4884,12 +5150,11 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         return '<button class="chip ' + st + '" style="--c:' + P(q).color + '" data-a="player" data-v="' + q + '" title="' + esc(T('Payoff {0}/100', u[q].toFixed(0))) + '"><i>' + esc(P(q).short) + '</i>' + esc(P(q).name) + ' <em>' + STANCE(st) + '</em></button>';
       }).join('') + '</div>' +
       '<details class="explain"><summary>' + T('How "with you / against you" is worked out') + '</summary>' + T('Each player wants the position to move in a particular direction. If that direction overlaps with yours, they are with you on the present board; if it runs opposite, they are against you. It changes as the position changes — today\'s opponent can become tomorrow\'s partner once the trade-offs shift.') + '</details></section>' +
-      '<section class="card"><div class="row between"><h2>' + T('The position') + '</h2><span class="help">' + (ghost ? T('▼ = your ideal · coloured band = after this round') : T('▼ = your ideal')) + '</span></div><p class="help">' + T('Ten measures of the Cyprus question, each scored 0–100 between the two descriptions under its bar. The facts behind today\'s scores are listed under Library → Assumptions.') + '</p>' + gauges(x, ghost, A.pid) + '</section></div>';
-
-    h += '<section class="card"><h2>' + T('Who plays the other stakeholders?') + '</h2><div class="seg" role="group" aria-label="' + esc(T('Who plays the other stakeholders')) + '">' +
+      ('<section class="card"><h2>' + T('Who plays the other stakeholders?') + '</h2><div class="seg" role="group" aria-label="' + esc(T('Who plays the other stakeholders')) + '">' +
       '<button data-a="playmode" data-v="auto" aria-pressed="' + (A.play === 'auto') + '">' + T('Computer plays them') + '</button><button data-a="playmode" data-v="manual" aria-pressed="' + man + '">' + T('I choose their moves') + '</button></div>' +
       '<p class="help" style="margin-top:8px">' + (A.play === 'auto' ? T('<b>Computer mode.</b> After your move, the app plays the other nine stakeholders: each answers with the reply that serves its own interests best, and you see the probability of each reply. Use this to find out what is likely to happen.') :
-        T('<b>Manual mode.</b> After your move, you decide what each of the other nine stakeholders does. Nothing is predicted for you; every stakeholder starts on "Hold position" until you choose otherwise. Use this to test a "what if", replay real events, or play with other people around a table.')) + '</p></section>';
+        T('<b>Manual mode.</b> After your move, you decide what each of the other nine stakeholders does. Nothing is predicted for you; every stakeholder starts on "Hold position" until you choose otherwise. Use this to test a "what if", replay real events, or play with other people around a table.')) + '</p></section>') + rec.replace('card REC', 'card rec-desk') + '</div>' +
+      '<section class="card"><div class="row between"><h2>' + T('The position') + '</h2><span class="help">' + (ghost ? T('▼ = your ideal · coloured band = after this round') : T('▼ = your ideal')) + '</span></div><p class="help">' + T('Ten measures of the Cyprus question, each scored 0–100 between the two descriptions under its bar. The facts behind today\'s scores are listed under Library → Assumptions.') + '</p>' + gauges(x, ghost, A.pid) + '</section></div>';
 
     h += '<section class="card"><div class="row between"><h2>' + T('Your move') + '</h2><div class="seg" role="group" aria-label="' + esc(T('Objective')) + '">' +
       Object.keys(MD).map(function (k) { return '<button data-a="mode" data-v="' + k + '" aria-pressed="' + (A.mode === k) + '" title="' + esc(MD[k][1]) + '">' + MD[k][0] + '</button>'; }).join('') + '</div></div>' +
@@ -4907,13 +5172,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     }).join('') + '</div></details>';
     h += '</section>';
 
-    h += '<section class="card"><div class="row between"><h2>' + T('Game record') + '</h2><div class="row"><button class="btn small" data-a="undo"' + (stack.length ? '' : ' disabled') + '>' + T('Undo round') + '</button><button class="btn small" data-a="reset"' + (stack.length ? '' : ' disabled') + '>' + T('New game') + '</button><button class="btn small" data-a="share">' + T('Share') + '</button></div></div>';
-    h += stack.length ? '<ol class="history">' + stack.map(function (s) {
-      var r = s.r, acts = r.replies.filter(function (y) { return !y.chosen.m.hold; });
-      return '<li>' + (r.manual ? '<span class="tag info">' + T('manual') + '</span> ' : '') + '<b>' + esc(P(A.pid).short) + ': ' + esc(r.move.src.name) + '</b> → ' + (acts.length ? acts.map(function (y) { return esc(P(y.pid).short) + ': ' + esc(y.chosen.m.src.name); }).join(' · ') : T('all others hold')) +
-        ' <span class="tag" style="color:' + outcomeOf(r.after).color + '">' + esc(outcomeOf(r.after).name) + '</span></li>';
-    }).join('') + '</ol>' : '<p class="help">' + T('No moves played yet. Select a move above to preview the predicted replies, then play it to advance the board one round (roughly six months).') + '</p>';
-    return h + '</section>';
+    return h + rec.replace('card REC', 'card rec-mob');
   }
 
   /* ---------- move detail ---------- */
@@ -5114,7 +5373,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       var x = 30 + (al[q] + 1) / 2 * (W - 50), y = H - 26 - C.players[q].power / 100 * (H - 46);
       return '<circle cx="' + x.toFixed(0) + '" cy="' + y.toFixed(0) + '" r="11" fill="' + P(q).color + '"/><text x="' + x.toFixed(0) + '" y="' + (y + 3).toFixed(0) + '" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">' + esc(P(q).short) + '</text>';
     }).join('');
-    return '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;max-width:560px;height:auto" role="img" aria-label="' + esc(T('Stakeholder map: power against alignment with you')) + '">' +
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;max-width:760px;height:auto;display:block;margin:0 auto" role="img" aria-label="' + esc(T('Stakeholder map: power against alignment with you')) + '">' +
       '<rect x="30" y="10" width="' + (W - 50) / 2 + '" height="' + (H - 36) + '" fill="var(--opp)" opacity=".08"/><rect x="' + (30 + (W - 50) / 2) + '" y="10" width="' + (W - 50) / 2 + '" height="' + (H - 36) + '" fill="var(--ally)" opacity=".08"/>' +
       '<line x1="30" y1="' + (H - 26) + '" x2="' + (W - 20) + '" y2="' + (H - 26) + '" stroke="var(--mute)"/><line x1="30" y1="10" x2="30" y2="' + (H - 26) + '" stroke="var(--mute)"/>' +
       '<text x="34" y="' + (H - 8) + '" font-size="9" fill="var(--mute)">' + T('against you') + '</text><text x="' + (W - 22) + '" y="' + (H - 8) + '" font-size="9" fill="var(--mute)" text-anchor="end">' + T('with you') + '</text>' +
@@ -5201,6 +5460,26 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         return '<tr><td>' + esc(M.topics[t].name) + '</td>' + (ag ? '<td class="c">' + ag.r7.toLocaleString(loc) + '</td><td class="c">' + ag.r28.toLocaleString(loc) + '</td><td class="c ' + cls(ag.ratio - 1, 0.2) + '">' + sgn((ag.ratio - 1) * 100, 0) + '%</td>' : '<td class="c mute" colspan="3">' + T('not yet fetched') + '</td>') + '<td class="c">' + n + '</td><td class="c">' + (ag ? momentumTag(ag.k) : '') + '</td></tr>';
       }).join('') + '</tbody></table></div></section>';
 
+    var vs = L.voices(), any = M.players.some(function (pl) { return vs[pl.id] && vs[pl.id].n; });
+    h += '<section class="card"><div class="row between"><h2>' + T('What each government is saying') + '</h2><label class="row help"><input type="checkbox" data-c="sig" data-v="voices"' + (A.sigOff.voices ? '' : ' checked') + (A.live ? '' : ' disabled') + '> ' + T('Let statements tilt predictions') + '</label></div>' +
+      '<p class="help">' + T('Readership shows attention, not intent. For intent the tool reads what leaders and governments have actually said. Current headlines that report a named leader or office speaking about the Cyprus question are attributed to that stakeholder and read as conciliatory or hard-line from their wording. When a stakeholder has at least three such statements, the balance between the two tilts its predicted choices slightly toward moves of the same kind. This is a reading of public words, which can differ from private intentions.') + '</p>' +
+      (any ? '<div class="tblwrap"><table><thead><tr><th>' + T('Stakeholder') + '</th><th>' + T('Conciliatory') + '</th><th>' + T('Hard-line') + '</th><th>' + T('Tilt') + '</th><th>' + T('Latest statement reported') + '</th></tr></thead><tbody>' + M.players.map(function (pl) {
+        var v = vs[pl.id] || { soft: 0, hard: 0, n: 0, lean: 0, items: [] }, it = v.items[0];
+        return '<tr><td>' + esc(pl.name) + '</td><td class="c good">' + v.soft + '</td><td class="c bad">' + v.hard + '</td><td class="c">' + (v.lean > 0.05 ? '<span class="tag good">' + T('conciliatory') + '</span>' : v.lean < -0.05 ? '<span class="tag bad">' + T('hard-line') + '</span>' : '<span class="tag">' + T('no tilt') + '</span>') + '</td><td>' + (it ? '<a href="' + esc(it.url) + '" target="_blank" rel="noopener" lang="' + (it.lang || '') + '">' + esc(it.title) + '</a> <span class="help">' + esc(it.domain) + ' · ' + esc(it.date) + '</span>' : '<span class="mute">' + T('none found') + '</span>') + '</td></tr>';
+      }).join('') + '</tbody></table></div>' : '<p class="help">' + T('No statements found yet. They appear after the newspaper feeds have been read.') + '</p>') + '</section>';
+
+    var of = d.official || {};
+    if ((of.uk && of.uk.length) || (of.us && of.us.length)) {
+      h += '<section class="card"><h2>' + T('On the official record') + '</h2><p class="help">' + T('What governments have formally stated or done, from primary sources. These are for your own reading and do not change the model.') + '</p>';
+      if (of.uk && of.uk.length) h += '<h3>' + T('United Kingdom: ministers\' written answers to Parliament') + '</h3>' + of.uk.map(function (x) {
+        return '<details class="lib-item"><summary>' + esc(x.q) + '</summary><p class="meta">' + esc(x.body) + ' · ' + esc(x.date) + '</p><p>' + esc(x.a) + ' <a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + T('Full answer') + '</a></p></details>';
+      }).join('');
+      if (of.us && of.us.length) h += '<h3 style="margin-top:12px">' + T('United States: Federal Register notices and rules') + '</h3><ul class="news">' + of.us.map(function (x) {
+        return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.title) + '</a><br><span class="help">' + esc(x.body) + ' · ' + esc(x.type) + ' · ' + esc(x.date) + '</span></li>';
+      }).join('') + '</ul>';
+      h += '</section>';
+    }
+
     h += '<div class="grid two">';
     if (d.fx) h += '<section class="card"><h2>' + T('Lira against the euro') + '</h2><div class="kv"><div><b>₺' + d.fx.try.toFixed(2) + '</b><span>' + T('per €1 on {0}', esc(d.fx.date)) + '</span></div><div><b class="' + (d.fx.change > 0 ? 'bad' : 'good') + '">' + sgn(d.fx.change) + '%</b><span>' + T('euro price in lira, 12 months') + '</span></div></div>' + spark(d.fx.series, 'var(--accent)') + '<p class="help">' + T('<b>Why this is here.</b> Türkiye is the player whose decision matters most, and its economy is where outside incentives and pressure bite. The lira is the one daily, public, hard number that shows how exposed that economy is. When it has fallen a lot over twelve months, Ankara needs foreign capital, trade access and investor confidence more, so offers such as a customs-union upgrade, and threats to them, weigh more in its calculation. The model therefore raises the weight Türkiye gives to its Western ties and to the economy, by at most 40%. The north of Cyprus also uses the lira, so the same slide erodes Turkish Cypriot living standards. Untick the lira signal above to switch this off.') + '</p></section>';
     if (d.tone) h += '<section class="card"><h2>' + T('Tone of Cyprus–Türkiye coverage') + '</h2><div class="kv"><div><b>' + d.tone.recent.toFixed(2) + '</b><span>' + T('last two weeks') + '</span></div><div><b>' + d.tone.base.toFixed(2) + '</b><span>' + T('four-month average') + '</span></div></div>' + spark(d.tone.series, 'var(--info)') + '<p class="help">' + T('<b>Why this is here.</b> It is an early-warning gauge. GDELT scores the language of worldwide news coverage: below zero is negative, and a falling line means more hostile reporting about Cyprus and Türkiye. If the last two weeks are clearly worse than the four-month average, the model starts with slightly lower stability.') + '</p></section>';
@@ -5215,6 +5494,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 
     if (d.research && d.research.length) h += '<section class="card"><h2>' + T('Latest research') + '</h2><p class="help">' + T('The most recent scholarly articles on the Cyprus question, from the OpenAlex index of world research, newest first. For background reading; they do not change the model.') + '</p><ul class="news">' +
       d.research.map(function (w) { return '<li><a href="' + esc(w.url) + '" target="_blank" rel="noopener">' + esc(w.title) + '</a><br><span class="help">' + esc(w.venue) + (w.venue ? ' · ' : '') + esc(w.date) + '</span></li>'; }).join('') + '</ul></section>';
+
+    var pr = ((d.press || {}).items || []).slice().sort(function (x, y) { return (y.lang === I18N.lang) - (x.lang === I18N.lang) || (x.date < y.date ? 1 : x.date > y.date ? -1 : 0); }).slice(0, 15);
+    if (pr.length) h += '<section class="card"><h2>' + T('From the newspapers') + '</h2><p class="help">' + T('The newest headlines on the Cyprus question read directly from {0} newspapers that publish an open feed ({1}), those in your language first. {2} headlines from the last 21 days are held on this device and sorted by subject for the board.', (d.press || {}).n || 0, esc(L.pressNames.join(', ')), ((d.press || {}).items || []).length) + '</p><ul class="news">' +
+      pr.map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener" lang="' + a.lang + '">' + esc(a.title) + '</a><br><span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + '</span></li>'; }).join('') + '</ul></section>';
 
     var themes = ['all'].concat(L.themes), news = (d.news || []).filter(function (a) { return A.newsTheme === 'all' || a.themes.indexOf(A.newsTheme) >= 0; });
     h += '<section class="card"><h2>' + T('Latest headlines') + '</h2><p class="help">' + T('News from the last three weeks that mentions the Cyprus question, newest first. Filter by theme; tap a headline to read it at its source. The mix of themes feeds the signals above.') + '</p><div class="filter">' + themes.map(function (t) { return '<button data-a="ntheme" data-v="' + t + '" aria-pressed="' + (A.newsTheme === t) + '">' + (t === 'all' ? T('All') : L.themeName(t)) + '</button>'; }).join('') + '</div>' +
@@ -5477,7 +5760,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   var lastSig = '';
   L.onChange(function (d, busy) {
     net();
-    var sig = JSON.stringify((d && d.signals) || []) + Object.keys((d && d.attn) || {}).map(function (t) { return t + ((L.agenda(t) || {}).k || ''); }).join(',') + ((d && d.feed) || []).length;
+    var sig = JSON.stringify((d && d.signals) || []) + Object.keys((d && d.attn) || {}).map(function (t) { return t + ((L.agenda(t) || {}).k || ''); }).join(',') + ((d && d.feed) || []).length + '/' + (((d && d.press) || {}).items || []).length;
     if (sig !== lastSig) {
       lastSig = sig;
       var el = document.activeElement, busyEl = el && (el.tagName === 'SELECT' || el.tagName === 'INPUT');
