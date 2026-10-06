@@ -143,9 +143,15 @@
   }
   /* Lets the reader take a wrongly sorted headline out of every count. */
   function hideBtn(title) { return '<button class="x" data-a="hide" data-v="' + esc(title) + '" title="' + esc(T('Not about this: leave it out')) + '" aria-label="' + esc(T('Not about this: leave it out')) + '">×</button>'; }
+  /* Nothing said lately: show the standing position from the current reference article, clearly labelled. */
+  function standingCell(pid) {
+    var sp = L.standing(pid);
+    return '<span class="mute">' + T('Nothing said or done about Cyprus was found in the last three months.') + '</span>' +
+      (sp ? '<br><span class="tag">' + T('standing position') + '</span> <span lang="en">' + esc(sp.text) + '</span> <a href="' + esc(sp.url) + '" target="_blank" rel="noopener">Wikipedia</a>' + (sp.updated ? ' <span class="help">' + T('article updated {0}', esc(sp.updated)) + '</span>' : '') : '');
+  }
   /* The reading of one item, as a button: pressing it changes the reading. */
   function toneBtn(x) {
-    var nm = { soft: T('conciliatory'), hard: T('hard-line'), plain: T('neither') }[x.tone], c = x.tone === 'soft' ? 'good' : x.tone === 'hard' ? 'bad' : '';
+    var nm = { soft: T('conciliatory'), hard: T('hard-line'), plain: T('neither'), unsure: T('unsure: you decide') }[x.tone], c = x.tone === 'soft' ? 'good' : x.tone === 'hard' ? 'bad' : x.tone === 'unsure' ? 'warn' : '';
     return '<button class="tag tonebtn ' + c + '" data-a="tone" data-v="' + esc(x.title) + '" data-t="' + x.tone + '" title="' + esc(T('Press to change how this is read')) + '">' + nm + (x.set ? ' ✓' : '') + '</button>';
   }
   function M0move(id) { var r = M.moves.filter(function (x) { return x.id === id; })[0]; return r && r.ps !== undefined ? r.ps : 0.8; }
@@ -216,7 +222,11 @@
         (g !== null && Math.abs(g - v) >= 0.5 ? ' → <b class="' + (gh.indexOf('up') > 0 ? 'good' : 'bad') + '">' + Math.round(g) + '</b>' : '') + '</span></div>' +
         '<div class="track"><span class="fill" style="width:' + v + '%"></span>' + gh + (ideal !== null && C.players[pid].w[i] > 0.02 ? '<span class="ideal" style="left:' + ideal + '%" title="' + esc(T('Your ideal point')) + '"></span>' : '') + '</div>' +
         '<div class="ends"><span>' + esc(d.lo) + '</span><span>' + esc(d.hi) + '</span></div></div>';
-    }).join('') + '</div>';
+    }).join('') + '</div>' +
+      /* what the colours mean, always shown with the bars */
+      '<div class="legend barkey"><span><i style="background:var(--info)"></i>' + T('blue: where the measure stands now') + '</span>' +
+      (ghost ? '<span><i style="background:var(--good)"></i>' + T('green: the change moves it toward your ideal') + '</span><span><i style="background:var(--bad)"></i>' + T('red: the change moves it away from your ideal') + '</span>' : '') +
+      (pid ? '<span><b style="color:var(--accent)">▼</b> ' + T('your ideal for that measure') + '</span>' : '') + '</div>';
   }
 
   function fxChips(m) {
@@ -648,13 +658,13 @@
       (any ? '<div class="tblwrap"><table><thead><tr><th>' + T('Stakeholder') + '</th><th>' + T('Says') + '</th><th>' + T('Does') + '</th><th>' + T('Tilt') + '</th><th>' + T('Your own assessment') + '</th><th>' + T('Latest') + '</th></tr></thead><tbody>' + M.players.map(function (pl) {
         var v = vs[pl.id] || { says: { soft: 0, hard: 0 }, does: { soft: 0, hard: 0 }, n: 0, lean: 0, items: [] }, it = v.items[0], pv = +A.priv[pl.id] || 0;
         function pair(o) { return o.soft + o.hard ? '<span class="good">' + o.soft + '</span> / <span class="bad">' + o.hard + '</span>' : '<span class="mute">–</span>'; }
-        return '<tr><td>' + esc(pl.name) + '</td><td class="c">' + pair(v.says) + '</td><td class="c">' + pair(v.does) + '</td><td class="c">' + (v.lean > 0 ? '<span class="tag good">' + T('conciliatory') + '</span>' : v.lean < 0 ? '<span class="tag bad">' + T('hard-line') + '</span>' : v.mixed ? '<span class="tag warn">' + T('mixed') + '</span>' : '<span class="tag">' + T('no tilt') + '</span>') + (v.gap ? '<br><span class="tag warn">' + T('words and deeds differ') + '</span>' : '') + (v.trend !== null && v.trend !== undefined && Math.abs(v.trend) >= 0.15 ? '<br><span class="help">' + (v.trend > 0 ? T('more conciliatory this week than in the two weeks before') : T('harder this week than in the two weeks before')) + '</span>' : '') + '</td><td class="c"><select data-c="priv" data-v="' + pl.id + '" aria-label="' + esc(T('Your own assessment')) + '">' +
+        return '<tr><td>' + esc(pl.name) + '</td><td class="c">' + pair(v.says) + '</td><td class="c">' + pair(v.does) + '</td><td class="c">' + (v.lean > 0 ? '<span class="tag good">' + T('conciliatory') + '</span>' : v.lean < 0 ? '<span class="tag bad">' + T('hard-line') + '</span>' : v.mixed ? '<span class="tag warn">' + T('mixed') + '</span>' : '<span class="tag">' + T('no tilt') + '</span>') + (v.gap ? '<br><span class="tag warn">' + T('words and deeds differ') + '</span>' : '') + (v.unsure ? '<br><span class="help">' + T('{0} unsure, not counted', v.unsure) + '</span>' : '') + (v.trend !== null && v.trend !== undefined && Math.abs(v.trend) >= 0.15 ? '<br><span class="help">' + (v.trend > 0 ? T('more conciliatory this week than in the two weeks before') : T('harder this week than in the two weeks before')) + '</span>' : '') + '</td><td class="c"><select data-c="priv" data-v="' + pl.id + '" aria-label="' + esc(T('Your own assessment')) + '">' +
           [[-2, T('much harder')], [-1, T('harder')], [0, T('as the record shows')], [1, T('more open')], [2, T('much more open')]].map(function (o) { return '<option value="' + o[0] + '"' + (pv === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></td><td>' +
-          (it ? (it.official ? '<span class="tag info">' + T('official') + '</span> ' : it.deed ? '<span class="tag">' + T('deed') + '</span> ' : '') + '<a href="' + esc(it.url) + '" target="_blank" rel="noopener" lang="' + (it.lang || '') + '">' + esc(it.title) + '</a> <span class="help">' + esc(it.domain) + (it.outlets > 1 ? ' ' + T('and {0} more', it.outlets - 1) : '') + ' · ' + esc(it.date) + '</span> ' + hideBtn(it.title) : '<span class="mute">' + T('none found in the last three weeks') + '</span>') + '</td></tr>' +
+          (it ? (it.official ? '<span class="tag info">' + T('official') + '</span> ' : it.deed ? '<span class="tag">' + T('deed') + '</span> ' : '') + '<a href="' + esc(it.url) + '" target="_blank" rel="noopener" lang="' + (it.lang || '') + '">' + esc(it.title) + '</a> <span class="help">' + esc(it.domain) + (it.outlets > 1 ? ' ' + T('and {0} more', it.outlets - 1) : '') + ' · ' + esc(it.date) + '</span> ' + hideBtn(it.title) : standingCell(pl.id)) + '</td></tr>' +
           (v.items.length ? '<tr><td colspan="6"><details class="explain"><summary>' + T('All {0} items counted for {1}: check and correct them', v.items.length, esc(pl.name)) + '</summary><ul class="news">' + v.items.slice(0, 40).map(function (x) {
             return '<li>' + toneBtn(x) + ' ' + (x.deed ? '<span class="tag">' + T('deed') + '</span> ' : x.official ? '<span class="tag info">' + T('official') + '</span> ' : '') + '<a href="' + esc(x.url) + '" target="_blank" rel="noopener" lang="' + x.lang + '">' + esc(x.title) + '</a> <span class="help">' + esc(x.domain) + ' · ' + esc(x.date) + (x.backs ? ' · ' + T('read as backing {0}', esc(P(x.backs).name)) : '') + '</span> ' + hideBtn(x.title) + '</li>';
           }).join('') + '</ul></details></td></tr>' : '');
-      }).join('') + '</tbody></table></div><p class="help">' + T('In each pair the first number is conciliatory, the second hard-line. The same story in several papers is counted once. A stakeholder needs a weighted total of at least three before any tilt is applied. If an item is read wrongly, open the list under its stakeholder and press its coloured label to change the reading, or × to leave it and other papers\' versions of it out of every count. <b>Your own assessment</b> is for what you know and the public record does not: it shifts that stakeholder\'s tilt on your device only, and is never shared, not even in a shared link.') + (L.hiddenCount() + L.tonedCount() ? ' ' + T('You have left out {0} and re-read {1}.', L.hiddenCount(), L.tonedCount()) + ' <button class="btn small" data-a="unhide">' + T('Undo my corrections') + '</button>' : '') + '</p>' : '<p class="help">' + T('No statements found yet. They appear after the newspaper feeds have been read.') + '</p>') + '</section>';
+      }).join('') + '</tbody></table></div><p class="help">' + T('In each pair the first number is conciliatory, the second hard-line. The same story in several papers is counted once. A stakeholder needs a weighted total of at least three before any tilt is applied. If an item is read wrongly, open the list under its stakeholder and press its coloured label to change the reading, or × to leave it and other papers\' versions of it out of every count. <b>Your own assessment</b> is for what you know and the public record does not: it shifts that stakeholder\'s tilt on your device only, and is never shared, not even in a shared link.') + (A.acc ? ' ' + T('<b>How reliable is this reading?</b> Before this version was released, {0} real statements and deeds and {1} subject assignments were checked by hand, and the rules were corrected against the errors found. On that same set the tool now names the right stakeholder in {2}% of cases, tells word from deed in {3}%, reads the tone correctly or withholds judgment in {4}%, and assigns the right subject in {5}%. On headlines it has never seen it will do somewhat worse. Where the wording pulls both ways the tool marks the item "unsure" and leaves it out until you decide.', A.acc.n, A.acc.sn, A.acc.who, A.acc.kind, A.acc.tone, A.acc.subject) : '') + (L.hiddenCount() + L.tonedCount() ? ' ' + T('You have left out {0} and re-read {1}.', L.hiddenCount(), L.tonedCount()) + ' <button class="btn small" data-a="unhide">' + T('Undo my corrections') + '</button>' : '') + '</p>' : '<p class="help">' + T('No statements found yet. They appear after the newspaper feeds have been read.') + '</p>') + '</section>';
 
     var off = L.officialItems();
     if (off.length) {
@@ -881,7 +891,7 @@
     },
     hide: function (v) { L.hide(v); build(); render(); toast(T('Left out. You can restore hidden headlines on the Live intel page.')); },
     unhide: function () { L.unhideAll(); L.resetTones(); build(); render(); },
-    tone: function (v, el) { var t = el.getAttribute('data-t'); L.setTone(v, t === 'soft' ? 'hard' : t === 'hard' ? 'plain' : 'soft'); build(); render(); },
+    tone: function (v, el) { var t = el.getAttribute('data-t'); L.setTone(v, t === 'unsure' ? 'soft' : t === 'soft' ? 'hard' : t === 'hard' ? 'plain' : 'soft'); build(); render(); },
     print: function () { if (A.tab === 'guide') acts.gopen('1'); window.print(); },
     resetassume: function () { A.custom = { base: {}, w: {}, ideal: {} }; build(); save(); render(); }
   };
@@ -935,7 +945,7 @@
     if (navigator.onLine === false) { if (manual) toast(T('You are offline. Showing the last saved data.')); return; }
     var pv = {};
     Object.keys(M.topics).forEach(function (t) { pv[t] = M.topics[t].pv || []; });
-    L.refresh(M.precedents.map(function (p) { return p.wiki; }).filter(Boolean), pv).then(function () { if (manual) toast(T('Live data updated.')); });
+    L.refresh(M.precedents.map(function (p) { return p.wiki; }).filter(Boolean).concat(L.standingTitles), pv).then(function () { if (manual) toast(T('Live data updated.')); });
     wantTopics(A.sel && C.moves[A.sel] ? C.moves[A.sel].src.topic : null);
   }
   /* Evidence arriving for a subject changes the odds of its moves: recalculate,
@@ -978,6 +988,8 @@
   build(); installUI();
   try { history.replaceState(navState(), '', location.href); } catch (e) {}
   render();
+  /* how well the reading rules did on the hand-checked set, measured at release */
+  if (window.ACC) A.acc = window.ACC; else if (location.protocol !== 'file:') fetch('data/accuracy.json').then(function (r) { return r.json(); }).then(function (j) { A.acc = j; if (A.tab === 'live') render(); }).catch(function () {});
   /* first run on this device: start from the snapshot shipped with this version */
   if (!L.get() && !window.SEED && location.protocol !== 'file:') fetch('data/seed.json').then(function (r) { return r.json(); }).then(function (j) { L.useSeed(j); if (C) { build(); render(); } }).catch(function () {});
   if (L.stale()) setTimeout(refresh, 800);

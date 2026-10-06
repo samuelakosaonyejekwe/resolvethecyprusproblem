@@ -575,6 +575,16 @@
     "neither": "ikisi de değil",
     "none found in the last three weeks": "son üç haftada bulunamadı",
     "read as backing {0}": "şu paydaşı desteklediği biçiminde okundu: {0}",
-    "This device has not yet completed a live fetch for every source. Until it does, the gaps are filled from the snapshot shipped with this version, taken on {0}. Live data replaces it source by source.": "Bu cihaz henüz her kaynak için canlı veri alımını tamamlamadı. Tamamlanana kadar eksikler, bu sürümle birlikte gelen {0} tarihli anlık görüntüden doldurulur. Canlı veriler onun yerini kaynak kaynak alır."
+    "This device has not yet completed a live fetch for every source. Until it does, the gaps are filled from the snapshot shipped with this version, taken on {0}. Live data replaces it source by source.": "Bu cihaz henüz her kaynak için canlı veri alımını tamamlamadı. Tamamlanana kadar eksikler, bu sürümle birlikte gelen {0} tarihli anlık görüntüden doldurulur. Canlı veriler onun yerini kaynak kaynak alır.",
+    "<b>How reliable is this reading?</b> Before this version was released, {0} real statements and deeds and {1} subject assignments were checked by hand, and the rules were corrected against the errors found. On that same set the tool now names the right stakeholder in {2}% of cases, tells word from deed in {3}%, reads the tone correctly or withholds judgment in {4}%, and assigns the right subject in {5}%. On headlines it has never seen it will do somewhat worse. Where the wording pulls both ways the tool marks the item \"unsure\" and leaves it out until you decide.": "<b>Bu okuma ne kadar güvenilir?</b> Bu sürüm yayımlanmadan önce {0} gerçek açıklama ve eylem ile {1} konu eşleştirmesi elle denetlendi ve kurallar bulunan hatalara göre düzeltildi. Aynı küme üzerinde aracın doğru paydaşı belirleme oranı %{2}, sözü eylemden ayırma oranı %{3}, tonu doğru okuma ya da yargıdan kaçınma oranı %{4}, doğru konuyu eşleştirme oranı %{5}. Daha önce görmediği başlıklarda bir miktar daha kötü sonuç verecektir. İfadenin iki yöne de çekildiği durumlarda araç ögeyi \"emin değil\" olarak işaretler ve siz karar verene kadar sayım dışında bırakır.",
+    "Nothing said or done about Cyprus was found in the last three months.": "Son üç ayda Kıbrıs hakkında söylenmiş ya da yapılmış bir şey bulunamadı.",
+    "article updated {0}": "madde güncellendi: {0}",
+    "standing position": "yerleşik tutum",
+    "unsure: you decide": "emin değil: siz karar verin",
+    "{0} unsure, not counted": "{0} belirsiz, sayılmadı",
+    "blue: where the measure stands now": "mavi: ölçütün şu anki konumu",
+    "green: the change moves it toward your ideal": "yeşil: değişim onu idealinize yaklaştırıyor",
+    "red: the change moves it away from your ideal": "kırmızı: değişim onu idealinizden uzaklaştırıyor",
+    "your ideal for that measure": "bu ölçüt için idealiniz"
   };
 })(typeof self !== 'undefined' ? self : this);

@@ -12,7 +12,7 @@ html = html.replace(/<link rel="manifest"[^>]*>\n/, '')
   .replace(/<link rel="apple-touch-icon"[^>]*>\n/, '')
   .replace('<link rel="stylesheet" href="styles.css">', () => '<style>' + read('styles.css') + '</style>')
   .replace(/<script src="js\/i18n\.js" defer><\/script>[\s\S]*<script src="js\/app\.js" defer><\/script>/, () =>
-    '<script>window.KNOWLEDGE=' + safe(read('data/knowledge.json')) + ';' + (fs.existsSync(path.join(root, 'data/seed.json')) ? 'window.SEED=' + safe(read('data/seed.json')) + ';' : '') + '</script>\n' +
+    '<script>window.KNOWLEDGE=' + safe(read('data/knowledge.json')) + ';' + (fs.existsSync(path.join(root, 'data/seed.json')) ? 'window.SEED=' + safe(read('data/seed.json')) + ';' : '') + (fs.existsSync(path.join(root, 'data/accuracy.json')) ? 'window.ACC=' + safe(read('data/accuracy.json')) + ';' : '') + '</script>\n' +
     ['js/i18n.js'].concat(packs, ['js/model.js', 'js/engine.js', 'js/live.js', 'js/guide.js']).map(f => '<script>' + safe(read(f)) + '</script>').join('\n') +
     '\n<script>document.addEventListener("DOMContentLoaded",function(){' + safe(read('js/app.js')) + '});</script>');
 if (/src="js\//.test(html) || /href="styles\.css"/.test(html)) throw new Error('inlining failed');

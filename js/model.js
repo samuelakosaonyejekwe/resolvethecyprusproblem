@@ -556,12 +556,12 @@
   M.topics.greeceturkey.must = 'gree|athens|mitsotakis|aegean|ελλάδ|αθήνα|μητσοτάκ|yunanistan|atina'; M.topics.russia.must = 'russia|putin|kremlin|moscow|akkuyu|ρωσί|πούτιν|rusya';
   M.topics.maritime.must = CY + '|' + TK;
   var SUB = {
-    talks: 'talks|negotiat|settlement|solution|reunif|federa|peace|envoy|two-state|cyprus problem|holgu|three-way|informal meeting|window of opportunity', security: 'guarant|peacekeep|unficyp|neutrality|security (guarantee|arrangement|council)|troop withdraw|withdrawal of',
+    talks: 'cyprus (talks|problem|issue|settlement|solution|peace)|(talks|negotiat\\w*|settlement|solution).{0,40}cypr|cypr.{0,60}(talks|negotiat|settlement|solution|reunif)|reunif|federa|two-state|holgu|three-way|informal meeting|window of opportunity', security: 'guarant|peacekeep|unficyp|neutrality|security (guarantee|arrangement|council)|troop withdraw|withdrawal of|buffer zone',
     troops: 'turkish troops|turkish army|turkish military|turkish forces|turkish soldiers|occupation (army|forces|troops)|garrison', property: 'refugee|restitut|compensat|missing persons|the missing|displaced|immovable|property (claim|commission|right|issue|dispute)|usurp',
-    cbm: 'crossing|confidence|buffer|bi-?communal|checkpoint', trade: 'green line|\\btrade|halloumi|direct flights?|ercan|turkish cypriot (econom|business|chamber)|north.{0,20}econom',
+    cbm: 'crossing|confidence[- ]building|bi-?communal|checkpoint', trade: 'green line|\\btrade|halloumi|direct flights?|ercan|turkish cypriot (econom|business|chamber)|north.{0,20}econom',
     gas: 'gas|drill|aphrodite|cronos|exxon|chevron|eez|hydrocarbon', grid: 'interconnector|cable|electric|hydrogen|grid|power link',
     euturkey: 'customs|visa|accession|\\beu\\b|european|brussels|membership', sanctions: 'sanction|restrictive|caatsa|designat|embargo',
-    uscyprus: '\\bu\\.?s\\.?\\b|united states|washington|american|pentagon|congress|visa waiver', usturkey: 'f-?35|f-?16|caatsa|s-?400|washington|\\bu\\.?s\\.?\\b|congress',
+    uscyprus: '\\bu\\.?s\\.?\\b|united states|washington|american|pentagon|congress|visa waiver', usturkey: '(f-?35|f-?16|s-?400).{0,80}(washington|\\bu\\.?s\\.?\\b|congress|trump|rubio|american)|(washington|\\bu\\.?s\\.?\\b|congress|trump|rubio|american).{0,80}(f-?35|f-?16|s-?400)|caatsa',
     courts: 'court|echr|ruling|lawsuit|arbitrat|judg|legal action|council of europe', maritime: 'warship|navtex|naval (exercise|drill|vessel)|navy|oruc reis|law of the sea|maritime (zone|boundar|dispute|deal|jurisdiction)|continental shelf',
     varosha: 'varosha|mara[sş]', recognition: 'two-state|trnc|recogni|sovereign|turkic|direct flight',
     defence: 'defen[cs]e|guard|military|exercise|nato|missile|frontex|\\barms\\b|army', regional: 'israel|egypt|emirates|\\buae\\b|saudi|india|trilateral|imec|gulf|jordan|leban',

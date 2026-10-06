@@ -575,6 +575,16 @@
     "neither": "καμία από τις δύο",
     "none found in the last three weeks": "δεν βρέθηκε κανένα τις τελευταίες τρεις εβδομάδες",
     "read as backing {0}": "θεωρήθηκε ότι στηρίζει: {0}",
-    "This device has not yet completed a live fetch for every source. Until it does, the gaps are filled from the snapshot shipped with this version, taken on {0}. Live data replaces it source by source.": "Η συσκευή αυτή δεν έχει ακόμη ολοκληρώσει ζωντανή άντληση για κάθε πηγή. Μέχρι τότε, τα κενά συμπληρώνονται από το στιγμιότυπο που συνοδεύει αυτή την έκδοση, με ημερομηνία {0}. Τα ζωντανά δεδομένα το αντικαθιστούν πηγή προς πηγή."
+    "This device has not yet completed a live fetch for every source. Until it does, the gaps are filled from the snapshot shipped with this version, taken on {0}. Live data replaces it source by source.": "Η συσκευή αυτή δεν έχει ακόμη ολοκληρώσει ζωντανή άντληση για κάθε πηγή. Μέχρι τότε, τα κενά συμπληρώνονται από το στιγμιότυπο που συνοδεύει αυτή την έκδοση, με ημερομηνία {0}. Τα ζωντανά δεδομένα το αντικαθιστούν πηγή προς πηγή.",
+    "<b>How reliable is this reading?</b> Before this version was released, {0} real statements and deeds and {1} subject assignments were checked by hand, and the rules were corrected against the errors found. On that same set the tool now names the right stakeholder in {2}% of cases, tells word from deed in {3}%, reads the tone correctly or withholds judgment in {4}%, and assigns the right subject in {5}%. On headlines it has never seen it will do somewhat worse. Where the wording pulls both ways the tool marks the item \"unsure\" and leaves it out until you decide.": "<b>Πόσο αξιόπιστη είναι αυτή η ανάγνωση;</b> Πριν από την κυκλοφορία αυτής της έκδοσης ελέγχθηκαν με το χέρι {0} πραγματικές δηλώσεις και έργα και {1} αντιστοιχίσεις θεμάτων, και οι κανόνες διορθώθηκαν με βάση τα σφάλματα που βρέθηκαν. Στο ίδιο αυτό σύνολο, το εργαλείο πλέον αποδίδει στο σωστό ενδιαφερόμενο μέρος το {2}% των περιπτώσεων, διακρίνει τα λόγια από τα έργα στο {3}%, διαβάζει σωστά τον τόνο ή απέχει από κρίση στο {4}%, και αντιστοιχίζει το σωστό θέμα στο {5}%. Σε τίτλους που δεν έχει ξαναδεί θα τα πηγαίνει κάπως χειρότερα. Όπου η διατύπωση τραβά προς δύο κατευθύνσεις, το εργαλείο σημειώνει το στοιχείο ως «αβέβαιο» και το αφήνει εκτός μέχρι να αποφασίσετε εσείς.",
+    "Nothing said or done about Cyprus was found in the last three months.": "Δεν βρέθηκε καμία δήλωση ή ενέργεια για την Κύπρο τους τελευταίους τρεις μήνες.",
+    "article updated {0}": "ενημέρωση άρθρου: {0}",
+    "standing position": "πάγια θέση",
+    "unsure: you decide": "αβέβαιο: αποφασίστε εσείς",
+    "{0} unsure, not counted": "{0} αβέβαια, δεν μετρούν",
+    "blue: where the measure stands now": "μπλε: πού βρίσκεται τώρα ο δείκτης",
+    "green: the change moves it toward your ideal": "πράσινο: η μεταβολή τον φέρνει πιο κοντά στο ιδεώδες σας",
+    "red: the change moves it away from your ideal": "κόκκινο: η μεταβολή τον απομακρύνει από το ιδεώδες σας",
+    "your ideal for that measure": "το ιδεώδες σας για τον δείκτη αυτόν"
   };
 })(typeof self !== 'undefined' ? self : this);

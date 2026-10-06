@@ -1,0 +1,1784 @@
+{
+ "voices": [
+  {
+   "title": "President of the Republic of Cyprus: Turkey’s refusal has prevented the trilateral meeting from taking place",
+   "relevant": true,
+   "stakeholder": "ROC",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "President of the Republic of Cyprus: I do not rule out the possibility of significant developments with regard to the resumption of talks on the Cyprus issue",
+   "relevant": true,
+   "stakeholder": "ROC",
+   "kind": "word",
+   "tone": "soft"
+  },
+  {
+   "title": "President of the Republic of Cyprus: We are here to support the UN Secretary-General’s efforts regarding the Cyprus issue, and we hope to achieve a positive outcome",
+   "relevant": true,
+   "stakeholder": "ROC",
+   "kind": "word",
+   "tone": "soft"
+  },
+  {
+   "title": "Χριστοδουλίδης: Προτείνει κοινή συνάντηση με Έρχιουρμαν την ερχόμενη εβδομάδα – «Υπάρχει πολιτική βούληση και ιδέες για τα τρία θέματα που ζήτησε ο ΓΓ του ΟΗΕ»",
+   "relevant": true,
+   "stakeholder": "ROC",
+   "kind": "word",
+   "tone": "soft"
+  },
+  {
+   "title": "Χριστοδουλίδης: Η αναβάθμιση παραγόντων ισχύος εξυπηρετεί προτεραιότητα για τερματισμό κατοχής",
+   "relevant": true,
+   "stakeholder": "ROC",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Hristodulidis ve Menelau’dan Kıbrıs sorunuyla ilgili açıklamalar",
+   "relevant": true,
+   "stakeholder": "ROC",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Χωρίς πρόοδο οι επαφές Χριστοδουλίδη, παρά τις κυβερνητικές προσδοκίες – «Η λύση και η επανένωση παραμένουν αμετάθετος στόχος», τονίζει το ΑΚΕΛ",
+   "relevant": false,
+   "stakeholder": "ROC",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "«Μπορεί να πείσει την κατοχική Τουρκία;»: Το σχόλιο Λετυμπιώτη για τα όσα αναφέρει ο Αβέρωφ για Κυπριακό",
+   "relevant": true,
+   "stakeholder": "ROC",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Πρόεδρος Χριστοδουλίδης: Η άρνηση της τουρκικής πλευράς δεν οδήγησε σε τριμερή συνάντηση – Το διαπραγματευτικό κεκτημένο δεν πρόκειται να αλλάξει",
+   "relevant": true,
+   "stakeholder": "ROC",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Cumhuriyet Meclisi ile TBMM futbol takımları, Kıbrıs Türklerine uygulanan izolasyon ve ambargolara karşı dostluk maçı yaptı",
+   "relevant": false,
+   "stakeholder": "TC",
+   "kind": "deed",
+   "tone": "plain"
+  },
+  {
+   "title": "Bakan Ertuğruloğlu’ndan Washington’da iki komşu egemen eşit devlet vurgusu",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Ertuğruloğlu, New York’ta EİT Dışişleri Bakanları Konseyi Gayriresmî Toplantısı’nda konuştu: “Tek ada, iki devlet”",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Cumhurbaşkanı Erhürman, New York’ta Holguin ile görüştü",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Dışişleri Bakanlığı: “Rum lider ne derse desin, Kıbrıs Adası’nda iki ayrı halkın ve iki ayrı devletin mevcut olduğu gerçeğini değiştirmeyecektir”",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Meclis Başkanı Öztürkler’den Erdoğan’ın BM konuşmasına destek: “Kararlılığımızı pekiştirdi”",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Başbakan Üstel: “Erdoğan’ın BM Genel Kurulu’nda yaptığı konuşma tarihi nitelikte”",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Dışişleri Bakanı Tahsin Ertuğruloğlu: “Kıbrıs Türk halkının varlığını ve geleceğini teminat altına alacak yegâne zemin, egemen eşit iki devletin kabulü ve Kıbrıs Türk halkının eşit uluslararası statüsünün tescil edilmesidir.”",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Dışişleri Bakanlığı, ABD’nin GKRY’ne Yönelik Silah Ambargosunu Kaldırma Kararını Uzatması hakkında açıklama yaptı",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Başbakan Üstel: “Bir çocuk futbol kampı bile Rum siyasetinin hedefi oluyorsa, ortada çok ciddi bir zihniyet sorunu vardır”",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "BM: “Liderler haftada bir ve gerekirse daha sık bir araya gelecek”",
+   "relevant": true,
+   "stakeholder": "UN",
+   "kind": "word",
+   "tone": "soft"
+  },
+  {
+   "title": "Erhürman: Halkımızın çözüm iradesi doğrultusunda iyi niyetle çalışmaya devam edeceğiz",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "soft"
+  },
+  {
+   "title": "Başbakan Üstel’den Rum Yönetimi açıklamalarına sert tepki:” Gerçek dışı ve düşmanca açıklamaları şiddetle kınıyorum”",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Dışişleri Bakanı Ertuğruloğlu: “Sorunun tarifinde mutabakat yoksa çözüm iradesi bir anlam taşımaz”",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Ertuğruloğlu’ndan Washington’da iki komşu egemen eşit devlet vurgusu",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Erhürman, Holguin’in belge açıklamasına işaret etti: “Müzakereler başladığında ve kullanışlı hale geldiğinde verilecek”",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Erhürman’dan Holguin’in açıklamasına dikkat: Müzakereler düşmanca bir ortamdan doğmaz",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Cumhurbaşkanı Erhürman: “Bizi çözüme ulaştıracak, başarılı sonuç alacak toplantılar istiyorum”",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "soft"
+  },
+  {
+   "title": "Erhürman: “Rum liderle haftalık görüşmelere devam edebiliriz. Ama önemli olan sıklık değil odaklanmak”",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "soft"
+  },
+  {
+   "title": "Yusuf KISA: Erhürman’ın şahsında CTP’nin federal çözüm ısrarı",
+   "relevant": false,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "soft"
+  },
+  {
+   "title": "5. Cumhurbaşkanı Tatar: Kıbrıs’ta iki devlet milli siyasettir",
+   "relevant": false,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Erhürman: “Sonuç verecek bir 5+1 ve bizi çözüme ulaştıracak bir müzakere istiyoruz”",
+   "relevant": true,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "soft"
+  },
+  {
+   "title": "Dendias in Nicosia: Greece will not leave Cyprus as Turkey blocks a power cable",
+   "relevant": true,
+   "stakeholder": "GR",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Προκαλεί η Τουρκία με NAVTEX για παράνομες έρευνες στα κατεχόμενα, αντιδρούν διπλωματικές πηγές",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "deed",
+   "tone": "hard"
+  },
+  {
+   "title": "Βγάζει ξανά το Oruc Reis η Τουρκία: NAVTEX για την κατασκευή αγωγού με τα κατεχόμενα",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "deed",
+   "tone": "hard"
+  },
+  {
+   "title": "Turkey Advances Gas Pipeline Plan Linking Turkey to Occupied Territories of Cyprus",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "deed",
+   "tone": "hard"
+  },
+  {
+   "title": "Νέο επεισόδιο στη νεκρή ζώνη στη Δένεια: Τούρκοι στρατιώτες παρεμπόδισαν Ελληνοκύπριους γεωργούς – Τι αναφέρει η ΟΥΝΦΙΚΥΠ (εικόνες & βίντεο)",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "deed",
+   "tone": "hard"
+  },
+  {
+   "title": "Cevdet Yılmaz bugün KKTC’ye geliyor",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Türkiye MSB: “Kıbrıs’taki askeri gelişmeler yakından izleniyor”",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Erdoğan, Kıbrıs Türk halkının adadaki egemen eşitliği ve uluslararası statüsünün tanınmadığı hiçbir formülün sonuç vermeyeceğinin altını çizdi",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Erdoğan, Guterres’le görüştü: “Kıbrıs Türk halkının egemen eşitliğini ve eşit uluslararası statüsünü tanımayan hiçbir öneri netice vermeyecek”",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Erdoğan, BM Genel Kurulu’nda uluslararası topluma KKTC’yi tanıma çağrısı yaptı",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "TC MSB duyurdu: “Türk Hava Kuvvetleri, Kıbrıs’ın güneyinde eğitim uçuşu yaptı”",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "deed",
+   "tone": "hard"
+  },
+  {
+   "title": "TC MSB: “Kıbrıs’ta hassas dengeleri ve güven ortamını olumsuz etkileyebilecek bir adım”",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Erdoğan: “KKTC ile iş birliği içerisinde arama çalışmalarına destek veriyoruz”",
+   "relevant": false,
+   "stakeholder": "TR",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Erdoğan: Kıbrıs Türk halkına başsağlığı diliyorum, çalışmalar için devletimizin tüm imkanlarını seferber ettik",
+   "relevant": false,
+   "stakeholder": "TR",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "ΑΚΕΛ: Καταδικάζει τις νέες αξιώσεις Ερντογάν για την Κύπρο – «Ο μόνος δρόμος είναι η ΔΔΟ»",
+   "relevant": false,
+   "stakeholder": "ROC",
+   "kind": "word",
+   "tone": "soft"
+  },
+  {
+   "title": "O Ερντογάν ζήτησε από Βρετανό Πρωθυπουργό «κυριαρχική ισότητα» για τους Τ/κ",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "MMV’den Erdoğan’ın KKTC’nin tanınması çağrısına destek",
+   "relevant": false,
+   "stakeholder": "TC",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Erdoğan’dan Burnham’a Kıbrıs mesajı: Egemen eşitlik tanınmalı",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Ερντογάν: Ακύρωσε Γκουτέρες ζητώντας αναγνώριση του ψευδοκράτους – Θεατρινισμοί και υποκρισίες από το βήμα της Γενικής Συνέλευσης του ΟΗΕ",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Κυπριακό: Τι είπε ο Ερντογάν στον ΟΗΕ – Η γραμμή της Άγκυρας παραμένει ίδια",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Όσα είπε ο Ερντογάν στη Γενική Συνέλευση του ΟΗΕ και οι αναφορές στο Κυπριακό",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Erdoğan BM kürsüsünden dünyaya çağrı yaptı: KKTC’yi tanıyın",
+   "relevant": true,
+   "stakeholder": "TR",
+   "kind": "word",
+   "tone": "hard"
+  },
+  {
+   "title": "Alamein summit: Egypt, Greece, and Cyprus pledge to expand energy ties and coordinate on regional crises",
+   "relevant": true,
+   "stakeholder": "REG",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Prime Minister Kyriakos Mitsotakis’ Speech at the 81st Session of the United Nations General Assembly",
+   "relevant": true,
+   "stakeholder": "GR",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Gerapetritis: Trilateral with Cyprus and Jordan, AI talks with India",
+   "relevant": true,
+   "stakeholder": "GR",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "«Τεστ αξιοπιστίας για ΟΗΕ»: Στο επίκεντρο της ομιλίας Μητσοτάκη το Κυπριακό, τι είπε για Τουρκία στην Γενική Συνέλευση",
+   "relevant": true,
+   "stakeholder": "GR",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Κυπριακό, Ουκρανία και Μέση Ανατολή στη συνάντηση Μητσοτάκη – Γκουτέρες",
+   "relevant": true,
+   "stakeholder": "GR",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Commission designates Special Representative for Cyprus",
+   "relevant": true,
+   "stakeholder": "EU",
+   "kind": "deed",
+   "tone": "soft"
+  },
+  {
+   "title": "Joint Press Release by Türkiye's FM Hakan Fidan, HR/VP Kaja Kallas, and EU Commissioners Marta Kos and Magnus Brunner following their meeting in Ankara",
+   "relevant": false,
+   "stakeholder": "EU",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Meeting of the Cultural Property Advisory Committee; Proposals To Extend Bilateral Cultural Property Agreements With Cyprus, Guatemala, and Peru Action: Notice",
+   "relevant": true,
+   "stakeholder": "US",
+   "kind": "deed",
+   "tone": "plain"
+  },
+  {
+   "title": "Amendment to the International Traffic in Arms Regulations: Prohibited Exports, Imports, and Sales to or From Certain Countries-Cyprus",
+   "relevant": true,
+   "stakeholder": "US",
+   "kind": "deed",
+   "tone": "plain"
+  },
+  {
+   "title": "S. 4443: Eastern Mediterranean Gateway Act",
+   "relevant": true,
+   "stakeholder": "US",
+   "kind": "deed",
+   "tone": "plain"
+  },
+  {
+   "title": "H.R. 3307: Eastern Mediterranean Gateway Act",
+   "relevant": true,
+   "stakeholder": "US",
+   "kind": "deed",
+   "tone": "plain"
+  },
+  {
+   "title": "H.R. 4413: End the Cyprus Embargo Act",
+   "relevant": true,
+   "stakeholder": "US",
+   "kind": "deed",
+   "tone": "plain"
+  },
+  {
+   "title": "S. 2018: A bill to modify certain limitations and exclusions regarding defense articles and requirements regarding security assistance and sales with respect to the Republic of Cyprus.",
+   "relevant": true,
+   "stakeholder": "US",
+   "kind": "deed",
+   "tone": "plain"
+  },
+  {
+   "title": "H.R. 2510: American-Hellenic-Israeli Eastern Mediterranean Counterterrorism and Maritime Security Partnership Act of 2025",
+   "relevant": true,
+   "stakeholder": "US",
+   "kind": "deed",
+   "tone": "plain"
+  },
+  {
+   "title": "Trump Shares Christodoulides Interview Calling the US Cyprus’s Closest Ally",
+   "relevant": true,
+   "stakeholder": "US",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Μήνυμα Ρούμπιο για επέτειο Ανεξαρτησίας: Οι ΗΠΑ προσβλέπουν σε εμβάθυνση της εταιρικής σχέσης με Κύπρο – Η αναφορά στο Κυπριακό",
+   "relevant": true,
+   "stakeholder": "US",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Rubio’dan Kıbrıs mesajı: İki toplumlu, iki bölgeli federasyona destek",
+   "relevant": true,
+   "stakeholder": "US",
+   "kind": "word",
+   "tone": "soft"
+  },
+  {
+   "title": "what discussions they have with Tufan Erhurman regarding the future of Cyprus issue since 1 January.",
+   "relevant": false,
+   "stakeholder": "UK",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "what assessment they have made of the election of Tufan Erhurman in Turkish Republic of Northern Cyprus.",
+   "relevant": false,
+   "stakeholder": "UK",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Holguin: “Kıbrıs’ta ilerleme için fırsat penceresi giderek kapanıyor”",
+   "relevant": true,
+   "stakeholder": "UN",
+   "kind": "word",
+   "tone": "soft"
+  },
+  {
+   "title": "Έτοιμο το έγγραφο των συγκλίσεων για Κυπριακό: Τι λέει η Ολγκίν για το «ναυάγιο» της Τριμερούς",
+   "relevant": true,
+   "stakeholder": "UN",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "BMGS’nin Kıbrıs Kişisel Temsilcisi Holguin’den New York’taki görüşmelere ilişkin açıklama",
+   "relevant": true,
+   "stakeholder": "UN",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Αξιολόγηση για το Κυπριακό στη συνάντηση Έρχιουρμαν με Ολγκίν στη Νέα Υόρκη",
+   "relevant": true,
+   "stakeholder": "UN",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Και το Κυπριακό στη συνάντηση Γκουτέρες – Ερντογάν στη Νέα Υόρκη, τι συζήτησαν",
+   "relevant": true,
+   "stakeholder": "UN",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Α. Γκουτέρες: Δεν θα υπάρξει συνάντηση 3+1 ή 5+1 για το Κυπριακό στο περιθώριο της ΓΣ του ΟΗΕ",
+   "relevant": true,
+   "stakeholder": "UN",
+   "kind": "word",
+   "tone": "plain"
+  },
+  {
+   "title": "Al-Sisi calls for deeper defence ties with Greece, Cyprus, stronger East Mediterranean coordination",
+   "relevant": true,
+   "stakeholder": "REG",
+   "kind": "word",
+   "tone": "plain"
+  }
+ ],
+ "subjects": [
+  {
+   "title": "YKP: Hataylaştırmaya karşı kendi kaynağımız, kendi karar mekanizmamız ve federal çözüm perspektifi…",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Χριστοδουλίδης: Προτείνει κοινή συνάντηση με Έρχιουρμαν την ερχόμενη εβδομάδα – «Υπάρχει πολιτική βούληση και ιδέες για τα τρία θέματα που ζήτησε ο ΓΓ του ΟΗΕ»",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Holguin’in Hristodulidis’e sürekli Türk tezlerini ilettiği iddia edildi",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Denktaş: “Kıbrıs sorunu siyasi zeminde değil, ekonomik iş birliği zemininde tartışılmalı”",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Διάλογο και λύση και όχι στρατιωτικοποίηση του Κυπριακού",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Ολγκίν: Η «ταχυδρόμος» των τουρκικών αξιώσεων προς τη Λευκωσία",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Προβληματικά μαθηματικά και επικίνδυνες εξάρσεις στο Κυπριακό",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Savaşan: Kıbrıs Türk halkının geleceği, tükenmiş müzakere modellerine değil, egemen eşitliğe dayanmalıdır",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Işık’tan federasyon temelinde çözüm politikasını savunan siyasi partilere eleştiri",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Στόχος ήταν η άρση του εμπάργκο και όχι η λύση του Κυπριακού",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Rum Müzakereci Menelau “(Kıbrıs sorununda) bataklık tercih olamaz”",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Kıbrıs sorunu Yunanistan’ın BM Güvenlik Konseyi başkanlığı önceliklerinin üst sırasında",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "ΑΚΕΛ – ΒΚΡ: Στο επίκεντρο το Κυπριακό και η επανέναρξη των διαπραγματεύσεων",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Kıbrıs Sorunu: Öz ve Retorik",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Rubio’dan Kıbrıs mesajı: İki toplumlu, iki bölgeli federasyona destek",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Erhürman, Holguin’in belge açıklamasına işaret etti: “Müzakereler başladığında ve kullanışlı hale geldiğinde verilecek”",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Holguin’in bu ay yeniden adaya gelmesi bekleniyor",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Με αναφορά στο Κυπριακό το μήνυμα ΗΠΑ για την 66η επέτειο ανεξαρτησίας της Κυπριακής Δημοκρατίας",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Θολό το σκηνικό στο Κυπριακό: Ευθύνες στην Άγκυρα για το αδιέξοδο",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Κρίσιμη η συμβολή των δύο ηγετών στην υπό εξέλιξη διαδικασία του Κυπριακού",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Λύση του Κυπριακού που να ολοκληρώνει και όχι να ακυρώνει την ανεξαρτησία",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "ΠτΔ: Μοναδικός στόχος η επανένωση και η μετεξέλιξη Κυπριακή Δημοκρατίας σε ένα σύγχρονο κράτος",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Πιθανή νέα διεθνής διάσκεψη για το Κυπριακό – Οι τουρκικές αιτιάσεις για να μη δοθούν οι συγκλίσεις",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Μήνυμα Ρούμπιο για επέτειο Ανεξαρτησίας: Οι ΗΠΑ προσβλέπουν σε εμβάθυνση της εταιρικής σχέσης με Κύπρο – Η αναφορά στο Κυπριακό",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Erhürman: Holguin’in bu sözleri bunca tartışmanın içinde kaynayıp gitmesin",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Hristodulidis ve Menelau’dan Kıbrıs sorunuyla ilgili açıklamalar",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Bazı Kıbrıslı Türk ve Rum siyasi partilerden ortak açıklama: “GYÖ’ler müzakerelerin yerini alamaz”",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Cumhurbaşkanı Erhürman, Holguin’in yanıtını hatırlattı",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Erhürman’dan Holguin’in açıklamasına dikkat: Müzakereler düşmanca bir ortamdan doğmaz",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "«Έχει σχεδόν 10 χρόνια που είναι σε θέση ισχύος»: Πυρά Φειδία κατά Χριστοδουλίδη για την απουσία εξελίξεων στο Κυπριακό",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Αννίτα στη Λάρνακα: Το Κυπριακό δεν προσφέρεται για σκοπιμότητες και επικοινωνιακές τακτικές",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Ούτε το Κυπριακό ούτε η ακρίβεια στις έγνοιες Προεδρικού – Πινδάρου",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "«Μέσα από τις Συμπληγάδες του Κυπριακού» – Παρουσιάζεται στη Λάρνακα το βιβλίο του Άντρου Κυπριανού",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "Διπλωμάτες στο Cyprus Forum: Η λύση του Κυπριακού «κλειδί» για την αξιοποίηση της θέσης της Κύπρου",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Θετική η Λευκωσία στην παραμονή της Ολγκίν και μετά τον Δεκέμβρη – Ενημερώνεται σήμερα το Εθνικό Συμβούλιο για τη Νέα Υόρκη",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Το παιχνίδι ευθυνών βλάπτει το Κυπριακό",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Λετυμπιώτης: Δεν θα επιτρέψουμε να χαθεί το διαπραγματευτικό κεκτημένο",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Διπλωμάτες εκτιμούν ότι η λύση του Κυπριακού θα ξεκλειδώσει τη στρατηγική θέση της Κύπρου",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Διαφωνία για το έγγραφο των συγκλίσεων στο Κυπριακό – Αντίθετη η τουρκική πλευρά, λένε πηγές",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Μήνυμα ενότητας και συσπείρωσης έστειλε η Αννίτα ενόψει Προεδρικών 2028 – «Η απόφαση ανήκει στα μέλη του ΔΗΣΥ» – Προτεραιότητα το Κυπριακό",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "Katar: ABD-İran müzakereleri sürüyor, görüş ayrılıklarını gidermeye çalışıyoruz",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "Holguin’in ANKA ajansına verdiği röportaj Rum basınında",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "UBP Milletvekili Öztürk: Federasyonu artık konuşmamalıyız",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "İran’dan Trump açıklaması: “Ne müzakere yapabiliyor ne de savaşabiliyor”",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "ΠτΔ: «Δεν ξέρω από πού αντλούν την ενημέρωσή τους όλοι εκείνοι που μιλούν για αδιέξοδο στο Κυπριακό»",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Μενελάου για Γκουτέρες: «Έχει στο μυαλό του συγκεκριμένες κινήσεις» για το Κυπριακό για το αμέσως επόμενο διάστημα",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Νικόλας Παπαδόπουλος: Η Τουρκία βρίσκεται πιο μακριά από ποτέ στην λύση του Κυπριακού",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Ν. Χριστοδουλίδης: Δεν παραβλέπουμε τις δυσκολίες αλλά σε καμία περίπτωση δεν είμαστε σε αδιέξοδο στο Κυπριακό",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "«Σίγουρα δεν είμαστε σε αδιέξοδο»: Τι αναφέρει ο Νίκος Χριστοδουλίδης για το Κυπριακό",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Τελικά πουλά ή δεν πουλά το Κυπριακό;",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "Gerapetritis: Trilateral with Cyprus and Jordan, AI talks with India",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "İzcan: Erhürman New-York’ta üçlü zirveyi reddetmekle hata yaptı",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Yusuf KISA: Erhürman’ın şahsında CTP’nin federal çözüm ısrarı",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Holguin: “Kıbrıs’ta ilerleme için fırsat penceresi giderek kapanıyor”",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Cumhurbaşkanı Erhürman: “Bizi çözüme ulaştıracak, başarılı sonuç alacak toplantılar istiyorum”",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Holguin’in New York’taki görüşmelere ilişkin açıklaması Rum basınında",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Erhürman: İş olsun diye üçlü görüşme yapmam",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "«Είναι αντιπαραγωγικό»: Η απάντηση της Κυβέρνησης σε όσα «υπονοεί» ο Αβέρωφ για το Κυπριακό",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "ΓΓ ΑΚΕΛ: Πέρασε ακόμα ένα ορόσημο για το Κυπριακό χωρίς να έχουμε καμία εξέλιξη – Να διαφυλάξουμε το διαπραγματευτικό κεκτημένο",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Αρχιεπίσκοπος Γεώργιος: Έκανε την εμφάνιση του και ζήτησε την επανατοποθέτηση του Κυπριακού",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Χωρίς πρόοδο οι επαφές Χριστοδουλίδη, παρά τις κυβερνητικές προσδοκίες – «Η λύση και η επανένωση παραμένουν αμετάθετος στόχος», τονίζει το ΑΚΕΛ",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Holguin: Genel Sekreter görev süresi bitene kadar çözüm arayışlarını destekleyecek",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "BMGS’nin Kıbrıs Kişisel Temsilcisi Holguin’den New York’taki görüşmelere ilişkin açıklama",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Αβέρωφ: Ανεξάρτητος υποψήφιος για το Κυπριακό",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "Έτοιμο το έγγραφο των συγκλίσεων για Κυπριακό: Τι λέει η Ολγκίν για το «ναυάγιο» της Τριμερούς",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "«Επαναβεβαιώθηκε η αρνητική στάση της τουρκικής πλευράς στο Κυπριακό»: Τι λέει η κυβέρνηση για τη Νέα Υόρκη",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Νίκος Μούδουρος στην «Χ»: Το Κυπριακό δεν «πουλά» πλέον πολιτικά στην τουρκοκυπριακή κοινωνία",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "«Το καλύτερο σχέδιο που προτάθηκε για το Κυπριακό»: Οι Δυτικοί προτείνουν επιστροφή του Βαρωσιού",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Δεν δίνει τις συγκλίσεις η Ολγκίν – Τι λέει σε γραπτή δήλωσή της για τις επαφές στη Νέα Υόρκη",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Επαναβεβαιώθηκε η αρνητική στάση τουρκικής πλευράς στο Κυπριακό είπε ο Γ. Αντωνίου",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Putin: “Ukrayna’yla müzakereleri başlatma kararını Rus çıkarları doğrultusunda alacağız”",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "Rum Müzakereci Menelau: “Ara bölge 10 binden fazla kişinin yaşadığı Kıbrıs Cumhuriyeti toprağıdır”",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "Rum basını: “Üçlü görüşme olacak mı yoksa Hristodulidis’in yeni bir iletişim hilesi mi söz konusu bugün netleşecek”",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Doç. Dr. Bilge Azgın: Federasyon yaklaşımı terk edildi",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Σήμερα η μεγάλη βραδιά της Άννας Βίσση στο ΟΑΚΑ: 95.000 θεατές και ισχυρό το κυπριακό «παρών»",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "Πρόεδρος Χριστοδουλίδης: Η άρνηση της τουρκικής πλευράς δεν οδήγησε σε τριμερή συνάντηση – Το διαπραγματευτικό κεκτημένο δεν πρόκειται να αλλάξει",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "«Δεν υπάρχει χρόνος για το Κυπριακό να πάει χαμένος»: Στο ακουστικό η Λευκωσία για Τριμερή, πότε αναμένεται η απάντηση Έρχιουρμαν",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Αννίτα: Κορυφαία προτεραιότητα το Κυπριακό για τον ΔΗΣΥ",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "«Το βάρος πέφτει στους ώμους του»: Το σχόλιο Αντωνίου στον Αβέρωφ ότι θα εξαγγείλει υποψηφιότητα αν είναι όλα «μαύρα κι άραχνα» στο Κυπριακό",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "«Τεστ αξιοπιστίας για ΟΗΕ»: Στο επίκεντρο της ομιλίας Μητσοτάκη το Κυπριακό, τι είπε για Τουρκία στην Γενική Συνέλευση",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Guterres liderlerle ayrı ayrı görüşecek…Üçlü görüşme olanağını arayacak",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Erhürman, New York’ta Holguin ile görüştü",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "«Εγώ θα είμαι υποψήφιος»: Ο Αβέρωφ απαντά ποιο «μικρό βήμα» στο Κυπριακό θα τον πείσει να κάνει πίσω",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "Επίθεση κατά Χριστοδουλίδη κι από τον Ουστέλ: Κάνει λόγο για «υποκρισία» της ε/κ ηγεσίας στο Κυπριακό",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Το Κυπριακό στη Νέα Υόρκη: Η ανάγνωση της ομιλίας Χριστοδουλίδη, οι φήμες για Τριμερή και τα κλειστά χαρτιά Γκουτέρες",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Είδε Ολγκίν ο Ερχιουρμάν στη Νέα Υόρκη, επί τάπητος το Κυπριακό",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Το Κυπριακό στη Νέα Υόρκη: Τα επόμενα 24ωρα θα δείξουν αν θα υπάρξει η πολυπόθητη τριμερής",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Αξιολόγηση για το Κυπριακό στη συνάντηση Έρχιουρμαν με Ολγκίν στη Νέα Υόρκη",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Holguin: “Birleşmiş Milletlerin Kıbrıs konusuyla ilgili çabası devam edecek”",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Έθεσε ξανά στον Γκουτέρες τις κόκκινες γραμμές στο Κυπριακό ο Ερντογάν, τι θα πει ο ΠτΔ από το βήμα του ΟΗΕ",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Ο Χριστοδουλίδης στο βήμα του ΟΗΕ: LIVE οι απαντήσεις του στον Ερντογάν κι οι αναφορές για το Κυπριακό",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "«Τα ΗΕ συνεχίζουν τις προσπάθειες για το Κυπριακό»: Για μια ώρα τα είπαν ΠτΔ και Ολγκίν στην Νέα Υόρκη",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Bozkurt: Federasyon artık gerçekçi değil",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Erhürman: “Sonuç verecek bir 5+1 ve bizi çözüme ulaştıracak bir müzakere istiyoruz”",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Από την ανεξαρτησία στη διεθνή εκπροσώπηση: Το Κυπριακό στη ΓΣ του ΟΗΕ μέσα από 66 χρόνια διπλωματίας",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Το Κυπριακό στη Νέα Υόρκη: Οι διπλωματικές επαφές Χριστοδουλίδη και το κρίσιμο ραντεβού Γκουτέρες-Ερντογάν",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Για κρίσιμο παρασκήνιο στο Κυπριακό μιλά ο Χριστοδουλίδης",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Όσα είπε ο Ερντογάν στη Γενική Συνέλευση του ΟΗΕ και οι αναφορές στο Κυπριακό",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Και το Κυπριακό στη συνάντηση Γκουτέρες – Ερντογάν στη Νέα Υόρκη, τι συζήτησαν",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Βλέπει επαφές για το Κυπριακό μακριά από τα φώτα της δημοσιότητας ο Χριστοδουλίδης",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "ΠτΔ: «Δεν αποκλείω να υπάρξουν σημαντικές εξελίξεις στο Κυπριακό» – Προανήγγειλε ανακοινώσεις για αμερικανικές επενδύσεις",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Erhürman: İş olsun diye müzakere söz konusu değil",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Guterres 5+1 için “yapılacak çok iş var” demişti",
+   "subject": "talks",
+   "ok": true
+  },
+  {
+   "title": "Egyptian foreign minister discusses regional de-escalation with US envoy, Omani and Cypriot counterparts",
+   "subject": "talks",
+   "ok": false
+  },
+  {
+   "title": "Νέο επεισόδιο στη νεκρή ζώνη στη Δένεια: Τούρκοι στρατιώτες παρεμπόδισαν Ελληνοκύπριους γεωργούς – Τι αναφέρει η ΟΥΝΦΙΚΥΠ (εικόνες & βίντεο)",
+   "subject": "security",
+   "ok": false
+  },
+  {
+   "title": "Νέο επεισόδιο στη νεκρή ζώνη στη Δένεια: Τούρκοι στρατιώτες παρεμπόδισαν Ελληνοκύπριους γεωργούς – Τι αναφέρει η ΟΥΝΦΙΚΥΠ (εικόνες & βίντεο)",
+   "subject": "troops",
+   "ok": true
+  },
+  {
+   "title": "Συνεργασία Ε/κ και Τ/κ για πωλήσεις περιουσιών",
+   "subject": "property",
+   "ok": true
+  },
+  {
+   "title": "Με τον σφετερισμό τι γίνεται;",
+   "subject": "property",
+   "ok": true
+  },
+  {
+   "title": "Τι μας λες! Ώστε έχουμε δικοινοτικό κράτος!",
+   "subject": "cbm",
+   "ok": false
+  },
+  {
+   "title": "“Στοπ” βουλευτών σε επιδότηση προστίμων σε οδοφράγματα: Δεν ενέκριναν το κονδύλι",
+   "subject": "cbm",
+   "ok": true
+  },
+  {
+   "title": "Rum Müzakereci Menelau: “Ara bölge 10 binden fazla kişinin yaşadığı Kıbrıs Cumhuriyeti toprağıdır”",
+   "subject": "cbm",
+   "ok": false
+  },
+  {
+   "title": "Πάνω από 10.000 ψυχές ζουν στη νεκρή ζώνη – Η καθημερινότητα, οι προκλήσεις και η προσπάθεια διατήρησης της κυπριακής παρουσίας",
+   "subject": "cbm",
+   "ok": false
+  },
+  {
+   "title": "Νέο επεισόδιο στη νεκρή ζώνη στη Δένεια: Τούρκοι στρατιώτες παρεμπόδισαν Ελληνοκύπριους γεωργούς – Τι αναφέρει η ΟΥΝΦΙΚΥΠ (εικόνες & βίντεο)",
+   "subject": "cbm",
+   "ok": false
+  },
+  {
+   "title": "Κοινοτάρχης Δένειας: Πολλαπλά τα περιστατικά παρεμπόδισης γεωργών στη νεκρή ζώνη κάθε εβδομάδα – Γιατί το σημερινό ήταν διαφορετικό",
+   "subject": "cbm",
+   "ok": false
+  },
+  {
+   "title": "Στο έλεος των Τούρκων χωριά της νεκρής ζώνης – Εκτός στεγαστικών προγραμμάτων του κράτους, με δρόμους χωρίς άσφαλτο και ηλεκτρικό",
+   "subject": "cbm",
+   "ok": false
+  },
+  {
+   "title": "Προκλητική χαρακτηρίζουν την τουρκική NAVTEX ελληνικές πηγές – Παράνομες οι έρευνες για τον αγωγό Τουρκίας-κατεχομένων",
+   "subject": "gas",
+   "ok": true
+  },
+  {
+   "title": "Νέα NAVTEX από την Τουρκία: Βγαίνει για έρευνες για τον αγωγό νότια των κατεχομένων το Oruc Reis – Πόσο θα διαρκέσουν",
+   "subject": "gas",
+   "ok": true
+  },
+  {
+   "title": "Turkey Advances Gas Pipeline Plan Linking Turkey to Occupied Territories of Cyprus",
+   "subject": "gas",
+   "ok": true
+  },
+  {
+   "title": "Taçoy: Doğal gaz boru hattı tüm bölgenin kaderini olumlu etkileyecek",
+   "subject": "gas",
+   "ok": true
+  },
+  {
+   "title": "Cyprus’s energy paradox: Gas beneath the sea, isolation on the grid",
+   "subject": "gas",
+   "ok": true
+  },
+  {
+   "title": "Eni, TotalEnergies take final investment decision to link Cyprus’ Cronos gas field to Egypt",
+   "subject": "gas",
+   "ok": true
+  },
+  {
+   "title": "Greece Rejects Turkish Permission Demand as Cyprus-Crete Power Cable Surveys Near Restart",
+   "subject": "grid",
+   "ok": true
+  },
+  {
+   "title": "Dendias in Nicosia: Greece will not leave Cyprus as Turkey blocks a power cable",
+   "subject": "grid",
+   "ok": true
+  },
+  {
+   "title": "Το Καλώδιο της έντασης: το νέο τεστ για Αθήνα και Άγκυρα",
+   "subject": "grid",
+   "ok": true
+  },
+  {
+   "title": "Νέα παρέμβαση της Άγκυρας για το καλώδιο Ελλάδας – Κύπρου – Ενόχληση τουρκικού ΥΠΑΜ για τη στρατιωτική παρέλαση στη Λευκωσία",
+   "subject": "grid",
+   "ok": true
+  },
+  {
+   "title": "Turkey Says Greece-Cyprus Cable Crosses Its Continental Shelf",
+   "subject": "grid",
+   "ok": true
+  },
+  {
+   "title": "Greece and France weigh new route for Crete-Cyprus cable amid Turkish marine park dispute",
+   "subject": "grid",
+   "ok": true
+  },
+  {
+   "title": "Απειλεί ξανά η Τουρκία για τον GSI",
+   "subject": "grid",
+   "ok": true
+  },
+  {
+   "title": "Στεφάνου για GSI: «Ποιος θα ελέγχει το καλώδιο;» – Βάζει στο τραπέζι κόστος και ιδιοκτησία",
+   "subject": "grid",
+   "ok": true
+  },
+  {
+   "title": "Cyprus’s energy paradox: Gas beneath the sea, isolation on the grid",
+   "subject": "grid",
+   "ok": true
+  },
+  {
+   "title": "Τραμπ για άρση κυρώσεων σε Τουρκία: «Πάντα θα κάνω χαρούμενο τον Ερντογάν, είναι φίλος μου»",
+   "subject": "sanctions",
+   "ok": true
+  },
+  {
+   "title": "Hristodulidis “ABD savunma ve güvenlik alanında en önemli ortak”",
+   "subject": "uscyprus",
+   "ok": true
+  },
+  {
+   "title": "Trump Shares Christodoulides Interview Calling the US Cyprus’s Closest Ally",
+   "subject": "uscyprus",
+   "ok": true
+  },
+  {
+   "title": "Αναδημοσιεύει συνέντευξη Χριστοδουλίδη ο Τραμπ: «Sky is the limit» δηλώνει ο ΠτΔ για τις σχέσεις ΗΠΑ-Κύπρου",
+   "subject": "uscyprus",
+   "ok": true
+  },
+  {
+   "title": "Χριστοδουλίδης: Δεν υπάρχουν όρια στις σχέσεις Κύπρου-ΗΠΑ – Αναδημοσίευσε στην προσωπική του πλατφόρμα ο Τραμπ – Προχθές αποθέωνε Ερντογάν",
+   "subject": "uscyprus",
+   "ok": true
+  },
+  {
+   "title": "ABD Büyükelçisi ve bazı diplomatlar Cyprus Forum’da konuştu",
+   "subject": "uscyprus",
+   "ok": true
+  },
+  {
+   "title": "Rubio’dan Kıbrıs mesajı: İki toplumlu, iki bölgeli federasyona destek",
+   "subject": "uscyprus",
+   "ok": false
+  },
+  {
+   "title": "New weapons, US and France at Cyprus parade",
+   "subject": "uscyprus",
+   "ok": true
+  },
+  {
+   "title": "Με αναφορά στο Κυπριακό το μήνυμα ΗΠΑ για την 66η επέτειο ανεξαρτησίας της Κυπριακής Δημοκρατίας",
+   "subject": "uscyprus",
+   "ok": true
+  },
+  {
+   "title": "Μήνυμα Ρούμπιο για επέτειο Ανεξαρτησίας: Οι ΗΠΑ προσβλέπουν σε εμβάθυνση της εταιρικής σχέσης με Κύπρο – Η αναφορά στο Κυπριακό",
+   "subject": "uscyprus",
+   "ok": true
+  },
+  {
+   "title": "Αμερικανός Πρέσβης: «Τα συμφέροντα και οι στόχοι ΗΠΑ-Κύπρου είναι στενά ευθυγραμμισμένα»",
+   "subject": "uscyprus",
+   "ok": true
+  },
+  {
+   "title": "«Τούρκος» σε κυπριακή εταιρεία πίσω από το σκάνδαλο της Oxygen στις ΗΠΑ – Δύο συλλήψεις για την εταιρεία που ελεγχόταν μέσω Κύπρου από Ρώσους",
+   "subject": "uscyprus",
+   "ok": false
+  },
+  {
+   "title": "ΠτΔ: «Δεν αποκλείω να υπάρξουν σημαντικές εξελίξεις στο Κυπριακό» – Προανήγγειλε ανακοινώσεις για αμερικανικές επενδύσεις",
+   "subject": "uscyprus",
+   "ok": true
+  },
+  {
+   "title": "Egyptian foreign minister discusses regional de-escalation with US envoy, Omani and Cypriot counterparts",
+   "subject": "uscyprus",
+   "ok": false
+  },
+  {
+   "title": "“They want to stop our F-35s”: How Turkish media read Rubio’s Athens trip",
+   "subject": "usturkey",
+   "ok": true
+  },
+  {
+   "title": "Rubio heads to Athens, not Ankara, as Greece pushes for F-35s, new weapons and energy backing",
+   "subject": "usturkey",
+   "ok": true
+  },
+  {
+   "title": "Γιατί το Ισραήλ φέρεται να μπλοκάρει την πώληση των τουρκικών S-400 στα ΗΑΕ – Στο επίκεντρο τα F-35",
+   "subject": "usturkey",
+   "ok": false
+  },
+  {
+   "title": "Τουρκικές παραβιάσεις στο Αιγαίο με F-16 και drones ενώ ο Δένδιας βρίσκεται στη Λευκωσία",
+   "subject": "usturkey",
+   "ok": false
+  },
+  {
+   "title": "Transatlantik: Rusya’nın S-400 şartları | Boeing alımları ve Türk-Amerikan ilişkileri",
+   "subject": "usturkey",
+   "ok": true
+  },
+  {
+   "title": "Λαβρόφ για τους τουρκικούς S-400: «Μπορούμε να εγκρίνουμε τη μεταφορά τους» – Υπό όρους η απόφαση",
+   "subject": "usturkey",
+   "ok": false
+  },
+  {
+   "title": "Turkey and the move away from US security strategies",
+   "subject": "usturkey",
+   "ok": true
+  },
+  {
+   "title": "Προκλητική χαρακτηρίζουν την τουρκική NAVTEX ελληνικές πηγές – Παράνομες οι έρευνες για τον αγωγό Τουρκίας-κατεχομένων",
+   "subject": "maritime",
+   "ok": true
+  },
+  {
+   "title": "Greece Halted Cable Surveys After Turkish Warships Appeared",
+   "subject": "maritime",
+   "ok": true
+  },
+  {
+   "title": "Βγάζει ξανά το Oruc Reis η Τουρκία: NAVTEX για την κατασκευή αγωγού με τα κατεχόμενα",
+   "subject": "maritime",
+   "ok": true
+  },
+  {
+   "title": "Προκαλεί η Τουρκία με NAVTEX για παράνομες έρευνες στα κατεχόμενα, αντιδρούν διπλωματικές πηγές",
+   "subject": "maritime",
+   "ok": true
+  },
+  {
+   "title": "Νέα NAVTEX από την Τουρκία: Βγαίνει για έρευνες για τον αγωγό νότια των κατεχομένων το Oruc Reis – Πόσο θα διαρκέσουν",
+   "subject": "maritime",
+   "ok": true
+  },
+  {
+   "title": "Turkey Says Greece-Cyprus Cable Crosses Its Continental Shelf",
+   "subject": "maritime",
+   "ok": true
+  },
+  {
+   "title": "Jerusalem Post: Turkey Libya maritime deal raises Israeli concerns over Mediterranean shipping",
+   "subject": "maritime",
+   "ok": true
+  },
+  {
+   "title": "Κυπριακό: Στις 19 προτάσεις Χριστοδουλίδη η επιστροφή των Βαρωσίων",
+   "subject": "varosha",
+   "ok": true
+  },
+  {
+   "title": "Επιστροφή Βαρωσίων και λειτουργία λιμανιού Αμ/στου σαν ΜΟΕ – Τι απαντά η Κυβέρνηση",
+   "subject": "varosha",
+   "ok": true
+  },
+  {
+   "title": "Στο προσκήνιο η Αμμόχωστος: Κίνηση του Προέδρου για περίκλειστη περιοχή και λιμάνι",
+   "subject": "varosha",
+   "ok": true
+  },
+  {
+   "title": "Savaşan: Kıbrıs Türk halkının geleceği, tükenmiş müzakere modellerine değil, egemen eşitliğe dayanmalıdır",
+   "subject": "recognition",
+   "ok": true
+  },
+  {
+   "title": "Ertuğruloğlu’ndan Washington’da iki komşu egemen eşit devlet vurgusu",
+   "subject": "recognition",
+   "ok": true
+  },
+  {
+   "title": "5. Cumhurbaşkanı Tatar: Kıbrıs’ta iki devlet milli siyasettir",
+   "subject": "recognition",
+   "ok": true
+  },
+  {
+   "title": "Παραποίησε τα γεγονότα ο Χριστοδουλίδης, λέει το ψευδοκράτος – «Αυθάδεις και αγενείς παρατηρήσεις προς τον Ερντογάν»",
+   "subject": "recognition",
+   "ok": false
+  },
+  {
+   "title": "Erdoğan’dan Burnham’a Kıbrıs mesajı: Egemen eşitlik tanınmalı",
+   "subject": "recognition",
+   "ok": true
+  },
+  {
+   "title": "MMV’den Erdoğan’ın KKTC’nin tanınması çağrısına destek",
+   "subject": "recognition",
+   "ok": true
+  },
+  {
+   "title": "O Ερντογάν ζήτησε από Βρετανό Πρωθυπουργό «κυριαρχική ισότητα» για τους Τ/κ",
+   "subject": "recognition",
+   "ok": true
+  },
+  {
+   "title": "Ερντογάν: Ακύρωσε Γκουτέρες ζητώντας αναγνώριση του ψευδοκράτους – Θεατρινισμοί και υποκρισίες από το βήμα της Γενικής Συνέλευσης του ΟΗΕ",
+   "subject": "recognition",
+   "ok": true
+  },
+  {
+   "title": "Erhürman: Tanınma başka bir şeydir. Medeni olma, uygar olma başka bir şeydir",
+   "subject": "recognition",
+   "ok": true
+  },
+  {
+   "title": "Στο ίδιο τέμπο οι Τούρκοι: Υπάρχουν δύο κράτη στην Κύπρο λέει ο Γιλμάζ –",
+   "subject": "recognition",
+   "ok": true
+  },
+  {
+   "title": "Hristodulidis “ABD savunma ve güvenlik alanında en önemli ortak”",
+   "subject": "defence",
+   "ok": true
+  },
+  {
+   "title": "Το πολιτικό και στρατιωτικό αποτύπωμα της παρέλασης: Τα όπλα που αναβαθμίζουν την Εθνική Φρουρά – Τα μηνύματα και η σημασία τους",
+   "subject": "defence",
+   "ok": true
+  },
+  {
+   "title": "Νέα παρέμβαση της Άγκυρας για το καλώδιο Ελλάδας – Κύπρου – Ενόχληση τουρκικού ΥΠΑΜ για τη στρατιωτική παρέλαση στη Λευκωσία",
+   "subject": "defence",
+   "ok": true
+  },
+  {
+   "title": "Al-Sisi calls for deeper defence ties with Greece, Cyprus, stronger East Mediterranean coordination",
+   "subject": "defence",
+   "ok": true
+  },
+  {
+   "title": "Φιντάν: «Απειλή» για Τουρκία ο εξοπλισμός ελληνικών νησιών",
+   "subject": "defence",
+   "ok": false
+  },
+  {
+   "title": "India and Cyprus open first Joint Maritime Committee, eye Mumbai business forum",
+   "subject": "regional",
+   "ok": true
+  },
+  {
+   "title": "Γιατί το Ισραήλ φέρεται να μπλοκάρει την πώληση των τουρκικών S-400 στα ΗΑΕ – Στο επίκεντρο τα F-35",
+   "subject": "regional",
+   "ok": false
+  },
+  {
+   "title": "Στο μικροσκόπιο του Ισραήλ το τουρκολιβυκό μνημόνιο – «Απειλεί τη ναυσιπλοΐα μας»",
+   "subject": "regional",
+   "ok": false
+  },
+  {
+   "title": "Gerapetritis: Trilateral with Cyprus and Jordan, AI talks with India",
+   "subject": "regional",
+   "ok": true
+  },
+  {
+   "title": "Ο διεθνής καταζητούμενος Νεντανιάχου θα προσφύγει στο ΔΠΔ κατά του Ερντογάν – Στο μεταξύ το Ισραήλ δεν αναγνωρίζει… το ΔΠΔ",
+   "subject": "regional",
+   "ok": false
+  },
+  {
+   "title": "Σε τεντωμένο σχοινί οι σχέσεις Ισραήλ – Τουρκίας: Ο Νετανιάχου επιδιώκει να στείλει στο Δικαστήριο της Χάγης τον Ερντογάν για τους Κούρδους και τη Χαμάς",
+   "subject": "regional",
+   "ok": false
+  },
+  {
+   "title": "Would Israel risk a Turkish conflict over Cyprus?",
+   "subject": "regional",
+   "ok": true
+  },
+  {
+   "title": "Alamein summit: Egypt, Greece, and Cyprus pledge to expand energy ties and coordinate on regional crises",
+   "subject": "regional",
+   "ok": true
+  },
+  {
+   "title": "Eni, TotalEnergies take final investment decision to link Cyprus’ Cronos gas field to Egypt",
+   "subject": "regional",
+   "ok": true
+  },
+  {
+   "title": "Egyptian foreign minister discusses regional de-escalation with US envoy, Omani and Cypriot counterparts",
+   "subject": "regional",
+   "ok": true
+  },
+  {
+   "title": "Greece Rejects Turkish Permission Demand as Cyprus-Crete Power Cable Surveys Near Restart",
+   "subject": "greeceturkey",
+   "ok": true
+  },
+  {
+   "title": "“They want to stop our F-35s”: How Turkish media read Rubio’s Athens trip",
+   "subject": "greeceturkey",
+   "ok": true
+  },
+  {
+   "title": "Rubio heads to Athens, not Ankara, as Greece pushes for F-35s, new weapons and energy backing",
+   "subject": "greeceturkey",
+   "ok": false
+  },
+  {
+   "title": "Μητσοτάκης στα 52α γενέθλια της ΝΔ: Παράδειγμα προς μίμηση η Ελλάδα, δεν θα γυρίσουμε πίσω",
+   "subject": "greeceturkey",
+   "ok": false
+  },
+  {
+   "title": "Η Νέα Δημοκρατία γιορτάζει 52 χρόνια και «ζωντανεύει» την ιστορία της – Οι σταθμοί της πολιτικής διαδρομής από τον Κωνσταντίνο Καραμανλή στον Κυριάκο Μητσοτάκη",
+   "subject": "greeceturkey",
+   "ok": false
+  },
+  {
+   "title": "Kıbrıs sorunu Yunanistan’ın BM Güvenlik Konseyi başkanlığı önceliklerinin üst sırasında",
+   "subject": "greeceturkey",
+   "ok": false
+  },
+  {
+   "title": "Dendias in Nicosia: Greece will not leave Cyprus as Turkey blocks a power cable",
+   "subject": "greeceturkey",
+   "ok": true
+  },
+  {
+   "title": "Greece Halted Cable Surveys After Turkish Warships Appeared",
+   "subject": "greeceturkey",
+   "ok": true
+  },
+  {
+   "title": "Turkey Says Greece-Cyprus Cable Crosses Its Continental Shelf",
+   "subject": "greeceturkey",
+   "ok": true
+  },
+  {
+   "title": "Greece denies GSI cable route redesign amid Turkish marine park dispute",
+   "subject": "greeceturkey",
+   "ok": true
+  },
+  {
+   "title": "Bulgaristan ile Yunanistan, Bulgar Çarı Samuil’in naaşı konusunda anlaştı",
+   "subject": "greeceturkey",
+   "ok": false
+  },
+  {
+   "title": "Varoufakis Draws Fury in Greece Over Remarks to Turkish State TV",
+   "subject": "greeceturkey",
+   "ok": true
+  },
+  {
+   "title": "Μητσοτάκης σε Τουρκία: Ο ουσιαστικός διάλογος δεν συνυπάρχει με μονομερείς ενέργειες",
+   "subject": "greeceturkey",
+   "ok": true
+  },
+  {
+   "title": "Yunanistan Başbakanı Miçotakis: “Coğrafyayı değiştiremeyiz, yan yana yaşamak bizim kaderimiz”",
+   "subject": "greeceturkey",
+   "ok": true
+  },
+  {
+   "title": "Κυπριακό, Ουκρανία και Μέση Ανατολή στη συνάντηση Μητσοτάκη – Γκουτέρες",
+   "subject": "greeceturkey",
+   "ok": false
+  },
+  {
+   "title": "«Τεστ αξιοπιστίας για ΟΗΕ»: Στο επίκεντρο της ομιλίας Μητσοτάκη το Κυπριακό, τι είπε για Τουρκία στην Γενική Συνέλευση",
+   "subject": "greeceturkey",
+   "ok": true
+  },
+  {
+   "title": "Schengen süreci önündeki İngiliz egemen üsler bölgesi engeli kalktı",
+   "subject": "britain",
+   "ok": true
+  },
+  {
+   "title": "Οι αφηγήσεις του Σπύρου Κυπριανού για τον Μακάριο, τα βρετανικά έγγραφα για διχοτόμηση και το δοτό σύνταγμα της Κυπριακής Δημοκρατίας",
+   "subject": "britain",
+   "ok": false
+  },
+  {
+   "title": "Holguin’in Hristodulidis’e sürekli Türk tezlerini ilettiği iddia edildi",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Ολγκίν: Η «ταχυδρόμος» των τουρκικών αξιώσεων προς τη Λευκωσία",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Kıbrıs sorunu Yunanistan’ın BM Güvenlik Konseyi başkanlığı önceliklerinin üst sırasında",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Πρόεδρος Χριστοδουλίδης για Τουρκία: Η θέση του ΓΓ του ΟΗΕ, δε συμβαδίζει με τη συμπεριφορά της",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Erhürman, Holguin’in belge açıklamasına işaret etti: “Müzakereler başladığında ve kullanışlı hale geldiğinde verilecek”",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Holguin’in bu ay yeniden adaya gelmesi bekleniyor",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Erhürman: Holguin’in bu sözleri bunca tartışmanın içinde kaynayıp gitmesin",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Cumhurbaşkanı Erhürman, Holguin’in yanıtını hatırlattı",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Erhürman’dan Holguin’in açıklamasına dikkat: Müzakereler düşmanca bir ortamdan doğmaz",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Θετική η Λευκωσία στην παραμονή της Ολγκίν και μετά τον Δεκέμβρη – Ενημερώνεται σήμερα το Εθνικό Συμβούλιο για τη Νέα Υόρκη",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Holguin’in ANKA ajansına verdiği röportaj Rum basınında",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Μενελάου για Γκουτέρες: «Έχει στο μυαλό του συγκεκριμένες κινήσεις» για το Κυπριακό για το αμέσως επόμενο διάστημα",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Holguin: “Kıbrıs’ta ilerleme için fırsat penceresi giderek kapanıyor”",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Holguin’in New York’taki görüşmelere ilişkin açıklaması Rum basınında",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Holguin: Genel Sekreter görev süresi bitene kadar çözüm arayışlarını destekleyecek",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "BMGS’nin Kıbrıs Kişisel Temsilcisi Holguin’den New York’taki görüşmelere ilişkin açıklama",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Έτοιμο το έγγραφο των συγκλίσεων για Κυπριακό: Τι λέει η Ολγκίν για το «ναυάγιο» της Τριμερούς",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Δεν δίνει τις συγκλίσεις η Ολγκίν – Τι λέει σε γραπτή δήλωσή της για τις επαφές στη Νέα Υόρκη",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Erhürman-Guterres görüşmesi başladı",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Cumhurbaşkanı Erhürman Guterres ile görüşmesinin ardından açıklamalarda bulundu",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Cumhurbaşkanı Erhürman, BM Genel Sekreteri Guterres ile görüştü",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Erhürman: Guterres, Güven Yaratıcı Önlemlerde ilerleme bekliyor",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Κυπριακό, Ουκρανία και Μέση Ανατολή στη συνάντηση Μητσοτάκη – Γκουτέρες",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Öztürkler: “Türkiye’nin BM’deki mesajı Kıbrıs Türk halkının sesidir”",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Erhürman, New York’ta Holguin ile görüştü",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Το Κυπριακό στη Νέα Υόρκη: Η ανάγνωση της ομιλίας Χριστοδουλίδη, οι φήμες για Τριμερή και τα κλειστά χαρτιά Γκουτέρες",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Είδε Ολγκίν ο Ερχιουρμάν στη Νέα Υόρκη, επί τάπητος το Κυπριακό",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Βλέπει Γκουτέρες στη Νέα Υόρκη ο Πρόεδρος Χριστοδουλίδης",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Αξιολόγηση για το Κυπριακό στη συνάντηση Έρχιουρμαν με Ολγκίν στη Νέα Υόρκη",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Holguin: “Birleşmiş Milletlerin Kıbrıs konusuyla ilgili çabası devam edecek”",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Έθεσε ξανά στον Γκουτέρες τις κόκκινες γραμμές στο Κυπριακό ο Ερντογάν, τι θα πει ο ΠτΔ από το βήμα του ΟΗΕ",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Ο Χριστοδουλίδης στο βήμα του ΟΗΕ: LIVE οι απαντήσεις του στον Ερντογάν κι οι αναφορές για το Κυπριακό",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "«Τα ΗΕ συνεχίζουν τις προσπάθειες για το Κυπριακό»: Για μια ώρα τα είπαν ΠτΔ και Ολγκίν στην Νέα Υόρκη",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Χριστοδουλίδης στον ΟΗΕ: «Η διχοτόμηση δεν θα γίνει αποδεκτή – Το διεθνές δίκαιο δεν μπορεί να εφαρμόζεται επιλεκτικά»",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Νέο επεισόδιο στη νεκρή ζώνη στη Δένεια: Τούρκοι στρατιώτες παρεμπόδισαν Ελληνοκύπριους γεωργούς – Τι αναφέρει η ΟΥΝΦΙΚΥΠ (εικόνες & βίντεο)",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Erhürman yarın New York’a gidiyor: Guterres’in yaklaşımlarıyla uyum içindeyiz",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Από την ανεξαρτησία στη διεθνή εκπροσώπηση: Το Κυπριακό στη ΓΣ του ΟΗΕ μέσα από 66 χρόνια διπλωματίας",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Το Κυπριακό στη Νέα Υόρκη: Οι διπλωματικές επαφές Χριστοδουλίδη και το κρίσιμο ραντεβού Γκουτέρες-Ερντογάν",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Και το Κυπριακό στη συνάντηση Γκουτέρες – Ερντογάν στη Νέα Υόρκη, τι συζήτησαν",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Κυπριακό: Τι είπε ο Ερντογάν στον ΟΗΕ – Η γραμμή της Άγκυρας παραμένει ίδια",
+   "subject": "un",
+   "ok": true
+  },
+  {
+   "title": "Egyptian foreign minister discusses regional de-escalation with US envoy, Omani and Cypriot counterparts",
+   "subject": "un",
+   "ok": false
+  }
+ ]
+}

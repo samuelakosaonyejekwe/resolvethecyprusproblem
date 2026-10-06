@@ -289,3 +289,5 @@ button.x:hover{border-color:var(--bad);color:var(--bad)}
 
 button.tonebtn{border:1px solid currentColor;cursor:pointer}
 button.tonebtn:hover{filter:brightness(1.15)}
+
+.legend.barkey{margin-top:12px;padding-top:9px;border-top:1px solid var(--line);font-size:.78rem;color:var(--mute)}

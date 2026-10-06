@@ -126,7 +126,8 @@
     { name: 'Politics Today', host: 'politicstoday.org', lang: 'en', side: 'tr', q: ['Cyprus'] },
     { name: 'Daily News Egypt', host: 'www.dailynewsegypt.com', lang: 'en', side: 'reg', q: ['Cyprus'] },
     { name: 'The Media Line', host: 'themedialine.org', lang: 'en', side: 'reg', q: ['Cyprus'] },
-    { name: 'Middle East Monitor', host: 'www.middleeastmonitor.com', lang: 'en', side: 'reg', q: ['Cyprus'] }
+    { name: 'Middle East Monitor', host: 'www.middleeastmonitor.com', lang: 'en', side: 'reg', q: ['Cyprus'] },
+    { name: 'Вестник Кипра', host: 'vkcyprus.com', lang: 'ru', cy: true, side: 'ru', q: ['Россия', 'Лавров', 'Захарова', 'посол России', 'МИД'] }
   ];
   function plain(h) {
     return String(h || '').replace(/<[^>]+>/g, '').replace(/&#(\d+);/g, function (m, n) { return String.fromCharCode(+n); })
@@ -138,7 +139,7 @@
     PRESS.forEach(function (src) { src.q.forEach(function (q) { jobs.push({ src: src, q: q }); }); });
     var i = 0;
     function one(job) {
-      return get('https://' + job.src.host + '/wp-json/wp/v2/posts?per_page=50&_fields=title,link,date&after=' + (job.src.side === 'reg' || job.src.side === 'tr' && job.src.lang === 'en' ? far : after) + '&search=' + encodeURIComponent(job.q), 20000).then(function (list) {
+      return get('https://' + job.src.host + '/wp-json/wp/v2/posts?per_page=50&_fields=title,link,date&after=' + (job.src.side === 'reg' || job.src.side === 'ru' || job.src.side === 'tr' && job.src.lang === 'en' ? far : after) + '&search=' + encodeURIComponent(job.q), 20000).then(function (list) {
         if (!Array.isArray(list)) return;
         job.src.ok = true;
         list.forEach(function (x) {
@@ -170,7 +171,7 @@
   function useful(a) {
     if (!USE) {
       var parts = [];
-      Object.keys(SUB_EL).forEach(function (t) { parts.push(SUB_EL[t], SUB_TR[t]); if (TOP && TOP[t] && TOP[t].sub) parts.push(TOP[t].sub); });
+      Object.keys(SUB_EL).forEach(function (t) { parts.push(SUB_EL[t], SUB_TR[t]); if (SUB_RU[t]) parts.push(SUB_RU[t]); if (TOP && TOP[t] && TOP[t].sub) parts.push(TOP[t].sub); });
       Object.keys(VOICE).forEach(function (p) { parts.push(VOICE[p]); });
       try { USE = new RegExp(parts.join('|'), 'i'); } catch (e) { USE = /./; }
     }
@@ -203,8 +204,9 @@
       return get('https://questions-statements-api.parliament.uk/api/writtenquestions/questions?searchTerm=Cyprus&take=20&answered=Answered', 40000).then(function (j) {
         return (j.results || []).map(function (r) { return r.value || {}; }).filter(function (v) { return v.answerText && /cypr/i.test(v.questionText || ''); }).map(function (v) {
           var d = String(v.dateTabled || '').slice(0, 10), ans = plain(v.answerText);
-          return { title: plain(v.questionText).replace(/^To ask (His Majesty's Government|the Secretary of State[^,]*,)\s*/i, '').slice(0, 240), date: String(v.dateAnswered || v.dateTabled || '').slice(0, 10), body: v.answeringBodyName || '',
-            detail: ans.length > 420 ? ans.slice(0, ans.lastIndexOf(' ', 420)) + '…' : ans, url: 'https://questions-statements.parliament.uk/written-questions/detail/' + d + '/' + encodeURIComponent(v.uin || '') };
+          var first = ans.length > 230 ? ans.slice(0, ans.lastIndexOf(' ', 230)) + '…' : ans;
+          return { title: first, date: String(v.dateAnswered || v.dateTabled || '').slice(0, 10), body: v.answeringBodyName || '',
+            detail: 'In answer to: ' + plain(v.questionText).replace(/^To ask (His Majesty's Government|the Secretary of State[^,]*,)\s*/i, '').slice(0, 220), url: 'https://questions-statements.parliament.uk/written-questions/detail/' + d + '/' + encodeURIComponent(v.uin || '') };
         });
       }); } },
     uscong: { actor: 'US', body: 'United States Congress', kind: 'record', run: function () {
@@ -226,6 +228,14 @@
           return x;
         }).filter(function (x) { return x.actor === 'TR' ? /kıbrıs|kktc|rum|ada/i.test(x.title) : /kıbrıs sorunu|müzakere|çözüm|rum |federasyon|egemen|iki devlet|\bbm\b|holguin|guterres|garant|tanın|ambargo|izolasyon/i.test(x.title); });
       }); } },
+    rukremlin: { actor: 'RU', body: 'President of Russia and TASS state news agency', kind: 'statement', run: function () {
+      function feed(u) {
+        return get('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(u), 20000).then(function (j) {
+          return (j.items || []).filter(function (i) { return /cyprus|cypriot|кипр/i.test((i.title || '') + ' ' + (i.description || '')); }).map(function (i) { return { title: plain(i.title), date: String(i.pubDate || '').slice(0, 10), url: i.link, detail: plain(i.description).slice(0, 300) }; });
+        }).catch(function () { return []; });
+      }
+      return Promise.all([feed('http://en.kremlin.ru/events/president/news/feed'), feed('https://tass.com/rss/v2.xml')]).then(function (r) { return r[0].concat(r[1]); });
+    } },
     ec: { actor: 'EU', body: 'European Commission', kind: 'statement', run: function () {
       return get('https://ec.europa.eu/commission/presscorner/api/search?language=en&text=Cyprus&pagesize=50', 20000).then(function (j) {
         return (j.docuLanguageListResources || []).filter(function (r) { return /cyprus (problem|issue|settlement|talks|reunification)|representative for cyprus|cyprus.{0,40}(türkiye|turkey)|türkiye|turkey|eastern mediterranean/i.test(r.title || ''); }).map(function (r) {
@@ -253,6 +263,17 @@
       return out;
     });
   }
+  /* When a stakeholder has said nothing lately, its standing position is taken
+     from the current reference article on its relations with Cyprus. */
+  var STANDING = { ROC: 'Cyprus problem', TC: 'Northern Cyprus', TR: 'Cyprus–Turkey relations', GR: 'Cyprus–Greece relations', EU: 'Cyprus and the European Union', US: 'Cyprus–United States relations',
+    UK: 'Cyprus–United Kingdom relations', UN: 'United Nations Peacekeeping Force in Cyprus', RU: 'Cyprus–Russia relations', REG: 'Cyprus–Israel relations' };
+  L.standingTitles = Object.keys(STANDING).map(function (k) { return STANDING[k]; }).concat(['Cyprus–Egypt relations']);
+  L.standing = function (pid) {
+    var w = (load() || {}).wiki || {}, x = w[STANDING[pid]];
+    if (!x || !x.extract) return null;
+    var t = x.extract, cut = t.indexOf('. ', 160);
+    return { text: cut > 0 && cut < 380 ? t.slice(0, cut + 1) : t.slice(0, 300), url: x.url, updated: String(x.updated || '').slice(0, 10) };
+  };
   L.officialItems = function () {
     var o = (load() || {}).official || {}, all = [];
     Object.keys(o).forEach(function (k) { if (o[k] && o[k].items) all = all.concat(o[k].items); });
@@ -491,39 +512,45 @@
 
   /* Subject words for the Greek- and Turkish-language press. */
   var SUB_EL = {
-    talks: 'το κυπριακό(?! (ποδόσφαιρο|μπάσκετ|πρωτάθλημα|κράτος|διαβατήριο|χαλλούμι))|του κυπριακού(?! (ποδοσφαίρου|κράτους|λαού))|στο κυπριακό(?! (ποδόσφαιρο|πρωτάθλημα))|συνομιλ|διαπραγματ|επανένωσ|ομοσπονδ|χόλγκιν|ολγκίν|άτυπη διάσκεψη|διευρυμέν|επίλυση|κοινή συνάντηση', security: 'εγγυήσ|εγγυησ|ειρηνευτικ|ουνφικυπ|ουδετερότ|αποχώρηση στρατ',
+    talks: 'συνομιλ.{0,60}(κυπρ|κύπρ|λύση|ηγέτ|χριστοδουλίδ|έρχιουρμαν|ερχιουρμάν)|διαπραγματ.{0,60}(κυπρ|κύπρ|λύση|ηγέτ)|επανένωσ|ομοσπονδ|χόλγκιν|ολγκίν|άτυπη διάσκεψη|διευρυμέν.{0,20}(διάσκεψ|συνάντησ)|επίλυση του κυπρ|κοινή συνάντηση', security: 'εγγυήσ|εγγυησ|ειρηνευτικ|ουνφικυπ|ουδετερότ|αποχώρηση στρατ|νεκρή ζώνη|νεκρής ζώνης',
     troops: 'κατοχικός στρατός|κατοχικού στρατού|κατοχικά στρατεύματα|κατοχικές δυνάμεις|τουρκικά στρατεύματα|τούρκοι στρατιώτες', property: 'περιουσι|εκτοπισμ|επιτροπή αγνοουμένων|σφετερισ',
-    cbm: 'οδόφραγμα|οδοφράγμ|μέτρα οικοδόμησης|νεκρή ζώνη|νεκρής ζώνης|δικοινοτικ', trade: 'πράσινης γραμμής|πράσινη γραμμή|χαλλούμι|απευθείας πτήσ|τουρκοκυπριακή οικονομ',
+    cbm: 'οδόφραγμα|οδοφράγμ|μέτρα οικοδόμησης|μοε\\\\b|δικοινοτικ', trade: 'πράσινης γραμμής|πράσινη γραμμή|χαλλούμι|απευθείας πτήσ|τουρκοκυπριακή οικονομ',
     gas: 'φυσικό αέριο|φυσικού αερίου|γεώτρησ.{0,40}(αοζ|κύπρ|οικόπεδ)|αοζ|κοίτασμα|κοιτάσμ|chevron|exxon|αγωγό', grid: 'ηλεκτρική διασύνδεσ|ηλεκτρικής διασύνδεσης|καλώδιο|καλωδίου|great sea|\\bgsi\\b',
     euturkey: 'τελωνειακή ένωση|τελωνειακής ένωσης|ενταξιακ|ευρωτουρκικ|βίζα|safe', sanctions: 'κυρώσ', uscyprus: '(ηπα|αμερικ|ρούμπιο|τραμπ).{0,60}(κύπρ|κυπρ|χριστοδουλίδ)|(κύπρ|κυπρ|χριστοδουλίδ).{0,60}(ηπα|αμερικ|ρούμπιο|τραμπ)',
-    usturkey: 'f-?35|f-?16|s-?400|caatsa', courts: '(εδαδ|εδδα|ευρωπαϊκό δικαστήριο).{0,90}(τουρκ|κατεχ|περιουσ|αγνοούμεν)|(τουρκ|κατεχ|περιουσ).{0,90}(εδαδ|εδδα)|διεθνές δικαστήριο|συμβούλιο της ευρώπης.{0,60}(τουρκ|κυπριακ)', maritime: 'navtex|πολεμικό πλοίο|πολεμικά πλοία|ναυτικ|γαλάζια πατρίδα|θαλάσσι',
+    usturkey: '(f-?35|f-?16|s-?400).{0,80}(ηπα|αμερικ|ουάσιγκτον|τραμπ|ρούμπιο)|(ηπα|αμερικ|ουάσιγκτον|τραμπ|ρούμπιο).{0,80}(f-?35|f-?16|s-?400)|caatsa', courts: '(εδαδ|εδδα|ευρωπαϊκό δικαστήριο).{0,90}(τουρκ|κατεχ|περιουσ|αγνοούμεν)|(τουρκ|κατεχ|περιουσ).{0,90}(εδαδ|εδδα)|διεθνές δικαστήριο|συμβούλιο της ευρώπης.{0,60}(τουρκ|κυπριακ)', maritime: 'navtex|πολεμικό πλοίο|πολεμικά πλοία|ναυτικ|γαλάζια πατρίδα|θαλάσσι',
     varosha: 'βαρώσι|βαρωσί|αμμόχωστ|αμμοχώστ', recognition: 'δύο κράτ|δύο κρατ|αναγνώρισ|αναγνωρίσ|κυριαρχική ισότητα|κυριαρχικής ισότητας|ψευδοκράτ',
-    defence: 'εθνική φρουρά|εθνικής φρουράς|αμυντική θωράκιση|εξοπλισ|αντιαεροπορικ|στρατιωτική άσκηση|στρατιωτική παρέλαση', regional: 'ισραήλ|αίγυπτ|αιγύπτ|εμιράτ|ινδία|τριμερής συνεργασία|τριμερούς συνεργασίας|imec',
-    greeceturkey: 'ελληνοτουρκικ|μητσοτάκ|γεραπετρίτ|αιγαίο', britain: 'βρετανικ|βάσεις|βάσεων|ακρωτήρι', un: 'γκουτέρες.{0,80}(κυπρ|κύπρ|χριστοδουλίδ|έρχιουρμαν)|(κυπρ|κύπρ|χριστοδουλίδ|έρχιουρμαν).{0,80}(οηε|γκουτέρες|συμβούλιο ασφαλείας)|χόλγκιν|ολγκίν|ουνφικυπ',
+    defence: 'εθνική φρουρά|εθνικής φρουράς|αμυντική θωράκιση|εξοπλισ|αντιαεροπορικ|στρατιωτική άσκηση|στρατιωτική παρέλαση', regional: '(ισραήλ|αίγυπτ|αιγύπτ|εμιράτ|ινδία).{0,80}(κύπρ|κυπρ|λευκωσ|χριστοδουλίδ)|(κύπρ|κυπρ|λευκωσ|χριστοδουλίδ).{0,80}(ισραήλ|αίγυπτ|αιγύπτ|εμιράτ|ινδία)|τριμερής συνεργασία|τριμερούς συνεργασίας|imec',
+    greeceturkey: 'ελληνοτουρκικ|(μητσοτάκ|γεραπετρίτ|δένδια|αθήνα).{0,80}(τουρκ|ερντογάν|άγκυρα)|(τουρκ|ερντογάν|άγκυρα).{0,80}(μητσοτάκ|γεραπετρίτ|δένδια|αθήνα|ελλάδ)|αιγαίο', britain: 'βρετανικ|βάσεις|βάσεων|ακρωτήρι', un: 'γκουτέρες.{0,80}(κυπρ|κύπρ|χριστοδουλίδ|έρχιουρμαν)|(κυπρ|κύπρ|χριστοδουλίδ|έρχιουρμαν).{0,80}(οηε|γκουτέρες|συμβούλιο ασφαλείας)|χόλγκιν|ολγκίν|ουνφικυπ',
     russia: '(ρωσία|ρωσίας|ρωσικ|πούτιν|λαβρόφ).{0,80}(κύπρ|κυπρ|τουρκ|ακούγιου)|(κύπρ|κυπρ).{0,80}(ρωσία|ρωσίας|ρωσικ|πούτιν|λαβρόφ)', society: 'δημοψήφισμ|δημοσκόπησ|διασπορά|κοινωνία των πολιτών|κοινωνίας των πολιτών'
   };
   var SUB_TR = {
-    talks: 'kıbrıs sorunu|müzakere|federal çözüm|çözüm süreci|çözüme ulaş|federasyon|holguin|gayriresmi|5\\+1|üçlü görüşme|üçlü zirve', security: 'garanti|garantör|barış gücü|unficyp|tarafsızlık',
+    talks: 'kıbrıs sorunu|kıbrıs müzakere|müzakere.{0,60}(kıbrıs|rum|erhürman|hristodulidis|holguin|lider|federasyon|çözüm)|(kıbrıs|rum|erhürman|hristodulidis|holguin|lider).{0,60}müzakere|federal çözüm|çözüm süreci|federasyon|holguin|gayriresmi|5\\\\+1|üçlü görüşme|üçlü zirve', security: 'garanti|garantör|barış gücü|unficyp|tarafsızlık|ara bölge',
     troops: 'türk askeri|işgal|barış harekâtı|barış harekatı', property: 'mülkiyet|taşınmaz mal|\\btmk\\b|kayıp şahıs|tazminat|göçmen',
-    cbm: 'geçiş kapı|sınır kapı|kapıların|güven artırıcı|ara bölge|iki toplumlu', trade: 'yeşil hat|hellim|ercan|doğrudan uçuş|doğrudan ticaret',
+    cbm: 'geçiş kapı|sınır kapı|kapıların|güven artırıcı|iki toplumlu', trade: 'yeşil hat|hellim|ercan|doğrudan uçuş|doğrudan ticaret',
     gas: 'doğal gaz|doğalgaz|sondaj|\\bmeb\\b|hidrokarbon|chevron|exxon', grid: 'enterkonnekt|elektrik kablosu|great sea',
     euturkey: 'gümrük birliği|üyelik müzakere|vize serbest|ab-türkiye|\\bsafe\\b', sanctions: 'yaptırım', uscyprus: '(\\babd\\b|amerika|rubio|trump).{0,60}(kıbrıs|rum|hristodulidis)|(kıbrıs|rum|hristodulidis).{0,60}(\\babd\\b|amerika|rubio|trump)',
-    usturkey: 'f-?35|f-?16|s-?400|caatsa', courts: 'aihm|avrupa insan hakları|uluslararası adalet', maritime: 'navtex|savaş gemisi|donanma|mavi vatan|deniz yetki',
+    usturkey: '(f-?35|f-?16|s-?400).{0,80}(\\\\babd\\\\b|amerika|washington|trump|rubio)|(\\\\babd\\\\b|amerika|washington|trump|rubio).{0,80}(f-?35|f-?16|s-?400)|caatsa', courts: 'aihm|avrupa insan hakları|uluslararası adalet', maritime: 'navtex|savaş gemisi|donanma|mavi vatan|deniz yetki',
     varosha: 'maraş', recognition: 'iki devlet|tanınma|tanınması|egemen eşit', defence: 'milli muhafız|savunma.{0,50}(kıbrıs|rum|hristodulidis)|(kıbrıs|rum|hristodulidis).{0,60}savunma|tatbikat|silahlan',
-    regional: 'israil|mısır|\\bbae\\b|hindistan|üçlü mekanizma|üçlü iş ?birliği', greeceturkey: 'yunanistan|miçotakis|\\bege\\b', britain: 'ingiliz|ingiltere|üsler|ağrotur|dikelya',
+    regional: '(israil|mısır|\\\\bbae\\\\b|hindistan).{0,80}(kıbrıs|rum|hristodulidis)|(kıbrıs|rum|hristodulidis).{0,80}(israil|mısır|\\\\bbae\\\\b|hindistan)|üçlü mekanizma|üçlü iş ?birliği', greeceturkey: '(yunanistan|miçotakis|atina).{0,80}(türkiye|ankara|erdoğan|türk)|(türkiye|ankara|erdoğan).{0,80}(yunanistan|miçotakis|atina)|\\\\bege\\\\b', britain: 'ingiliz|ingiltere|üsler|ağrotur|dikelya',
     un: '(guterres|\\bbm\\b|güvenlik konseyi|birleşmiş milletler).{0,80}(kıbrıs|erhürman|müzakere)|(kıbrıs|erhürman).{0,80}(guterres|\\bbm\\b|güvenlik konseyi)|holguin|unficyp', russia: '(rusya|putin|lavrov).{0,80}(kıbrıs|kktc|türkiye|akkuyu)|(kıbrıs|kktc).{0,80}(rusya|putin|lavrov)|akkuyu', society: 'referandum|anket|diaspora|sivil toplum'
   };
-  var SAID_ANY = /\b(says?|said|tells?|told|interview|speech|remarks|statement|warns?|urges?|calls? (for|on)|vows?|pledges?|rejects?|insists?|accuses?|announces?)\b|δήλωσ|δηλώσ|είπε|ανέφερε|τόνισε|προειδοπ|κάλεσε|απάντησε|μήνυμα|συνέντευξη|dedi|açıkla|söyledi|belirtti|vurgula|uyardı|çağrı|röportaj|mesaj/i;
+  var SUB_RU = {
+    russia: 'росси|москв|лавров|путин|захаров|посольств|посол', talks: 'урегулирован|переговор|воссоединен|кипрск(ая|ой|ую) проблем', un: 'оон|гутерриш|совет безопасности',
+    recognition: 'признани|два государства', troops: 'турецк.{0,15}войск|оккупац', sanctions: 'санкци', gas: 'газ|бурени|шельф', defence: 'оборон|учени|вооружен'
+  };
+  var SAID_ANY = /\b(says?|said|tells?|told|interview|speech|remarks|statement|warns?|urges?|calls? (for|on)|vows?|pledges?|rejects?|insists?|accuses?|announces?)\b|δήλωσ|δηλώσ|είπε|ανέφερε|τόνισε|προειδοπ|κάλεσε|απάντησε|μήνυμα|συνέντευξη|dedi|açıkla|söyledi|belirtti|vurgula|uyardı|çağrı|röportaj|mesaj|заявил|сообщил|отметил|подчеркнул|интервью|призвал/i;
   var MEET_ANY = /\b(summit|conference|council|meeting|meets?|talks|forum|assembly|visit|session|dialogue|trilateral)\b|συνάντησ|συναντήσ|σύνοδ|συνόδ|διάσκεψ|συνέδρι|επίσκεψ|τριμερ|görüş|toplantı|zirve|konferans|ziyaret|buluş/i;
 
   /* Current headlines on a subject: news-index feeds and newspaper feeds, sorted
      on the device, plus the subject's own search where it has one. */
   L.reports = function (id, def) {
     var d = load() || {}, own = tload()[id], seen = {};
-    var re = { must: def.must ? new RegExp(def.must, 'i') : null, en: def.sub ? new RegExp(def.sub, 'i') : null, el: SUB_EL[id] ? new RegExp(SUB_EL[id], 'i') : null, tr: SUB_TR[id] ? new RegExp(SUB_TR[id], 'i') : null };
+    var re = { must: def.must ? new RegExp(def.must, 'i') : null, en: def.sub ? new RegExp(def.sub, 'i') : null, el: SUB_EL[id] ? new RegExp(SUB_EL[id], 'i') : null, tr: SUB_TR[id] ? new RegExp(SUB_TR[id], 'i') : null, ru: SUB_RU[id] ? new RegExp(SUB_RU[id], 'i') : null };
     var all = (d.news || []).concat(d.feed || [], own && own.items ? own.items : [], (d.press || {}).items || []);
+    var KYP = /(^|[^Α-Ωα-ωά-ώ])Κυπριακ(ό|ού)(?![α-ωά-ώ])(?! (ποδόσφαιρο|μπάσκετ|πρωτάθλημα|διαβατήριο|κράτος|χαλλούμι|κοινό|στοιχείο))/;
     all = all.filter(function (a) {
       var k = (a.title || '').toLowerCase().replace(/\s+/g, ' ').slice(0, 60), on = re[a.lang || 'en'];
+      if (id === 'talks' && a.lang === 'el' && a.title && !seen[k] && !leftOut(a.title) && KYP.test(a.title)) { seen[k] = 1; return true; }
       if (!a.title || seen[k] || leftOut(a.title) || !on || !on.test(a.title)) return false;
       if ((!a.cy || def.own) && re.must && !re.must.test(a.title)) return false;
       seen[k] = 1; return true;
@@ -537,20 +564,20 @@
      that stakeholder and read as conciliatory or hard-line from their wording. */
   var VOICE = {
     ROC: 'christodoulid|χριστοδουλίδ|hristodulidis|kombos|κόμπος|κόμπου|letymbiot|λετυμπιώτ|cyprus government|κυπριακή κυβέρνηση|rum lider|rum yönetimi',
-    TC: 'erh[uü]rman|ερχιουρμάν|ερχουρμάν|\\btatar\\b|τατάρ|üstel|ertuğruloğlu|turkish cypriot leader',
+    TC: 'erh[uü]rman|ερχιουρμάν|ερχουρμάν|έρχιουρμαν|üstel|ertuğruloğlu|turkish cypriot leader',
     TR: 'erdo[gğ]an|ερντογάν|\\bfidan\\b|φιντάν|cevdet yılmaz|yaşar güler|ankara says|turkish (president|foreign minister|defen[cs]e ministry|government)|\\bmsb\\b|τουρκικό υπεξ|türkiye dışişleri',
     GR: 'mitsotak|μητσοτάκ|miçotakis|gerapetrit|γεραπετρίτ|dendias|δένδια|greek (prime minister|foreign minister|government)',
     EU: 'von der leyen|φον ντερ λάιεν|antónio costa|antonio costa|kallas|κάλας|european commission|κομισιόν|european council|ab komisyon|eu envoy|johannes hahn',
     US: '\\btrump\\b|τραμπ|rubio|ρούμπιο|state department|στέιτ ντιπάρτμεντ|white house|λευκός οίκος|us ambassador|u\\.s\\. ambassador|abd büyükelçi|beyaz saray',
     UK: 'starmer|στάρμερ|burnham|lammy|foreign office|british (high commissioner|government|prime minister)|ingiltere başbakan',
-    UN: 'guterres|γκουτέρες|holgu[ií]n|χόλγκιν|ολγκίν|unficyp|ουνφικυπ|security council|συμβούλιο ασφαλείας|güvenlik konseyi|un envoy|un chief',
-    RU: '\\bputin\\b|πούτιν|lavrov|λαβρόφ|zakharova|ζαχάροβα|kremlin|κρεμλίν|russian (foreign ministry|ambassador)',
+    UN: 'guterres|(^|[^a-zçğıöşü])bm([^a-zçğıöşü]|$)|γκουτέρες|holgu[ií]n|χόλγκιν|ολγκίν|unficyp|ουνφικυπ|security council|συμβούλιο ασφαλείας|güvenlik konseyi|un envoy|un chief',
+    RU: '\\bputin\\b|πούτιν|lavrov|λαβρόφ|zakharova|ζαχάροβα|kremlin|κρεμλίν|russian (foreign ministry|ambassador)|путин|лавров|захаров|мид россии|мид рф|посол россии|посольств[оа] россии|кремл|песков',
     REG: 'netanyahu|νετανιάχου|\\bsisi\\b|σίσι|herzog|bin zayed|israeli (prime minister|foreign minister)|egyptian (president|foreign minister)|\\bmodi\\b'
   };
-  var SOFT = /\b(talks?|dialogue|ready|open to|agree\w*|cooperat\w*|welcom\w*|support\w*|window|solution|settlement|peace|resum\w*|bridge|trust|progress|constructive|commit\w*|meets?|meeting)\b|διάλογ|συνομιλ|έτοιμ|λύση|συνεργασ|καλωσόρι|στήριξ|πρόοδο|ειρήν|επανέναρξ|εποικοδομ|συνάντησ|diyalog|görüşme|hazır|çözüm|iş ?birliği|destek|barış|ilerleme|yapıcı|uzlaş/i;
-  var HARD = /\b(rejects?|warns?|threat|condemn|illegal|never|two-state|sovereign equality|accus|slams?|violat|provoc|occup|red line|not accept|refus|blames?|sanction)|απορρίπτ|απέρριψ|προειδοπ|απειλ|καταδικ|παράνομ|ποτέ|δύο κράτ|κυριαρχική ισότητα|κατηγορ|παραβίασ|πρόκλησ|προκλητικ|κατοχ|κόκκινη γραμμή|δεν δεχ|tanınması|tanınmalı|recognition of the|αναγνώριση του ψευδοκράτους|reddet|uyardı|tehdit|kınadı|kınıyor|yasa dışı|asla|iki devlet|egemen eşit|suçla|ihlal|provokasyon|işgal|kırmızı çizgi|kabul etme/i;
+  var SOFT = /\b(dialogue|compromise|constructive|goodwill|political will|peace process|confidence[- ]building|resum\w* (the )?(talks|negotiations)|ready (for|to) (talks|negotiat\w*|dialogue|meet)|open to (talks|dialogue)|window (of opportunity )?(remains|is|still) open|(supports?|supporting|backs?|commit\w* to|calls? for|seeks?|wants?|proposes?|urges?) .{0,50}(talks|negotiations|settlement|solution|federation|reunification|dialogue|joint meeting|un secretary-general.s efforts)|lasting.{0,30}settlement|significant developments)\b|διάλογ|εποικοδομ|καλή θέληση|πολιτική βούληση|επανέναρξ|προτείνει (κοινή )?συνάντηση|έτοιμ.{0,20}(συνομιλ|διάλογ|διαπραγματ)|λύση και (η )?επανένωση|στήριξ.{0,30}(λύση|συνομιλ|προσπάθει)|μέτρα οικοδόμησης|diyalog|yapıcı|iyi niyet|uzlaş|çözüm irade|çözüme ulaş|müzakere istiyoruz|görüşmelere devam|federal çözüm|federasyona destek|çözüm.{0,25}destek|güven artırıcı|fırsat penceresi|παράθυρο ευκαιρίας|диалог|урегулирован|готов.{0,20}переговор/i;
+  var HARD = /\b(rejects?|warns?|threat|condemn|illegal|never|two-state|sovereign equality|accus|slams?|violat|provoc|occup|red line|not accept|refus|blames?|sanction)|απορρίπτ|απέρριψ|προειδοπ|απειλ|καταδικ|παράνομ|ποτέ|δύο κράτ|κυριαρχική ισότητα|κατηγορ|παραβίασ|πρόκλησ|προκλητικ|κατοχ|κόκκινη γραμμή|δεν δεχ|tanınması|tanınmalı|tanıma çağrısı|tanıyın|iki ayrı devlet|ayrı devlet|iki devletli|recognition of the|recogni[sz]e the trnc|sert tepki|kınadı|şiddetle|hedefi ol|ikiyüzlü|düşmanca|gerçek dışı|yakından izle|olumsuz etkile|refusal|άρνηση της|κατοχική τουρκία|αναγνώριση του ψευδοκράτους|reddet|uyardı|tehdit|kınadı|kınıyor|yasa dışı|asla|iki devlet|egemen eşit|suçla|ihlal|provokasyon|işgal|kırmızı çizgi|kabul etme|осужда|предупрежд|угроз|незаконн|санкци|недопустим|провокац/i;
   /* Only statements about the Cyprus question itself are counted. */
-  var CORE = /cyprus (problem|issue|talks|settlement|solution)|negotiat|two-state|federa|sovereign|recogni|reunif|guarant|troops|occup|turkish cypriot|greek cypriot|northern cyprus|το κυπριακό|του κυπριακού|στο κυπριακό|συνομιλ|διαπραγματ|δύο κράτ|ομοσπονδ|κατοχ|εγγυήσ|επανένωσ|τουρκοκύπρι|κοινή συνάντηση|kıbrıs sorunu|müzakere|iki devlet|federasyon|egemen eşit|tanınma|garanti|kıbrıs türk|rum lider|çözüm/i;
+  var CORE = /cyprus (problem|issue|talks|settlement|solution)|negotiat|two-state|federa|sovereign|recogni|reunif|guarant|troops|occup|turkish cypriot|greek cypriot|northern cyprus|το κυπριακό|του κυπριακού|στο κυπριακό|συνομιλ|διαπραγματ|δύο κράτ|ομοσπονδ|κατοχ|εγγυήσ|επανένωσ|τουρκοκύπρι|κοινή συνάντηση|kıbrıs sorunu|müzakere|iki devlet|federasyon|egemen eşit|tanınma|garanti|kıbrıs türk|rum lider|çözüm|кипрск|урегулирован/i;
   /* Deeds: a headline that reports an act, not a remark. Deeds count double. */
   var ACT = /\b(signs?|signed|deploys?|deployed|opens?|opened|closes?|closed|sends?|sent|withdraws?|withdrew|votes?|voted|approves?|approved|blocks?|blocked|imposes?|imposed|lifts?|lifted|launch(es|ed)?|drills?|exercise|seizes?|seized|arrests?|arrested|inaugurat\w*|allocat\w*|adopts?|adopted|ratif\w*|extends?|suspends?|cancels?|violat\w*|builds?|expands?|issues?|issued|obstruct\w*|halts?|halted|designat\w*|appoints?|appointed|delivers?|delivered|buys?|bought|purchas\w*|sells?|sold|advances?|harass\w*|shadow\w*|dispatch\w*)\b|navtex|υπέγραψ|υπογράφ|ανέπτυξ|άνοιξ|ανοίγει|έκλεισ|απέστειλ|αποσύρ|ψήφισ|ενέκριν|μπλόκαρ|μπλοκάρ|επέβαλ|ήρε |ξεκίνησ|άσκηση|συνέλαβ|εγκαινί|παραβίασ|παρεμπόδισ|εξέδωσε|βγάζει|διόρισ|αγόρασ|παρέλαβ|imzala|konuşlandır|açtı|açıldı|açılıyor|kapattı|gönderdi|çekti|oyladı|onayladı|engelledi|uyguladı|kaldırdı|başlattı|tatbikat|tutukla|ihlal etti|ilan etti|atadı|satın al|teslim|eğitim uçuşu|uçuş yaptı|υπερπτήσ|overflight/i;
   var ACT_SOFT = /\b(signs?|signed|opens?|opened|withdraws?|withdrew|lifts?|lifted|approves?|approved|inaugurat\w*|ratif\w*|allocat\w*|designat\w*|appoints?|appointed)\b|υπέγραψ|υπογράφ|άνοιξ|ανοίγει|αποσύρ|ήρε |ενέκριν|εγκαινί|διόρισ|imzala|açtı|açıldı|açılıyor|çekti|kaldırdı|onayladı|atadı/i;
@@ -565,14 +592,15 @@
     US: 'washington|pentagon|u\\.s\\. (congress|senate|house)|congress|ουάσιγκτον|ηπα|\\babd\\b',
     UK: 'britain|british (government|forces|bases)|βρετανία|ingiltere',
     UN: 'unficyp|united nations|un security council|ουνφικυπ|οηε|birleşmiş milletler',
-    RU: 'russia|moscow|ρωσία|μόσχα|rusya',
+    RU: 'russia|moscow|ρωσία|μόσχα|rusya|россия|москва',
     REG: 'israel|egypt|ισραήλ|αίγυπτος|israil|mısır'
   };
   var QUOTE = /^[^:]{0,70}:\s|[«“"]/;
   /* Wording that turns a friendly word into its opposite: "no talks", "rules out a meeting". */
   var NEGATED = /\b(no|not|never|won't|will not|rules? out|ruled out|refus\w*|without|cancel\w*|den(y|ies|ied))\b.{0,40}\b(talks?|dialogue|meeting|negotiat\w*|solution|settlement|agree\w*|cooperat\w*|progress)\b|(δεν|όχι|χωρίς|αποκλεί|ακύρωσ|αρνήθηκ|αρνείται|ναυάγ).{0,50}(συνάντησ|διάλογ|συνομιλ|λύση|πρόοδο|συνεργασ)|(görüşme|diyalog|müzakere|çözüm|iş ?birliği|toplantı|zirve).{0,40}(yok|olmayacak|yapmam|yapmayacağ|reddet|iptal)|reddet.{0,40}(görüşme|müzakere|zirve)/i;
+  var COND = /\b(if|unless|only if|provided|as long as|must first|before any)\b|\b(αν|εάν|εφόσον|μόνο αν|υπό την προϋπόθεση|χωρίς να)\b|eğer|yoksa|olmadıkça|olmadan|şartıyla|ancak .{0,30}(halinde|durumunda)|если|только если|при условии/i;
   /* Backing someone else's position: read as that position, not as a friendly word. */
-  var ENDORSE = /\b(backs?|backed|supports?|supported|praises?|praised|welcomes?|welcomed|endorses?|hails?|hailed)\b|destek|övgü|tebrik|στηρίζει|στήριξη σ|χαιρετίζει|επικροτεί/i;
+  var ENDORSE = /\b(backs?|backed|supports?|supported|praises?|praised|welcomes?|welcomed|endorses?|hails?|hailed)\b|destek|övgü|tebrik|tarihi nitelikte|teşekkür|στηρίζει|στήριξη σ|χαιρετίζει|επικροτεί/i;
   L.voices = function () {
     var d = load() || {}, out = {}, res = {}, both = {}, seen = {}, pend = [], week = iso(new Date(Date.now() - 7 * 864e5));
     var all = (d.news || []).concat(d.feed || [], (d.press || {}).items || []);
@@ -595,7 +623,7 @@
     }
     if (!L._subj) {
       var parts = [];
-      Object.keys(SUB_EL).forEach(function (t) { parts.push(SUB_EL[t], SUB_TR[t]); if (TOP && TOP[t] && TOP[t].sub) parts.push(TOP[t].sub); });
+      Object.keys(SUB_EL).forEach(function (t) { parts.push(SUB_EL[t], SUB_TR[t]); if (SUB_RU[t]) parts.push(SUB_RU[t]); if (TOP && TOP[t] && TOP[t].sub) parts.push(TOP[t].sub); });
       try { L._subj = new RegExp(parts.join('|'), 'i'); } catch (e) { L._subj = /./; }
     }
     /* a statement belongs to whoever is named first in it */
@@ -610,11 +638,13 @@
       var k = pid + hkey(a.title), o = out[pid];
       if (!o || seen[k]) return;
       var text = a.title + ' ' + (a.detail || '');
-      var deed = kind === 'deed' || kind === 'record' || (kind === 'official' && (ACT_HARD.test(a.title) || ACT_SOFT.test(a.title)) && !QUOTE.test(a.title.slice(0, 40)));
+      var deed = kind === 'deed' || kind === 'record' || (kind === 'official' && (ACT_HARD.test(a.title) || ACT_SOFT.test(a.title)) && (!QUOTE.test(a.title.slice(0, 40)) || /duyurdu|announced|ανακοίνωσε|uçuş|tatbikat/i.test(a.title)));
       var hard = deed ? ACT_HARD.test(a.title) || HARD.test(text) : HARD.test(text), soft = deed ? ACT_SOFT.test(a.title) || SOFT.test(text) : SOFT.test(text);
       if (!hard && !soft && kind === 'word' && !SAID_ANY.test(a.title)) return;
       seen[k] = 1;
-      var tone = hard ? 'hard' : soft ? (NEGATED.test(a.title) ? 'plain' : 'soft') : 'plain', backs = null, own = tones()[hkey(a.title)];
+      /* When the wording pulls both ways, or a friendly word hangs on a condition, the tool does not guess: the item is marked unsure and left out until the reader decides. */
+      var hc = deed && (ACT_HARD.test(a.title) || ACT_SOFT.test(a.title)) ? ACT_HARD.test(a.title) : hard, sc = deed && (ACT_HARD.test(a.title) || ACT_SOFT.test(a.title)) ? ACT_SOFT.test(a.title) : soft;
+      var tone = hc && sc ? 'unsure' : hc ? 'hard' : sc ? (NEGATED.test(a.title) ? 'plain' : COND.test(a.title) ? 'unsure' : 'soft') : 'plain', backs = null, own = tones()[hkey(a.title)];
       if (!deed && tone !== 'hard' && ENDORSE.test(a.title)) backs = other(a.title, pid);
       /* weight: deeds 2; a government's own statement 2; a leader quoted directly counts the same where the government publishes nothing we can read; anything else 1; +0.5 when several papers carry it */
       var w = deed || kind === 'official' ? 2 : (!o.official && QUOTE.test(a.title) ? 2 : 1);
@@ -624,15 +654,28 @@
       if (age > 60) w *= 0.25; else if (age > 21) w *= 0.5;
       var it = { title: a.title, url: a.url, domain: a.domain || a.body, date: a.date || '', lang: a.lang || 'en', tone: own || tone, deed: deed, official: kind === 'official' || kind === 'record', outlets: (a.outlets || []).length, w: w, set: !!own };
       o.n += 1; o.items.push(it);
-      if (own) { if (own !== 'plain') count(o, it, 1); }
-      else if (backs) pend.push([o, it, backs]);
-      else if (tone !== 'plain') count(o, it, 1);
+      if (own) { if (own === 'soft' || own === 'hard') count(o, it, 1); }
+      else if (backs && tone !== 'unsure') pend.push([o, it, backs]);
+      else if (tone === 'soft' || tone === 'hard') count(o, it, 1);
     }
-    var CYMARK = /cypr|kıbrıs|κυπρ|κύπρ|kktc|trnc|τ\/κ|ε\/κ|turkish cypriot|rum (lider|yönetim)|τουρκοκύπρι|ψευδοκράτ|κατεχόμεν|νεκρή ζών|buffer zone|ara bölge/i;
-    var TRIVIAL = /visitors.? book|βιβλίο επισκεπτών|wreath|στεφάν|çelenk|anniversary|επέτειο|yıl ?dönümü|condolenc|συλλυπητήρι|taziye/i;
+    var CYMARK = /cypr|kıbrıs|κυπρ|κύπρ|kktc|trnc|τ\/κ|ε\/κ|turkish cypriot|rum (lider|yönetim)|τουρκοκύπρι|ψευδοκράτ|κατεχόμεν|νεκρή ζών|buffer zone|ara bölge|кипр/i;
+    var TRIVIAL = /visitors.? book|βιβλίο επισκεπτών|wreath|στεφάν|çelenk|anniversary|επέτειο|yıl ?dönümü|condolenc|συλλυπητήρι|taziye|başsağlığı|futbol|football|ποδόσφαιρ|arama (kurtarma|çalışma)|search and rescue/i;
+    /* "X: …" and, in Turkish, "X'den …": X is the one speaking */
+    function prefix(t) {
+      var m = /^([^:«“"]{2,48}):\s/.exec(t) || /^([^,:]{2,40})[’'](?:den|dan|ten|tan)\s/i.exec(t);
+      return m ? m[1] : null;
+    }
+    function whoIs(name) { var best = null, at = 1e9; Object.keys(both).forEach(function (q) { both[q].lastIndex = 0; var m = both[q].exec(name); if (m && m.index < at) { at = m.index; best = q; } }); return best; }
     all.forEach(function (a) {
-      var act = ACT.test(a.title), about = CYMARK.test(a.title);
-      if (act && about && !TRIVIAL.test(a.title) && (CORE.test(a.title) || L._subj.test(a.title))) { var who = doer(a.title); if (who) { add(who, a, 'deed'); return; } }
+      var act = ACT.test(a.title), about = CYMARK.test(a.title), pre = prefix(a.title);
+      if (TRIVIAL.test(a.title)) return;
+      if (pre && !ACT.test(pre)) {
+        /* someone is being quoted: it is that someone's word, or, if a short name that is not one of the ten, nobody's */
+        var sp0 = whoIs(pre), nw = pre.split(/\s+/).length;
+        if (sp0 && nw <= 6) { if (sp0 === 'ROC' || sp0 === 'TC' ? CORE.test(a.title) : about) add(sp0, a, 'word'); return; }
+        if (!sp0 && nw <= 3) return;
+      }
+      if (act && about && (CORE.test(a.title) || L._subj.test(a.title))) { var who = doer(a.title); if (who) { add(who, a, 'deed'); return; } }
       var sp = first(a.title);
       if (!sp) return;
       /* the island's own leaders: anything on the question; everyone else: anything they say about Cyprus */
@@ -640,7 +683,10 @@
     });
     off.forEach(function (a) {
       if (a.kind === 'record') { if (/cyprus|turk|türk|mediterranean/i.test(a.title)) add(a.actor, a, 'record'); }
-      else if (a.actor === 'TC' || a.actor === 'TR' || CYQ.test(a.title + ' ' + a.detail)) add(a.actor, a, 'official');
+      else if (!TRIVIAL.test(a.title) && (a.actor === 'TC' || a.actor === 'TR' || CYQ.test(a.title + ' ' + a.detail))) {
+        var pr = prefix(a.title), sp = pr && pr.split(/\s+/).length <= 6 ? whoIs(pr) : null;
+        if (sp && sp !== a.actor && !(a.actor === 'TC' && sp === 'TR') && !(a.actor === 'TR' && sp === 'TC')) add(sp, a, 'word'); else add(a.actor, a, 'official');
+      }
     });
     /* backing another's position takes that position's colour */
     /* A tilt needs a clear balance: a near-even split is "mixed" and tilts nothing. */
@@ -649,11 +695,12 @@
     pend.forEach(function (x) {
       var o = x[0], it = x[1], l = base[x[2]];
       it.tone = l < -0.1 ? 'hard' : l > 0.1 ? 'soft' : it.tone; it.backs = x[2];
-      if (it.tone !== 'plain') count(o, it, 1);
+      if (it.tone === 'soft' || it.tone === 'hard') count(o, it, 1);
     });
     Object.keys(out).forEach(function (pid) {
       var o = out[pid];
       o.items.sort(function (x, y) { return (y.deed - x.deed) || (y.official - x.official) || (x.date < y.date ? 1 : -1); });
+      o.unsure = o.items.filter(function (x) { return x.tone === 'unsure'; }).length;
       o.lean = lean(o);
       o.mixed = !o.lean && o.w >= 3 && (o.says.soft + o.does.soft) > 0 && (o.says.hard + o.does.hard) > 0;
       var s = o.says.soft - o.says.hard, dd = o.does.soft - o.does.hard;

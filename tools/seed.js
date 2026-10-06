@@ -13,7 +13,7 @@ const real = global.fetch;
 global.fetch = (u, o) => /gdeltproject/.test(u) ? Promise.reject(new Error('skipped')) :
   real(u, Object.assign({}, o, { headers: { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/126 Safari/537.36', Origin: 'https://samuelakosaonyejekwe.github.io' } }));
 L.setTopics(M.topics);
-L.refresh(M.precedents.map(p => p.wiki).filter(Boolean), pv).then(d => {
+L.refresh(M.precedents.map(p => p.wiki).filter(Boolean).concat(L.standingTitles), pv).then(d => {
   const seed = { t: Date.now(), press: d.press, official: d.official, attn: d.attn, research: d.research, wiki: d.wiki, fx: d.fx, wb: d.wb };
   const missing = ['press', 'official', 'attn'].filter(k => !seed[k]);
   if (missing.length) { console.error('Snapshot incomplete, not saved. Missing: ' + missing.join(', ')); process.exit(1); }
