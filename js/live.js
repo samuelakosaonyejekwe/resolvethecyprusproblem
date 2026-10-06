@@ -163,7 +163,7 @@
     function part(name, p) {
       return p.then(function (v) { d[name] = v; d.status[name] = { ok: true, t: Date.now() }; })
         .catch(function (e) { d.status[name] = { ok: false, t: Date.now(), err: String(e && e.message || e), kept: !!d[name] }; })
-        .then(function () { d.signals = signals(d); L.data = d; emit(); });
+        .then(function () { d.signals = signals(d); if (d.status[name].ok) d.t = Date.now(); L.data = d; save(); emit(); });
     }
     /* GDELT asks for at most one request every five seconds. */
     function retry(f) { return f().catch(function () { return wait(6500).then(f); }); }
