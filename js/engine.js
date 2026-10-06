@@ -133,8 +133,21 @@
     return null;
   };
 
+  /* The same test as `blocked`, as a plain yes or no: used in the inner loops. */
+  function open(C, S, m) {
+    if (m.hold) return true;
+    if (m.once && S.used[m.id]) return false;
+    var i;
+    for (i = 0; i < m.after.length; i++) if (!S.used[m.after[i]]) return false;
+    if (m.any.length) { var ok = false; for (i = 0; i < m.any.length; i++) if (S.used[m.any[i]]) { ok = true; break; } if (!ok) return false; }
+    for (i = 0; i < m.not.length; i++) if (S.used[m.not[i]]) return false;
+    for (i = 0; i < m.req.length; i++) { var v = S.x[m.req[i][0]]; if (v < m.req[i][1] || v > m.req[i][2]) return false; }
+    return true;
+  }
   E.available = function (C, S, pid) {
-    return C.byPlayer[pid].filter(function (m) { return !E.blocked(C, S, m); });
+    var ms = C.byPlayer[pid], out = [];
+    for (var i = 0; i < ms.length; i++) if (open(C, S, ms[i])) out.push(ms[i]);
+    return out;
   };
 
   /* mode: 'exp' expected value, 'ok' success, 'fail' failure. */
@@ -185,6 +198,14 @@
     opt = opt || {};
     var tau = opt.tau || C.M.tau || 1.2, deep = opt.deep !== false;
     var ms = avail[pid], out = [], i, j;
+    if (opt.top) {
+      var bm = ms[0], bvv = -1e9;
+      for (i = 0; i < ms.length; i++) {
+        var m0 = ms[i], v0 = E.utility(C, pid, E.apply(C, x, m0, S.used, 'exp')) - m0.cost + bound(m0, S.used) + leaning(C, pid, m0) + (m0.hold ? C.players[pid].inertia : 0);
+        if (v0 > bvv) { bvv = v0; bm = m0; }
+      }
+      return [{ m: bm, v: bvv, direct: bvv, p: 1 }];
+    }
     for (i = 0; i < ms.length; i++) {
       var m = ms[i], y = E.apply(C, x, m, S.used, 'exp');
       var direct = E.utility(C, pid, y);
@@ -222,7 +243,7 @@
     res.afterMove = x.slice();
     for (var i = 0; i < order.length; i++) {
       var q = order[i], before = x;
-      var ranked = E.rank(C, { used: used }, x, q, order.slice(i + 1), avail, { deep: opt.deep, tau: opt.tau });
+      var ranked = E.rank(C, { used: used }, x, q, opt.top ? null : order.slice(i + 1), avail, { deep: opt.deep, tau: opt.tau, top: opt.top && !rand });
       var ch = rand ? pick(ranked, rand()) : ranked[0], forced = false;
       if (opt.forced && opt.forced[q]) {
         var want = ranked.filter(function (o) { return o.m.id === opt.forced[q]; })[0];
@@ -282,30 +303,53 @@
   /* Score every option of `pid` by playing it and then following best play for
      `horizon` rounds. Returns the list ranked for the chosen objective. */
   E.recommend = function (C, S, pid, opt) {
+    var job = E.recommendJob(C, S, pid, opt);
+    while (!job.step(1e9)) { /* run to the end */ }
+    return job.result();
+  };
+  /* The same calculation, able to stop and resume: step(ms) works for about
+     that long and returns true once every move has been assessed. */
+  E.recommendJob = function (C, S, pid, opt) {
     opt = opt || {};
     var H = opt.horizon || 3, mode = opt.mode || 'sustainable', x0 = S.x, pot0 = mode === 'collective' ? 0 : E.potential(C, S, pid);
-    var list = E.available(C, S, pid).map(function (m) {
+    var todo = E.available(C, S, pid), i = 0, list = [];
+    function one(m) {
       var r = E.round(C, S, pid, m.id, { deep: opt.deep }), s = r.state, first = r, acc = E.objective(C, pid, s.x, mode, x0), wsum = 1;
       for (var h = 1; h < H; h++) {
         var nx = E.bestQuick(C, s, pid, mode, x0);
-        s = E.round(C, s, pid, nx.id, { deep: false }).state;
+        s = E.round(C, s, pid, nx.id, { deep: false, top: true }).state;
         var wgt = 1 + h * 0.5;
         acc += wgt * E.objective(C, pid, s.x, mode, x0); wsum += wgt;
       }
       if (mode !== 'collective') acc += wsum * 0.6 * (E.potential(C, s, pid) - pot0);
       return { m: m, score: acc / wsum, first: first, end: s.x };
-    });
-    var base = E.objective(C, pid, S.x, mode, x0);
-    list.forEach(function (o) { o.gain = o.score - base; });
-    list.sort(function (a, b) { return b.score - a.score; });
-    return list;
+    }
+    return {
+      step: function (ms) {
+        var t0 = Date.now();
+        while (i < todo.length) { list.push(one(todo[i])); i += 1; if (Date.now() - t0 >= ms) break; }
+        return i >= todo.length;
+      },
+      result: function () {
+        var base = E.objective(C, pid, S.x, mode, x0);
+        list.forEach(function (o) { o.gain = o.score - base; });
+        list.sort(function (a, b) { return b.score - a.score; });
+        return list;
+      }
+    };
   };
 
   /* Cheap one-round choice used inside deeper searches. */
   E.bestQuick = function (C, S, pid, mode, x0) {
     var ms = E.available(C, S, pid), best = ms[0], bv = -1e9;
+    /* with many options, look closely only at the eight that look best at first sight */
+    if (ms.length > 8) {
+      ms = ms.map(function (m) { return [m, E.objective(C, pid, E.apply(C, S.x, m, S.used, 'exp'), mode, x0) - m.cost * 0.3]; })
+        .sort(function (a, b) { return b[1] - a[1]; }).slice(0, 8).map(function (a) { return a[0]; });
+      best = ms[0];
+    }
     for (var i = 0; i < ms.length; i++) {
-      var r = E.round(C, S, pid, ms[i].id, { deep: false });
+      var r = E.round(C, S, pid, ms[i].id, { deep: false, top: true });
       var v = E.objective(C, pid, r.after, mode, x0) - ms[i].cost * 0.3;
       if (v > bv) { bv = v; best = ms[i]; }
     }
@@ -335,7 +379,7 @@
       var next = [];
       beams.forEach(function (b) {
         var cands = E.available(C, b.s, pid).map(function (m) {
-          var r = E.round(C, b.s, pid, m.id, { deep: false });
+          var r = E.round(C, b.s, pid, m.id, { deep: false, top: true });
           return { m: m, q: val(r.state) - m.cost * 0.3 };
         }).sort(function (a, c) { return c.q - a.q; }).slice(0, K);
         cands.forEach(function (c) {
@@ -476,6 +520,39 @@
       return { dim: d, lo: run(-15), hi: run(15) };
     });
     return { top: topId, robustness: same / N, wins: wins, runs: N, tornado: tornado, baseScore: base[0].score };
+  };
+
+  /* The same stress test, cut into small pieces of work so a page can run it
+     without freezing: call step() until it returns true, then read result(). */
+  E.sensitivityJob = function (C, S, pid, opt) {
+    opt = opt || {};
+    var N = opt.runs || 30, mode = opt.mode || 'sustainable', rand = E.rng(opt.seed || 11);
+    var base = null, topId = null, wins = {}, same = 0, n = 0, t = 0, tornado = [];
+    function trial() {
+      var M2 = JSON.parse(JSON.stringify(C.M));
+      M2.players.forEach(function (p) {
+        Object.keys(p.w).forEach(function (k) { p.w[k] *= 0.65 + 0.7 * rand(); });
+        Object.keys(p.ideal).forEach(function (k) { p.ideal[k] = clamp(p.ideal[k] + (rand() - 0.5) * 20); });
+      });
+      M2.moves.forEach(function (m) { Object.keys(m.fx || {}).forEach(function (k) { m.fx[k] *= 0.7 + 0.6 * rand(); }); });
+      var r = E.recommend(E.compile(M2), S, pid, { horizon: 2, mode: mode, deep: false })[0].m.id;
+      wins[r] = (wins[r] || 0) + 1;
+      if (r === topId) same++;
+    }
+    function shifted(i, delta) {
+      var s = { x: S.x.slice(), used: S.used, round: S.round, history: S.history };
+      s.x[i] = clamp(s.x[i] + delta);
+      return E.recommend(C, s, pid, { horizon: 2, mode: mode, deep: false })[0].score;
+    }
+    return {
+      step: function () {
+        if (!base) { base = E.recommend(C, S, pid, { horizon: 2, mode: mode, deep: false }); topId = base[0].m.id; return false; }
+        if (n < N) { trial(); n++; return false; }
+        if (t < C.n) { tornado.push({ dim: C.D[t], lo: shifted(t, -15), hi: shifted(t, 15) }); t++; return t >= C.n; }
+        return true;
+      },
+      result: function () { return { top: topId, robustness: same / N, wins: wins, runs: N, tornado: tornado, baseScore: base[0].score }; }
+    };
   };
 
   E.clamp = clamp;

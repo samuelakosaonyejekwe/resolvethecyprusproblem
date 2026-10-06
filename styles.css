@@ -275,7 +275,6 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   .pick{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
   .moves{grid-template-columns:1fr 1fr}
   body.has-sheet .moves{grid-template-columns:1fr}
-  .guide-sec p,.guide-sec .list{max-width:90ch}
 }
 @media (min-width:1300px){main{max-width:1320px}}
 .rec-desk{display:none}
@@ -291,3 +290,16 @@ button.tonebtn{border:1px solid currentColor;cursor:pointer}
 button.tonebtn:hover{filter:brightness(1.15)}
 
 .legend.barkey{margin-top:12px;padding-top:9px;border-top:1px solid var(--line);font-size:.78rem;color:var(--mute)}
+
+/* wide screens: long reading runs in two columns, so lines stay comfortable and the width is used */
+.gbody>*{break-inside:avoid}
+.gbody li{break-inside:avoid}
+.cols2>*{break-inside:avoid}
+@media (min-width:1100px){
+  .gbody{columns:2;column-gap:44px;column-rule:1px solid var(--line)}
+  .gbody h3{break-after:avoid}
+  .cols2{columns:2;column-gap:14px}
+  .cols2>.card{display:inline-block;width:100%}
+  .cols2>.lib-item{display:inline-block;width:100%}
+  #kbres .lib-item p,#kbres .lib-item .list{max-width:110ch}
+}

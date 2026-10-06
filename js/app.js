@@ -97,15 +97,40 @@
     });
     /* What each government has been saying lately tilts its choices a little. */
     /* ...and the user's own private assessment is added on top: the user may know more than the public record shows. */
-    var vs0 = A.live && !A.sigOff.voices ? L.voices() : null;
+    var vs0 = A.live && !A.sigOff.voices ? (L._lazy ? L._voicesReady() : L.voices()) : null;
     if (vs0) L.remember(vs0);
     A.priv = A.priv || {};
     m.players.forEach(function (pl) {
       var v = (vs0 && vs0[pl.id] ? vs0[pl.id].lean : 0) + 0.3 * (+A.priv[pl.id] || 0);
       pl.lean = v > 1 ? 1 : v < -1 ? -1 : v;
     });
+    /* Recalculate only when something that feeds the model has really changed. */
+    var key = I18N.lang + JSON.stringify([m.dims.map(function (d) { return d.base; }), m.players.map(function (pl) { return [pl.w, pl.ideal, +pl.lean.toFixed(3)]; }), m.moves.map(function (mv) { return mv.ps; })]);
+    if (C && key === build.key) return false;
+    build.key = key; build.model = m; build.stamp = (build.stamp || 0) + 1;
     C = E.compile(m);
     replay();
+    return true;
+  }
+
+  /* ---------- heavy calculations in the background ----------
+     Where the browser allows it, the long calculations run on a separate
+     thread. If it does not (a copy opened straight from a file, an old
+     browser), `fallback` does the same work on the page instead. */
+  var bgWorker = null, bgJobs = {}, bgId = 0, bgOff = location.protocol === 'file:' || typeof Worker === 'undefined';
+  L._lazy = !bgOff;
+  function background(job, opt, done, fallback, snap) {
+    if (!bgOff && !bgWorker) {
+      try {
+        bgWorker = new Worker('js/worker.js');
+        bgWorker.onmessage = function (e) { var f = bgJobs[e.data.id]; delete bgJobs[e.data.id]; if (f) { if (e.data.error) f.fallback(); else f.done(e.data.out); } };
+        bgWorker.onerror = function () { bgOff = true; L._lazy = false; bgWorker = null; var js = bgJobs; bgJobs = {}; Object.keys(js).forEach(function (k) { js[k].fallback(); }); };
+      } catch (e) { bgOff = true; L._lazy = false; bgWorker = null; }
+    }
+    if (bgOff || !bgWorker) return fallback();
+    var id = ++bgId; bgJobs[id] = { done: done, fallback: fallback };
+    if (snap) bgWorker.postMessage({ id: id, job: job, snap: snap });
+    else bgWorker.postMessage({ id: id, job: job, stamp: build.stamp, model: build.model, state: { x: S.x, used: S.used, round: S.round, history: [] }, pid: A.pid, opt: opt });
   }
 
   /* ---------- live evidence on the subject of a move ---------- */
@@ -170,13 +195,26 @@
     A.own = kept;
   }
 
+  function recKeep(c, list) {
+    var hold = list.filter(function (r) { return r.m.hold; })[0];
+    list.forEach(function (r) { r.rel = r.gain - (hold ? hold.gain : 0); });
+    c.rec = list;
+  }
   function recs() {
-    if (!cache.rec) {
-      cache.rec = E.recommend(C, S, A.pid, { horizon: 3, mode: A.mode });
-      var hold = cache.rec.filter(function (r) { return r.m.hold; })[0];
-      cache.rec.forEach(function (r) { r.rel = r.gain - (hold ? hold.gain : 0); });
-    }
+    if (!cache.rec) recKeep(cache, E.recommend(C, S, A.pid, { horizon: 3, mode: A.mode }));
     return cache.rec;
+  }
+  /* Work the recommendation out a little at a time, so the page stays responsive, then call back.
+     If the user moves on in the meantime the unfinished work is simply dropped. */
+  function recsSoon(then) {
+    if (cache.rec || !A.pid) return then();
+    var c0 = cache, job = E.recommendJob(C, S, A.pid, { horizon: 3, mode: A.mode });
+    (function next() {
+      if (cache !== c0) return;
+      if (cache.rec) return then();
+      if (!job.step(24)) return setTimeout(next, 0);
+      recKeep(c0, job.result()); then();
+    })();
   }
   function recFor(id) { return recs().filter(function (r) { return r.m.id === id; })[0]; }
 
@@ -421,23 +459,30 @@
 
   /* ---------- best path ---------- */
   function viewPath() {
-    if (!cache.path) {
-      setTimeout(function () {
-        var p = E.path(C, S, A.pid, { horizon: A.horizon, mode: A.mode });
-        var dn = E.doNothing(C, S, A.pid, A.horizon);
-        var first = p.steps[0] ? p.steps[0].move.id : null;
-        cache.path = { p: p, dn: dn, mc: E.monteCarlo(C, S, A.pid, first, { horizon: A.horizon, mode: A.mode, runs: 240 }), mc0: E.monteCarlo(C, S, A.pid, A.pid + '.hold', { horizon: A.horizon, mode: A.mode, runs: 240, seed: 9, holdOnly: true }) };
-        if (A.tab === 'path') render();
-      }, 30);
-      return '<p class="loading">' + T('Searching {0} rounds ahead…', A.horizon) + '</p>';
-    }
-    var k = cache.path, p = k.p, u0 = E.utility(C, A.pid, S.x), uE = E.utility(C, A.pid, p.s.x), uN = E.utility(C, A.pid, k.dn.s.x), MD = MODES();
-    var h = intro(T('Best path'), T('The strongest sequence of moves the computer can find for <b>{0}</b>, looking several rounds ahead with the app playing every other stakeholder. It is the critical path: the order matters, because early moves open later ones.', esc(P(A.pid).name)), [
+    var head = intro(T('Best path'), T('The strongest sequence of moves the computer can find for <b>{0}</b>, looking several rounds ahead with the app playing every other stakeholder. It is the critical path: the order matters, because early moves open later ones.', esc(P(A.pid).name)), [
       T('Choose what to optimise: your own payoff, a sustainable outcome, or the collective good.'),
       T('Choose how many rounds to look ahead (one round is about six months).'),
       T('Read the steps in order. Each shows your move, the replies the computer predicts, and where the position stands afterwards.'),
       T('Compare with <b>if you only wait</b>, then check the <b>odds</b> to see how the path fares when things go wrong.'),
-      T('Press <b>Play step 1</b> to take the first move onto the board.')]) +
+      T('Press <b>Play step 1</b> to take the first move onto the board.')]);
+    if (!cache.path) {
+      if (!cache.pathJob) {
+        var mine = cache; cache.pathJob = 1;
+        background('path', { horizon: A.horizon, mode: A.mode }, function (out) { if (cache === mine) { cache.path = out; if (A.tab === 'path') render(); } }, function () {
+          setTimeout(function () {
+            if (cache !== mine) return;
+            var p = E.path(C, S, A.pid, { horizon: A.horizon, mode: A.mode });
+            var dn = E.doNothing(C, S, A.pid, A.horizon);
+            var first = p.steps[0] ? p.steps[0].move.id : null;
+            cache.path = { p: p, dn: dn, mc: E.monteCarlo(C, S, A.pid, first, { horizon: A.horizon, mode: A.mode, runs: 240 }), mc0: E.monteCarlo(C, S, A.pid, A.pid + '.hold', { horizon: A.horizon, mode: A.mode, runs: 240, seed: 9, holdOnly: true }) };
+            if (A.tab === 'path') render();
+          }, 30);
+        });
+      }
+      return head + '<section class="card"><p class="loading">' + T('Searching {0} rounds ahead…', A.horizon) + '</p></section>';
+    }
+    var k = cache.path, p = k.p, u0 = E.utility(C, A.pid, S.x), uE = E.utility(C, A.pid, p.s.x), uN = E.utility(C, A.pid, k.dn.s.x), MD = MODES();
+    var h = head +
       '<section class="card"><div class="row between"><h2>' + T('Settings and headline result') + '</h2></div>' +
       '<div class="row" style="margin:8px 0"><div class="seg" role="group" aria-label="' + esc(T('Objective')) + '">' + Object.keys(MD).map(function (m) { return '<button data-a="mode" data-v="' + m + '" aria-pressed="' + (A.mode === m) + '">' + MD[m][0] + '</button>'; }).join('') + '</div>' +
       '<label class="help">' + T('Rounds ahead') + ' <select data-c="horizon">' + [3, 4, 6, 8, 10].map(function (n) { return '<option' + (n === A.horizon ? ' selected' : '') + '>' + n + '</option>'; }).join('') + '</select></label></div>' +
@@ -574,7 +619,17 @@
 
   function sens() {
     if (!cache.sens) {
-      setTimeout(function () { cache.sens = E.sensitivity(C, S, A.pid, { mode: A.mode, runs: 24 }); if (A.tab === 'analysis') render(); }, 60);
+      if (!cache.sensJob) {
+        var mine = cache; cache.sensJob = 1;
+        background('sens', { mode: A.mode, runs: 24 }, function (out) { if (cache === mine) { cache.sens = out; if (A.tab === 'analysis') render(); } }, function () {
+          /* on the page itself: a little at a time, so it never freezes */
+          var job = E.sensitivityJob(C, S, A.pid, { mode: A.mode, runs: 24 });
+          (function tick() {
+            if (cache !== mine) return;
+            if (job.step()) { cache.sens = job.result(); if (A.tab === 'analysis') render(); } else setTimeout(tick, 30);
+          })();
+        });
+      }
       return '<p class="loading">' + T('Stress-testing the recommendation…') + '</p>';
     }
     var s = cache.sens, top = C.moves[s.top], others = Object.keys(s.wins).filter(function (k) { return k !== s.top; }).sort(function (a, b) { return s.wins[b] - s.wins[a]; });
@@ -664,7 +719,7 @@
           (v.items.length ? '<tr><td colspan="6"><details class="explain"><summary>' + T('All {0} items counted for {1}: check and correct them', v.items.length, esc(pl.name)) + '</summary><ul class="news">' + v.items.slice(0, 40).map(function (x) {
             return '<li>' + toneBtn(x) + ' ' + (x.deed ? '<span class="tag">' + T('deed') + '</span> ' : x.official ? '<span class="tag info">' + T('official') + '</span> ' : '') + '<a href="' + esc(x.url) + '" target="_blank" rel="noopener" lang="' + x.lang + '">' + esc(x.title) + '</a> <span class="help">' + esc(x.domain) + ' · ' + esc(x.date) + (x.backs ? ' · ' + T('read as backing {0}', esc(P(x.backs).name)) : '') + '</span> ' + hideBtn(x.title) + '</li>';
           }).join('') + '</ul></details></td></tr>' : '');
-      }).join('') + '</tbody></table></div><p class="help">' + T('In each pair the first number is conciliatory, the second hard-line. The same story in several papers is counted once. A stakeholder needs a weighted total of at least three before any tilt is applied. If an item is read wrongly, open the list under its stakeholder and press its coloured label to change the reading, or × to leave it and other papers\' versions of it out of every count. <b>Your own assessment</b> is for what you know and the public record does not: it shifts that stakeholder\'s tilt on your device only, and is never shared, not even in a shared link.') + (A.acc ? ' ' + T('<b>How reliable is this reading?</b> Before this version was released, {0} real statements and deeds and {1} subject assignments were checked by hand, and the rules were corrected against the errors found. On that same set the tool now names the right stakeholder in {2}% of cases, tells word from deed in {3}%, reads the tone correctly or withholds judgment in {4}%, and assigns the right subject in {5}%. On headlines it has never seen it will do somewhat worse. Where the wording pulls both ways the tool marks the item "unsure" and leaves it out until you decide.', A.acc.n, A.acc.sn, A.acc.who, A.acc.kind, A.acc.tone, A.acc.subject) : '') + (L.hiddenCount() + L.tonedCount() ? ' ' + T('You have left out {0} and re-read {1}.', L.hiddenCount(), L.tonedCount()) + ' <button class="btn small" data-a="unhide">' + T('Undo my corrections') + '</button>' : '') + '</p>' : '<p class="help">' + T('No statements found yet. They appear after the newspaper feeds have been read.') + '</p>') + '</section>';
+      }).join('') + '</tbody></table></div><p class="help">' + T('In each pair the first number is conciliatory, the second hard-line. The same story in several papers is counted once. A stakeholder needs a weighted total of at least three before any tilt is applied. If an item is read wrongly, open the list under its stakeholder and press its coloured label to change the reading, or × to leave it and other papers\' versions of it out of every count. <b>Your own assessment</b> is for what you know and the public record does not: it shifts that stakeholder\'s tilt on your device only, and is never shared, not even in a shared link.') + (A.acc && A.acc.fresh ? ' ' + T('<b>How reliable is this reading?</b> It is measured against headlines read by hand. On {0} fresh headlines the rules had never been corrected against, they read {1}% correctly, but they caught only {2} of the {3} statements a careful reader would have counted, and {4} of the {5} they did count were right. The rules were then corrected against those too. On all {6} checked headlines they now read {7}% correctly, catch {8}% of what a reader would count, and are right in {9}% of what they count; subjects are assigned correctly in {10}% of {11} cases. Expect new headlines to fall between the two: the tool misses more than it invents, so an empty or thin tally means "little found", not "nothing said". Where the wording pulls both ways the item is marked "unsure" and left out until you decide.', A.acc.fresh.n, A.acc.fresh.right, A.acc.fresh.caught, A.acc.fresh.tally, A.acc.fresh.countedRight, A.acc.fresh.counted, A.acc.n, A.acc.right, A.acc.caught, A.acc.countedRight, A.acc.subject, A.acc.sn) : '') + (L.hiddenCount() + L.tonedCount() ? ' ' + T('You have left out {0} and re-read {1}.', L.hiddenCount(), L.tonedCount()) + ' <button class="btn small" data-a="unhide">' + T('Undo my corrections') + '</button>' : '') + '</p>' : '<p class="help">' + T('No statements found yet. They appear after the newspaper feeds have been read.') + '</p>') + '</section>';
 
     var off = L.officialItems();
     if (off.length) {
@@ -715,7 +770,7 @@
       '<div class="filter" style="margin-bottom:12px">' + LIBS().map(function (l) { return '<button data-a="lib" data-v="' + l[0] + '" aria-pressed="' + (A.lib === l[0]) + '">' + l[1] + '</button>'; }).join('') + '</div>';
     if (A.lib === 'players') {
       var u = E.utilities(C, S.x);
-      h += '<p class="help">' + T('One card per stakeholder. "Power" is relative influence on the outcome (0–100); "payoff now" is how close today\'s position is to that player\'s ideal (100 would be its perfect world).') + '</p>' + M.players.map(function (p) {
+      h += '<p class="help">' + T('One card per stakeholder. "Power" is relative influence on the outcome (0–100); "payoff now" is how close today\'s position is to that player\'s ideal (100 would be its perfect world).') + '</p><div class="cols2">' + M.players.map(function (p) {
         function li(t, a) { return a && a.length ? '<h3>' + t + '</h3><ul class="list">' + a.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; }
         var cp = C.players[p.id], top = M.dims.map(function (d, i) { return [d, cp.w[i], cp.ideal[i]]; }).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 4);
         return '<section class="card" id="pl-' + p.id + '" style="border-left:5px solid ' + p.color + '"><div class="row between"><h2>' + esc(p.name) + '</h2><span class="help">' + (p.veto ? T('power {0} · payoff now {1} · <b>can block a settlement</b>', p.power, u[p.id].toFixed(0)) : T('power {0} · payoff now {1}', p.power, u[p.id].toFixed(0))) + '</span></div><p>' + esc(p.role) + '</p>' +
@@ -723,7 +778,7 @@
           li(T('Interests'), p.interests) + li(T('Red lines'), p.redlines) + li(T('Leverage'), p.leverage) + li(T('Vulnerabilities'), p.vuln) +
           '<h3>' + T('Moves available in the model') + '</h3><div class="chips">' + C.byPlayer[p.id].filter(function (m) { return !m.hold; }).map(function (m) { return '<span class="chip" style="padding-left:10px" title="' + esc(m.src.desc) + '">' + esc(m.src.name) + '</span>'; }).join('') + '</div>' +
           (p.id !== A.pid ? '<p style="margin-top:10px"><button class="btn small" data-a="pick" data-v="' + p.id + '">' + T('Play as {0}', esc(p.short)) + '</button></p>' : '') + '</section>';
-      }).join('');
+      }).join('') + '</div>';
     } else if (A.lib === 'blueprints') {
       h += '<section class="card"><h2>' + T('Blueprint strategies') + '</h2><p class="help">' + T('The strategies set out in the source blueprints by Samuel Akosa Onyejekwe, searchable. These are proposals, not established facts; figures and timings inside them are the author\'s planning estimates. The moves on the board are drawn from them.') + '</p>' +
         (I.lang === 'en' ? '' : '<p class="help langnote">' + T('The source documents are in English, so the entries in this list are shown in English.') + '</p>') +
@@ -734,7 +789,7 @@
       h += '<div id="kbres">' + kbResults(q) + '</div></section>';
     } else if (A.lib === 'history') {
       h += '<section class="card"><h2>' + T('Precedents: what worked, what failed') + '</h2><p class="help">' + T('Past attempts on Cyprus and comparable cases elsewhere. Summaries update from Wikipedia when online.') + '</p>' + [['cy', T('Cyprus')], ['else', T('Elsewhere')]].map(function (g) {
-        return '<h2 style="margin-top:14px">' + g[1] + '</h2>' + M.precedents.filter(function (p) { return (p.scope === 'cy') === (g[0] === 'cy'); }).map(precItem).join('');
+        return '<h2 style="margin-top:14px">' + g[1] + '</h2><div class="cols2">' + M.precedents.filter(function (p) { return (p.scope === 'cy') === (g[0] === 'cy'); }).map(precItem).join('') + '</div>';
       }).join('') + '</section>';
     } else if (A.lib === 'assume') {
       h += viewAssume();
@@ -810,6 +865,15 @@
 
   /* ---------- render ---------- */
   function render() {
+    /* remember which fold-out sections the reader has opened, so a redraw does not close them */
+    var openNow = {}, od = view.querySelectorAll('details[open] > summary'), oi;
+    for (oi = 0; oi < od.length; oi++) openNow[od[oi].textContent.slice(0, 60)] = 1;
+    var keepTab = render.tab === A.tab + '|' + A.lib + '|' + A.pid; render.tab = A.tab + '|' + A.lib + '|' + A.pid;
+    setTimeout(function () {
+      if (!keepTab) return;
+      var all = view.querySelectorAll('details > summary');
+      for (var q = 0; q < all.length; q++) if (openNow[all[q].textContent.slice(0, 60)]) all[q].parentNode.open = true;
+    }, 0);
     chrome();
     if (!A.pid && A.tab === 'guide') { view.innerHTML = viewGuide() + '<nav class="pager">' + pagerBtn('prev', 'start', '', T('Previous'), T('Choose stakeholder')) + '</nav>'; sheet.className = 'sheet'; document.body.classList.remove('has-sheet'); return; }
     if (!A.pid) { view.innerHTML = viewPick(); sheet.className = 'sheet'; document.body.classList.remove('has-sheet'); return; }
@@ -889,9 +953,9 @@
       var cur = A.theme || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       A.theme = cur === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', A.theme); save();
     },
-    hide: function (v) { L.hide(v); build(); render(); toast(T('Left out. You can restore hidden headlines on the Live intel page.')); },
-    unhide: function () { L.unhideAll(); L.resetTones(); build(); render(); },
-    tone: function (v, el) { var t = el.getAttribute('data-t'); L.setTone(v, t === 'unsure' ? 'soft' : t === 'soft' ? 'hard' : t === 'hard' ? 'plain' : 'soft'); build(); render(); },
+    hide: function (v) { L.hide(v); readNow(); build(); render(); toast(T('Left out. You can restore hidden headlines on the Live intel page.')); },
+    unhide: function () { L.unhideAll(); L.resetTones(); readNow(); build(); render(); },
+    tone: function (v, el) { var t = el.getAttribute('data-t'); L.setTone(v, t === 'unsure' ? 'soft' : t === 'soft' ? 'hard' : t === 'hard' ? 'plain' : 'soft'); readNow(); build(); render(); },
     print: function () { if (A.tab === 'guide') acts.gopen('1'); window.print(); },
     resetassume: function () { A.custom = { base: {}, w: {}, ideal: {} }; build(); save(); render(); }
   };
@@ -950,27 +1014,44 @@
   }
   /* Evidence arriving for a subject changes the odds of its moves: recalculate,
      and redraw unless the user is in the middle of choosing something. */
-  var topicTimer = null;
-  L.onTopic(function () {
-    clearTimeout(topicTimer);
-    topicTimer = setTimeout(function () {
-      if (!C) return;
-      var el = document.activeElement, busyEl = el && (el.tagName === 'SELECT' || el.tagName === 'INPUT');
-      build();
-      if (!busyEl && (A.tab === 'board' || A.tab === 'analysis' || A.tab === 'live')) render();
-    }, 400);
-  });
-  var lastSig = '';
-  L.onChange(function (d, busy) {
+  var liveTimer = null, liveFirst = 0, liveDrawn = 0;
+  function liveArrived() {
     net();
-    var sig = JSON.stringify((d && d.signals) || []) + Object.keys((d && d.attn) || {}).map(function (t) { return t + ((L.agenda(t) || {}).k || ''); }).join(',') + ((d && d.feed) || []).length + '/' + (((d && d.press) || {}).items || []).length;
-    if (sig !== lastSig) {
-      lastSig = sig;
-      var el = document.activeElement, busyEl = el && (el.tagName === 'SELECT' || el.tagName === 'INPUT');
-      if (C) { build(); if (!busyEl && (A.tab === 'live' || A.tab === 'board' || A.tab === 'analysis')) render(); }
-    }
-    else if (A.tab === 'live') render();
-  });
+    var now = Date.now();
+    if (!liveFirst) liveFirst = now;
+    clearTimeout(liveTimer);
+    /* recalculate after 2.5 quiet seconds, or 8 seconds at most while things keep arriving */
+    liveTimer = setTimeout(liveApply, Math.max(0, Math.min(2500, liveFirst + 8000 - now)));
+    /* the Live intel page itself may redraw sooner, to show sources ticking in, but not more than every two seconds */
+    if (A.tab === 'live' && C && now - liveDrawn > 2000 && !typing()) { liveDrawn = now; render(); }
+  }
+  /* Sort the headlines by subject a little at a time while the page is idle, so that pages which show them open at once. */
+  var warmTimer = null;
+  function warmUp() {
+    clearTimeout(warmTimer);
+    var ids = Object.keys(M.topics), i = 0;
+    (function next() { if (i >= ids.length) return; L.reports(ids[i], M.topics[ids[i]]); i += 1; warmTimer = setTimeout(next, 60); })();
+  }
+  /* A correction made by the user is read at once, on the page, so that it shows immediately. */
+  function readNow() { var z = L._lazy; L._lazy = false; L.voices(); Object.keys(M.topics).forEach(function (t) { L.reports(t, M.topics[t]); }); L._lazy = z; }
+  function typing() { var el = document.activeElement; return !!el && (el.tagName === 'SELECT' || el.tagName === 'INPUT'); }
+  function liveApply() {
+    liveFirst = 0;
+    if (!C) return;
+    L._lazy = !bgOff;
+    if (bgOff) { warmUp(); return liveDone(); }
+    var snap = L._snapshot();
+    if (L._voicesReady()) return liveDone();
+    /* have the headlines read in the background, then recalculate */
+    background('read', null, function (out) { if (!L._adopt(snap.stamp, out)) return liveArrived(); liveDone(); }, function () { L._lazy = false; warmUp(); liveDone(); }, snap);
+  }
+  function liveDone() {
+    var changed = build();
+    if (typing()) return;
+    if (A.tab === 'live' || (changed && (A.tab === 'board' || A.tab === 'analysis' || A.tab === 'path')) || (A.tab === 'board' && A.sel)) recsSoon(function () { if (typing()) return; liveDrawn = Date.now(); render(); });
+  }
+  L.onTopic(liveArrived);
+  L.onChange(liveArrived);
   window.addEventListener('online', function () { net(); refresh(); });
   window.addEventListener('offline', net);
   document.addEventListener('visibilitychange', function () { if (!document.hidden && L.stale()) refresh(); });
@@ -982,10 +1063,10 @@
   /* ---------- start ---------- */
   restore();
   if (A.theme) document.documentElement.setAttribute('data-theme', A.theme);
-  lastSig = JSON.stringify((L.get() || {}).signals || []);
   fixed();
   L.setTopics(window.MODEL.topics);
   build(); installUI();
+  setTimeout(liveArrived, 300);          /* read what is already stored, in the background */
   try { history.replaceState(navState(), '', location.href); } catch (e) {}
   render();
   /* how well the reading rules did on the hand-checked set, measured at release */

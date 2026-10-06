@@ -134,7 +134,7 @@
       .replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
   }
   function press() {
-    var after = new Date(Date.now() - 21 * 864e5).toISOString().slice(0, 19), far = new Date(Date.now() - 90 * 864e5).toISOString().slice(0, 19), out = [], seen = {}, okSources = 0;
+    var after = new Date(Date.now() - (root.PRESS_DAYS || 21) * 864e5).toISOString().slice(0, 19), far = new Date(Date.now() - 90 * 864e5).toISOString().slice(0, 19), out = [], seen = {}, okSources = 0;
     var jobs = [];
     PRESS.forEach(function (src) { src.q.forEach(function (q) { jobs.push({ src: src, q: q }); }); });
     var i = 0;
@@ -469,27 +469,47 @@
   L.hiddenCount = function () { return Object.keys(hid()).length; };
   L.unhideAll = function () { hidden = {}; try { localStorage.removeItem(HKEY); } catch (e) {} emit(); };
 
+  /* A stamp that changes whenever anything the readings depend on changes. */
+  function stampOf() {
+    var d = L.data || {}, o = d.official || {}, n = 0;
+    Object.keys(o).forEach(function (k) { n += ((o[k] || {}).items || []).length + ((o[k] || {}).t || 0) % 1000; });
+    return [((d.press || {}).items || []).length, (d.news || []).length, (d.feed || []).length, n, Object.keys(topics || {}).length, Object.keys(hidden || {}).length, JSON.stringify(toned || {}).length, (d.status && d.status.press ? d.status.press.t : 0), new Date().getDate()].join('.');
+  }
+
   /* The same story carried by several papers is one story. Two headlines are
      taken as the same story when most of their words coincide. */
   var SPLIT;
   try { SPLIT = new RegExp('[^\\p{L}\\p{N}]+', 'u'); } catch (e) { SPLIT = /[\s.,;:!?"'«»“”‘’()\[\]\-–—\/|]+/; }
-  function words(t) { var o = {}, n = 0; String(t || '').toLowerCase().split(SPLIT).forEach(function (w) { if (w.length > 3 && !o[w]) { o[w] = 1; n += 1; } }); o._n = n; return o; }
+  var WCACHE = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
+  function words(t) { var o = {}, n = 0; String(t || '').toLowerCase().split(SPLIT).forEach(function (w) { if (w.length > 3 && !o[w]) { o[w] = 1; n += 1; } }); o._n = n; o._k = Object.keys(o).filter(function (k) { return k !== '_n'; }); return o; }
+  function wordsOf(a) { if (!WCACHE) return words(a.title); var w = WCACHE.get(a); if (!w) { w = words(a.title); WCACHE.set(a, w); } return w; }
   function same(a, b) {
     if (!a._n || !b._n) return false;
-    var k, c = 0;
-    for (k in a) if (k !== '_n' && b[k]) c += 1;
+    var small = a._n <= b._n ? a : b, big = small === a ? b : a;
+    if (small._n / big._n < 0.55) return false;                 /* too different in length to be the same story */
+    var k = small._k, c = 0, need = Math.ceil(0.55 * (a._n + b._n) / 1.55), left = k.length;
+    for (var i = 0; i < k.length; i++) { if (big[k[i]] === 1) c += 1; left -= 1; if (c + left < need) return false; }
     return c / (a._n + b._n - c) >= 0.55;
   }
   function stories(list) {
-    var out = [];
+    var out = [], index = {};
     list.forEach(function (a) {
-      var w = words(a.title), i;
-      for (i = 0; i < out.length; i++) if (out[i].lang === a.lang && same(out[i]._w, w)) {
-        if (out[i].outlets.indexOf(a.domain) < 0) out[i].outlets.push(a.domain);
-        return;
+      var w = wordsOf(a), lang = a.lang || 'en', day = a.date ? Date.parse(a.date) / 864e5 : 0, tried = {}, k = w._k, i, j, hit = null;
+      /* the same story shares most of its words, so only groups sharing a word need to be looked at */
+      for (i = 0; i < k.length && !hit; i++) {
+        var groups = index[lang + ' ' + k[i]];
+        if (!groups || groups.length > 40) continue;       /* a word in everything tells us nothing */
+        for (j = 0; j < groups.length; j++) {
+          var g = groups[j];
+          if (tried[g._i]) continue;
+          tried[g._i] = 1;
+          if (Math.abs(g._d - day) <= 3 && same(g._w, w)) { hit = g; break; }
+        }
       }
-      var c = {}; Object.keys(a).forEach(function (k) { c[k] = a[k]; });
-      c._w = w; c.outlets = [a.domain]; out.push(c);
+      if (hit) { if (hit.outlets.indexOf(a.domain) < 0) hit.outlets.push(a.domain); return; }
+      var c = {}; Object.keys(a).forEach(function (x) { c[x] = a[x]; });
+      c._w = w; c._d = day; c._i = out.length; c.outlets = [a.domain]; out.push(c);
+      for (i = 0; i < k.length; i++) (index[lang + ' ' + k[i]] || (index[lang + ' ' + k[i]] = [])).push(c);
     });
     return out;
   }
@@ -544,6 +564,11 @@
   /* Current headlines on a subject: news-index feeds and newspaper feeds, sorted
      on the device, plus the subject's own search where it has one. */
   L.reports = function (id, def) {
+    var memo = stampOf();
+    /* while a fresh reading is on its way from the background, show the last one rather than hold the page up */
+    if (L._lazy && L._repAt !== memo) return (L._rep && L._rep[id]) || [];
+    if (L._repAt !== memo) { L._rep = {}; L._repAt = memo; }
+    if (L._rep[id]) return L._rep[id];
     var d = load() || {}, own = tload()[id], seen = {};
     var re = { must: def.must ? new RegExp(def.must, 'i') : null, en: def.sub ? new RegExp(def.sub, 'i') : null, el: SUB_EL[id] ? new RegExp(SUB_EL[id], 'i') : null, tr: SUB_TR[id] ? new RegExp(SUB_TR[id], 'i') : null, ru: SUB_RU[id] ? new RegExp(SUB_RU[id], 'i') : null };
     var all = (d.news || []).concat(d.feed || [], own && own.items ? own.items : [], (d.press || {}).items || []);
@@ -556,7 +581,7 @@
       seen[k] = 1; return true;
     }).map(function (a) { return { title: a.title, url: a.url, domain: a.domain, date: a.date, lang: a.lang || 'en', said: SAID_ANY.test(a.title), meet: MEET_ANY.test(a.title) }; })
       .sort(function (x, y) { return x.date < y.date ? 1 : x.date > y.date ? -1 : 0; });
-    return stories(all).map(function (a) { delete a._w; return a; });
+    return (L._rep[id] = stories(all).map(function (a) { delete a._w; delete a._d; delete a._i; return a; }));
   };
 
   /* ---------- what governments are saying ----------
@@ -564,7 +589,7 @@
      that stakeholder and read as conciliatory or hard-line from their wording. */
   var VOICE = {
     ROC: 'christodoulid|χριστοδουλίδ|hristodulidis|kombos|κόμπος|κόμπου|letymbiot|λετυμπιώτ|cyprus government|κυπριακή κυβέρνηση|rum lider|rum yönetimi',
-    TC: 'erh[uü]rman|ερχιουρμάν|ερχουρμάν|έρχιουρμαν|üstel|ertuğruloğlu|turkish cypriot leader',
+    TC: 'erh[uü]rman|ερχιουρμάν|ερχουρμάν|έρχιουρμαν|taçoy|kktc dışişleri|^dışişleri( bakanlığı)?\\b|üstel|ertuğruloğlu|turkish cypriot leader',
     TR: 'erdo[gğ]an|ερντογάν|\\bfidan\\b|φιντάν|cevdet yılmaz|yaşar güler|ankara says|turkish (president|foreign minister|defen[cs]e ministry|government)|\\bmsb\\b|τουρκικό υπεξ|türkiye dışişleri',
     GR: 'mitsotak|μητσοτάκ|miçotakis|gerapetrit|γεραπετρίτ|dendias|δένδια|greek (prime minister|foreign minister|government)',
     EU: 'von der leyen|φον ντερ λάιεν|antónio costa|antonio costa|kallas|κάλας|european commission|κομισιόν|european council|ab komisyon|eu envoy|johannes hahn',
@@ -574,8 +599,8 @@
     RU: '\\bputin\\b|πούτιν|lavrov|λαβρόφ|zakharova|ζαχάροβα|kremlin|κρεμλίν|russian (foreign ministry|ambassador)|путин|лавров|захаров|мид россии|мид рф|посол россии|посольств[оа] россии|кремл|песков',
     REG: 'netanyahu|νετανιάχου|\\bsisi\\b|σίσι|herzog|bin zayed|israeli (prime minister|foreign minister)|egyptian (president|foreign minister)|\\bmodi\\b'
   };
-  var SOFT = /\b(dialogue|compromise|constructive|goodwill|political will|peace process|confidence[- ]building|resum\w* (the )?(talks|negotiations)|ready (for|to) (talks|negotiat\w*|dialogue|meet)|open to (talks|dialogue)|window (of opportunity )?(remains|is|still) open|(supports?|supporting|backs?|commit\w* to|calls? for|seeks?|wants?|proposes?|urges?) .{0,50}(talks|negotiations|settlement|solution|federation|reunification|dialogue|joint meeting|un secretary-general.s efforts)|lasting.{0,30}settlement|significant developments)\b|διάλογ|εποικοδομ|καλή θέληση|πολιτική βούληση|επανέναρξ|προτείνει (κοινή )?συνάντηση|έτοιμ.{0,20}(συνομιλ|διάλογ|διαπραγματ)|λύση και (η )?επανένωση|στήριξ.{0,30}(λύση|συνομιλ|προσπάθει)|μέτρα οικοδόμησης|diyalog|yapıcı|iyi niyet|uzlaş|çözüm irade|çözüme ulaş|müzakere istiyoruz|görüşmelere devam|federal çözüm|federasyona destek|çözüm.{0,25}destek|güven artırıcı|fırsat penceresi|παράθυρο ευκαιρίας|диалог|урегулирован|готов.{0,20}переговор/i;
-  var HARD = /\b(rejects?|warns?|threat|condemn|illegal|never|two-state|sovereign equality|accus|slams?|violat|provoc|occup|red line|not accept|refus|blames?|sanction)|απορρίπτ|απέρριψ|προειδοπ|απειλ|καταδικ|παράνομ|ποτέ|δύο κράτ|κυριαρχική ισότητα|κατηγορ|παραβίασ|πρόκλησ|προκλητικ|κατοχ|κόκκινη γραμμή|δεν δεχ|tanınması|tanınmalı|tanıma çağrısı|tanıyın|iki ayrı devlet|ayrı devlet|iki devletli|recognition of the|recogni[sz]e the trnc|sert tepki|kınadı|şiddetle|hedefi ol|ikiyüzlü|düşmanca|gerçek dışı|yakından izle|olumsuz etkile|refusal|άρνηση της|κατοχική τουρκία|αναγνώριση του ψευδοκράτους|reddet|uyardı|tehdit|kınadı|kınıyor|yasa dışı|asla|iki devlet|egemen eşit|suçla|ihlal|provokasyon|işgal|kırmızı çizgi|kabul etme|осужда|предупрежд|угроз|незаконн|санкци|недопустим|провокац/i;
+  var SOFT = /\b(dialogue|compromise|constructive|goodwill|political will|peace process|confidence[- ]building|resum\w* (the )?(talks|negotiations)|ready (for|to) (talks|negotiat\w*|dialogue|meet)|open to (talks|dialogue)|window (of opportunity )?(remains|is|still) open|(supports?|supporting|backs?|commit\w* to|calls? for|seeks?|wants?|proposes?|urges?) .{0,50}(talks|negotiations|settlement|solution|federation|reunification|dialogue|joint meeting|un secretary-general.s efforts)|lasting.{0,30}settlement|significant developments)\b|διάλογ|εποικοδομ|καλή θέληση|πολιτική βούληση|επανέναρξ|προτείνει (κοινή )?συνάντηση|έτοιμ.{0,20}(συνομιλ|διάλογ|διαπραγματ)|λύση και (η )?επανένωση|στήριξ.{0,30}(λύση|συνομιλ|προσπάθει)|μέτρα οικοδόμησης|diyalog|yapıcı|iyi niyet|uzlaş|çözüm irade|çözüme ulaş|müzakere istiyoruz|görüşmelere devam|federal çözüm|federasyona destek|çözüm.{0,25}destek|güven artırıcı|fırsat penceresi|παράθυρο ευκαιρίας|çabalarını destekl|genel sekreter.{0,40}destek|üçlü görüşme (öner|iste|arayış|olanağ)|τριμερή συνάντηση|seeks? (a )?(trilateral|three-way)|диалог|урегулирован|готов.{0,20}переговор/i;
+  var HARD = /\b(rejects?|warns?|threat|condemn|illegal|never|two-state|sovereign equality|accus|slams?|violat|provoc|occup|red line|not accept|refus|blames?|sanction)|απορρίπτ|απέρριψ|προειδοπ|απειλ|καταδικ|παράνομ|ποτέ|δύο κράτ|κυριαρχική ισότητα|κατηγορ|παραβίασ|πρόκλησ|προκλητικ|κατοχ|κόκκινη γραμμή|δεν δεχ|tanınması|tanınmalı|tanıma çağrısı|tanıyın|iki ayrı devlet|ayrı devlet|iki devletli|recognition of the|recogni[sz]e the trnc|sert tepki|kınadı|şiddetle|kınıyor|kınama|ortaklık.{0,25}(yok|olmayacak|kurulamaz)|hedefi ol|ikiyüzlü|düşmanca|gerçek dışı|yakından izle|olumsuz etkile|refusal|άρνηση της|κατοχική τουρκία|αναγνώριση του ψευδοκράτους|reddet|uyardı|tehdit|kınadı|kınıyor|yasa dışı|asla|iki devlet|egemen eşit|suçla|ihlal|provokasyon|işgal|kırmızı çizgi|kabul etme|осужда|предупрежд|угроз|незаконн|санкци|недопустим|провокац/i;
   /* Only statements about the Cyprus question itself are counted. */
   var CORE = /cyprus (problem|issue|talks|settlement|solution)|negotiat|two-state|federa|sovereign|recogni|reunif|guarant|troops|occup|turkish cypriot|greek cypriot|northern cyprus|το κυπριακό|του κυπριακού|στο κυπριακό|συνομιλ|διαπραγματ|δύο κράτ|ομοσπονδ|κατοχ|εγγυήσ|επανένωσ|τουρκοκύπρι|κοινή συνάντηση|kıbrıs sorunu|müzakere|iki devlet|federasyon|egemen eşit|tanınma|garanti|kıbrıs türk|rum lider|çözüm|кипрск|урегулирован/i;
   /* Deeds: a headline that reports an act, not a remark. Deeds count double. */
@@ -601,7 +626,26 @@
   var COND = /\b(if|unless|only if|provided|as long as|must first|before any)\b|\b(αν|εάν|εφόσον|μόνο αν|υπό την προϋπόθεση|χωρίς να)\b|eğer|yoksa|olmadıkça|olmadan|şartıyla|ancak .{0,30}(halinde|durumunda)|если|только если|при условии/i;
   /* Backing someone else's position: read as that position, not as a friendly word. */
   var ENDORSE = /\b(backs?|backed|supports?|supported|praises?|praised|welcomes?|welcomed|endorses?|hails?|hailed)\b|destek|övgü|tebrik|tarihi nitelikte|teşekkür|στηρίζει|στήριξη σ|χαιρετίζει|επικροτεί/i;
+  /* The reading of all headlines can be done on a background thread: the page
+     hands over what it holds, and takes back the finished readings. */
+  L._snapshot = function () { return { data: load(), topics: tload(), hidden: hid(), toned: tones(), top: TOP, stamp: stampOf() }; };
+  L._inject = function (p) { L.data = p.data; topics = p.topics || {}; hidden = p.hidden || {}; toned = p.toned || {}; TOP = p.top; L._voices = null; L._rep = null; L._repAt = null; L._subj = null; USE = null; };
+  L._readAll = function (defs) {
+    var reps = {};
+    Object.keys(defs).forEach(function (t) { reps[t] = L.reports(t, defs[t]); });
+    return { voices: L.voices(), reports: reps };
+  };
+  L._adopt = function (stamp, out) {
+    if (stamp !== stampOf()) return false;                 /* something changed meanwhile: ask again */
+    L._voices = out.voices; L._voicesAt = stamp; L._rep = out.reports; L._repAt = stamp;
+    return true;
+  };
+  L._voicesReady = function () { return L._voices && L._voicesAt === stampOf() ? L._voices : null; };
+  var RES = {}, BOTH = {};
   L.voices = function () {
+    var memo = stampOf();
+    if (L._voices && L._voicesAt === memo) return L._voices;
+    if (L._lazy) return L._voices || {};
     var d = load() || {}, out = {}, res = {}, both = {}, seen = {}, pend = [], week = iso(new Date(Date.now() - 7 * 864e5));
     var all = (d.news || []).concat(d.feed || [], (d.press || {}).items || []);
     Object.keys(tload()).forEach(function (t) { all = all.concat((topics[t] || {}).items || []); });
@@ -609,7 +653,9 @@
     var off = L.officialItems(), hasOfficial = {};
     off.forEach(function (a) { if (a.kind !== 'record') hasOfficial[a.actor] = 1; });
     Object.keys(VOICE).forEach(function (pid) {
-      res[pid] = new RegExp(VOICE[pid], 'i'); both[pid] = new RegExp(VOICE[pid] + '|' + STATE[pid], 'ig');
+      /* the patterns are built once and kept */
+      if (!RES[pid]) { RES[pid] = new RegExp(VOICE[pid], 'i'); BOTH[pid] = new RegExp(VOICE[pid] + '|' + STATE[pid], 'ig'); }
+      res[pid] = RES[pid]; both[pid] = BOTH[pid];
       out[pid] = { says: { soft: 0, hard: 0 }, does: { soft: 0, hard: 0 }, n: 0, w: 0, score: 0, now: [0, 0], prev: [0, 0], items: [], official: !!hasOfficial[pid] };
     });
     /* who acted: the one named nearest before the verb, else the first named after it */
@@ -659,10 +705,11 @@
       else if (tone === 'soft' || tone === 'hard') count(o, it, 1);
     }
     var CYMARK = /cypr|kıbrıs|κυπρ|κύπρ|kktc|trnc|τ\/κ|ε\/κ|turkish cypriot|rum (lider|yönetim)|τουρκοκύπρι|ψευδοκράτ|κατεχόμεν|νεκρή ζών|buffer zone|ara bölge|кипр/i;
-    var TRIVIAL = /visitors.? book|βιβλίο επισκεπτών|wreath|στεφάν|çelenk|anniversary|επέτειο|yıl ?dönümü|condolenc|συλλυπητήρι|taziye|başsağlığı|futbol|football|ποδόσφαιρ|arama (kurtarma|çalışma)|search and rescue/i;
+    var ISLAND = /hristodulidis|erh[uü]rman|χριστοδουλίδ|έρχιουρμαν|christodoulid|kıbrıs|\brum|kktc|izolasyon|ambargo|τουρκ|κατεχ|τ\/κ|κυπριακ|cypr|turk|occup|ortaklık|çözüm|λύση/i;
+    var TRIVIAL = /visitors.? book|βιβλίο επισκεπτών|wreath|στεφάν|çelenk|anniversary|επέτειο|yıl ?dönümü|condolenc|συλλυπητήρι|taziye|başsağlığı|futbol|football|ποδόσφαιρ|arama (kurtarma|çalışma)|search and rescue|konser|orkestra|\bmaç|turnuva|festival|ödül|συναυλ|φεστιβάλ|βραβεί|τουρνουά|award|concert|tournament|barcelona|μπαρτσελόνα|μπαρσελόνα/i;
     /* "X: …" and, in Turkish, "X'den …": X is the one speaking */
     function prefix(t) {
-      var m = /^([^:«“"]{2,48}):\s/.exec(t) || /^([^,:]{2,40})[’'](?:den|dan|ten|tan)\s/i.exec(t);
+      var m = /^([^:«“"]{2,48}):\s/.exec(t) || /^([^,:]{2,40})[’']n?(?:den|dan|ten|tan)\s/i.exec(t);
       return m ? m[1] : null;
     }
     function whoIs(name) { var best = null, at = 1e9; Object.keys(both).forEach(function (q) { both[q].lastIndex = 0; var m = both[q].exec(name); if (m && m.index < at) { at = m.index; best = q; } }); return best; }
@@ -672,7 +719,7 @@
       if (pre && !ACT.test(pre)) {
         /* someone is being quoted: it is that someone's word, or, if a short name that is not one of the ten, nobody's */
         var sp0 = whoIs(pre), nw = pre.split(/\s+/).length;
-        if (sp0 && nw <= 6) { if (sp0 === 'ROC' || sp0 === 'TC' ? CORE.test(a.title) : about) add(sp0, a, 'word'); return; }
+        if (sp0 && nw <= 6) { if (sp0 === 'ROC' || sp0 === 'TC' ? CORE.test(a.title) || (ISLAND.test(a.title) && (SOFT.test(a.title) || HARD.test(a.title))) || SOFT.test(a.title) : about || (sp0 === 'UN' && a.cy && /lider|ηγέτ|leaders/i.test(a.title))) add(sp0, a, 'word'); return; }
         if (!sp0 && nw <= 3) return;
       }
       if (act && about && (CORE.test(a.title) || L._subj.test(a.title))) { var who = doer(a.title); if (who) { add(who, a, 'deed'); return; } }
@@ -708,6 +755,7 @@
       /* direction of travel: this week against the two weeks before, from the dates on the items themselves */
       o.trend = o.now[0] >= 2 && o.prev[0] >= 2 ? o.now[1] / (o.now[0] + 2) - o.prev[1] / (o.prev[0] + 2) : null;
     });
+    L._voices = out; L._voicesAt = memo;
     return out;
   };
 

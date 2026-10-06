@@ -1,8 +1,8 @@
 /* Offline support. The whole tool is stored on the device at first visit and
    served from there straight away on every later visit; fresh copies are
    fetched in the background whenever a connection exists. */
-var CACHE = 'cyprus-board-36872246af';
-var SHELL = ['./', 'index.html', 'styles.css', 'js/i18n.js', 'js/lang/el.model.js', 'js/lang/el.ui.js', 'js/lang/tr.model.js', 'js/lang/tr.ui.js', 'js/lang/el.guide.js', 'js/lang/tr.guide.js', 'js/guide.js', 'js/model.js', 'js/engine.js', 'js/live.js', 'js/app.js', 'data/knowledge.json', 'data/seed.json', 'data/accuracy.json',
+var CACHE = 'cyprus-board-d5ede041de';
+var SHELL = ['./', 'index.html', 'styles.css', 'js/i18n.js', 'js/lang/el.model.js', 'js/lang/el.ui.js', 'js/lang/tr.model.js', 'js/lang/tr.ui.js', 'js/lang/el.guide.js', 'js/lang/tr.guide.js', 'js/guide.js', 'js/model.js', 'js/engine.js', 'js/live.js', 'js/worker.js', 'js/app.js', 'data/knowledge.json', 'data/seed.json', 'data/accuracy.json',
   'manifest.webmanifest', 'offline.html', 'icons/icon.svg', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png'];
 
 self.addEventListener('install', function (e) {
