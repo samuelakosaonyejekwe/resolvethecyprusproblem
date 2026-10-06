@@ -7,7 +7,7 @@
   var view = $('#view'), sheet = $('#sheet');
 
   var A = { pid: null, tab: 'board', sel: null, mode: 'sustainable', horizon: 6, live: true, sigOff: {}, own: [],
-    cat: 'all', lib: 'players', q: '', opp: null, theme: null, custom: { base: {}, w: {}, ideal: {} }, newsTheme: 'all' };
+    cat: 'all', play: 'auto', manual: {}, lib: 'players', q: '', opp: null, theme: null, custom: { base: {}, w: {}, ideal: {} }, newsTheme: 'all' };
   var C = null, S = null, stack = [], cache = {}, KB = null, deferred = null;
 
   var TABS = [['board', '♟', 'Board'], ['path', '➤', 'Best path'], ['analysis', '◫', 'Analysis'], ['live', '◉', 'Live intel'], ['library', '☰', 'Library']];
@@ -26,18 +26,42 @@
   /* ---------- persistence ---------- */
   function save() {
     try {
-      localStorage.setItem(LS, JSON.stringify({ pid: A.pid, tab: A.tab, mode: A.mode, horizon: A.horizon, live: A.live, sigOff: A.sigOff, own: A.own, custom: A.custom, theme: A.theme, opp: A.opp }));
+      localStorage.setItem(LS, JSON.stringify({ pid: A.pid, tab: A.tab, mode: A.mode, horizon: A.horizon, live: A.live, sigOff: A.sigOff, own: A.own, play: A.play, custom: A.custom, theme: A.theme, opp: A.opp }));
     } catch (e) {}
     var h = A.pid ? '#p=' + A.pid + (A.own.length ? '&m=' + A.own.join(',') : '') : '';
-    try { history.replaceState(null, '', location.pathname + location.search + h); } catch (e) {}
+    try { history.replaceState(history.state, '', location.pathname + location.search + h); } catch (e) {}
   }
   function restore() {
     try { Object.assign(A, JSON.parse(localStorage.getItem(LS) || '{}')); } catch (e) {}
-    var m = /#p=([A-Z]+)(?:&m=([\w.,-]+))?/.exec(location.hash);
+    var m = /#p=([A-Z]+)(?:&m=([\w.,~=-]+))?/.exec(location.hash);
     if (m && M.players.some(function (p) { return p.id === m[1]; })) { A.pid = m[1]; A.own = m[2] ? m[2].split(',') : []; }
     A.custom = Object.assign({ base: {}, w: {}, ideal: {} }, A.custom || {});
-    A.sel = null;
+    A.sel = null; A.manual = {};
+    if (A.play !== 'manual') A.play = 'auto';
   }
+
+  /* ---------- page history: back and forward arrows, and the device's own back button ---------- */
+  var navI = 0, navMax = 0;
+  function navState() { return { i: navI, pid: A.pid, tab: A.tab, lib: A.lib }; }
+  function navPush() {
+    navI += 1; navMax = navI;
+    try { history.pushState(navState(), '', location.href); } catch (e) {}
+    save(); navButtons();
+  }
+  function navButtons() {
+    var b = $('#navBack'), f = $('#navFwd');
+    if (b) b.disabled = navI <= 0;
+    if (f) f.disabled = navI >= navMax;
+  }
+  window.addEventListener('popstate', function (e) {
+    var st = e.state;
+    if (!st || st.i === undefined) return;
+    navI = st.i;
+    if (st.pid !== A.pid) { A.pid = st.pid; if (st.pid) { A.own = []; replay(); } }
+    A.tab = st.tab || 'board'; A.lib = st.lib || 'players'; A.sel = null; A.manual = {};
+    $('#modal').hidden = true;
+    save(); render(); window.scrollTo(0, 0);
+  });
 
   /* ---------- model assembly: defaults + user edits + live signals ---------- */
   function activeSignals() {
@@ -62,11 +86,13 @@
   function replay() {
     S = E.newState(C); stack = []; cache = {};
     var kept = [];
-    if (A.pid) A.own.forEach(function (id) {
-      var mv = C.moves[id];
+    if (A.pid) A.own.forEach(function (entry) {
+      var parts = String(entry).split('~'), id = parts[0], mv = C.moves[id], forced = null;
       if (!mv || mv.p !== A.pid || E.blocked(C, S, mv)) return;
-      var r = E.round(C, S, A.pid, id, { deep: true });
-      stack.push({ S: S, r: r }); S = r.state; kept.push(id);
+      parts.slice(1).forEach(function (kv) { var a = kv.split('='); if (C.players[a[0]] && C.moves[a[1]]) { forced = forced || {}; forced[a[0]] = a[1]; } });
+      var r = E.round(C, S, A.pid, id, { deep: true, forced: forced });
+      r.manual = !!forced;
+      stack.push({ S: S, r: r }); S = r.state; kept.push(entry);
     });
     A.own = kept;
   }
@@ -80,6 +106,24 @@
     return cache.rec;
   }
   function recFor(id) { return recs().filter(function (r) { return r.m.id === id; })[0]; }
+
+  /* The replies the user has chosen for the other players (manual play). */
+  function forcedMap() {
+    var f = {};
+    C.order.forEach(function (q) {
+      if (q === A.pid) return;
+      var v = A.manual[q];
+      if (v === 'auto') return;
+      f[q] = v && C.moves[v] && !E.blocked(C, S, C.moves[v]) ? v : q + '.hold';
+    });
+    return f;
+  }
+
+  /* Every page opens with what it shows and how to use it. */
+  function intro(title, lead, steps) {
+    return '<section class="card intro"><h1>' + title + '</h1><p class="lead">' + lead + '</p>' +
+      (steps ? '<details class="explain" open><summary>How to use this page</summary><ol class="list">' + steps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol></details>' : '') + '</section>';
+  }
 
   /* ---------- small renderers ---------- */
   function outcomeOf(x) { return M.outcomes[E.classify(C, x)]; }
@@ -120,7 +164,7 @@
       return '<button data-a="tab" data-v="' + t[0] + '"' + (A.tab === t[0] ? ' aria-current="page"' : '') + '><i>' + t[1] + '</i>' + t[2] + '</button>';
     }).join('') : '';
     $('#tabs').style.display = A.pid ? '' : 'none';
-    net();
+    net(); navButtons();
   }
   function net() {
     var d = L.get(), el = $('#net'), on = navigator.onLine !== false;
@@ -140,14 +184,14 @@
       '<section class="card"><h2>How it works</h2><ol class="list">' +
       '<li><b>Position.</b> Ten measurable dimensions describe where the Cyprus question stands today, from troop presence to energy cooperation. Live news and economic data nudge the starting position.</li>' +
       '<li><b>Players.</b> Ten stakeholders each have an ideal position and care about the dimensions to different degrees. That is all the model needs to compute who gains and who loses from any change.</li>' +
-      '<li><b>Moves.</b> You choose a move. Every other player then answers in turn with the reply that serves them best, anticipating the replies still to come — as in chess.</li>' +
+      '<li><b>Moves.</b> You choose a move. Then either the computer plays the other nine stakeholders, each answering with the reply that serves it best, as a chess program would; or you switch to manual mode and choose their moves yourself.</li>' +
       '<li><b>Result.</b> You see each predicted reply with its probability, the new position, every player\'s gain or loss, a SWOT and risk analysis, and the best path several rounds ahead.</li></ol>' +
       '<p class="help">Predictions are model-based forecasts with stated assumptions, not certainties. Every assumption is open to inspection and adjustment under Library → Assumptions.</p></section>';
   }
 
   function viewBoard() {
     var x = S.x, u = E.utilities(C, x), al = E.alignment(C, x, A.pid), o = outcomeOf(x), R = recs();
-    var sel = A.sel ? recFor(A.sel) : null, ghost = sel ? sel.first.after : null;
+    var sel = A.sel ? recFor(A.sel) : null, ghost = sel ? (A.play === 'manual' ? E.round(C, S, A.pid, sel.m.id, { deep: true, forced: forcedMap() }).after : sel.first.after) : null;
     var withU = 0, withP = 0, oppU = 0, oppP = 0;
     C.order.forEach(function (q) {
       if (q === A.pid) return;
@@ -159,7 +203,12 @@
     var cats = ['all'].concat(Object.keys(M.cats).filter(function (c) { return C.byPlayer[A.pid].some(function (m) { return m.src.cat === c; }); }));
     var locked = C.byPlayer[A.pid].filter(function (m) { return E.blocked(C, S, m); });
 
-    var h = '<div class="status"><section class="card"><div class="outcome"><div class="badge" style="color:' + o.color + '">' + o.icon + '</div><div>' +
+    var h = intro('The board', 'You are playing <b>' + esc(P(A.pid).name) + '</b>. This page shows where the Cyprus question stands, who is with you and against you, and every move open to you. Each round stands for roughly six months.', [
+      'Read <b>Current position</b> and <b>The position</b>: ten bars describe the situation today; the ▼ on each bar is where you would like it to be.',
+      'Choose under <b>Who plays the other stakeholders?</b> whether the computer answers for them or you pick their moves yourself.',
+      'Under <b>Your move</b>, tap any move to preview it: what it does, how the others answer, and who gains or loses.',
+      'Press <b>Play this move</b> to commit. The board advances one round and the <b>Game record</b> keeps the history. <b>Undo</b> takes a round back.']) +
+      '<div class="status"><section class="card"><div class="outcome"><div class="badge" style="color:' + o.color + '">' + o.icon + '</div><div>' +
       '<span class="tag">Round ' + (S.round + 1) + ' · current position</span><h2 style="margin:.15em 0">' + esc(o.name) + '</h2><span class="help">' + esc(o.desc) + '</span></div></div>' +
       '<div style="margin-top:12px"><div class="row between help"><span>Coalition weight with you <b class="num">' + pct(bal) + '</b></span><span>Your payoff <b class="num">' + u[A.pid].toFixed(0) + '</b>/100</span></div>' +
       '<div class="evalbar" role="img" aria-label="Balance of power between your coalition and opponents"><i style="width:' + (bal * 100) + '%"></i></div></div>' +
@@ -169,11 +218,16 @@
         return '<button class="chip ' + st + '" style="--c:' + P(q).color + '" data-a="player" data-v="' + q + '" title="Payoff ' + u[q].toFixed(0) + '/100"><i>' + esc(P(q).short) + '</i>' + esc(P(q).name) + ' <em>' + STANCE[st] + '</em></button>';
       }).join('') + '</div>' +
       '<details class="explain"><summary>How "with you / against you" is worked out</summary>Each player wants the position to move in a particular direction. If that direction overlaps with yours, they are with you on the present board; if it runs opposite, they are against you. It changes as the position changes — today\'s opponent can become tomorrow\'s partner once the trade-offs shift.</details></section>' +
-      '<section class="card"><div class="row between"><h2>The position</h2><span class="help">▼ = your ideal' + (ghost ? ' · coloured band = after this round' : '') + '</span></div>' + gauges(x, ghost, A.pid) + '</section></div>';
+      '<section class="card"><div class="row between"><h2>The position</h2><span class="help">▼ = your ideal' + (ghost ? ' · coloured band = after this round' : '') + '</span></div><p class="help">Ten measures of the Cyprus question, each scored 0–100 between the two descriptions under its bar. The facts behind today\'s scores are listed under Library → Assumptions.</p>' + gauges(x, ghost, A.pid) + '</section></div>';
+
+    h += '<section class="card"><h2>Who plays the other stakeholders?</h2><div class="seg" role="group" aria-label="Who plays the other stakeholders">' +
+      '<button data-a="playmode" data-v="auto" aria-pressed="' + (A.play === 'auto') + '">Computer plays them</button><button data-a="playmode" data-v="manual" aria-pressed="' + (A.play === 'manual') + '">I choose their moves</button></div>' +
+      '<p class="help" style="margin-top:8px">' + (A.play === 'auto' ? '<b>Computer mode.</b> After your move, the app plays the other nine stakeholders: each answers with the reply that serves its own interests best, and you see the probability of each reply. Use this to find out what is likely to happen.' :
+        '<b>Manual mode.</b> After your move, you decide what each of the other nine stakeholders does. Nothing is predicted for you; every stakeholder starts on "Hold position" until you choose otherwise. Use this to test a "what if", replay real events, or play with other people around a table.') + '</p></section>';
 
     h += '<section class="card"><div class="row between"><h2>Your move</h2><div class="seg" role="group" aria-label="Objective">' +
       Object.keys(MODES).map(function (k) { return '<button data-a="mode" data-v="' + k + '" aria-pressed="' + (A.mode === k) + '" title="' + esc(MODES[k][1]) + '">' + MODES[k][0] + '</button>'; }).join('') + '</div></div>' +
-      '<p class="help">' + esc(MODES[A.mode][1]) + ' Each score is how much better (+) or worse (−) than simply waiting the move leaves you, three rounds on, once every other player has answered with their best replies.</p>';
+      '<p class="help">' + esc(MODES[A.mode][1]) + ' Each score is how much better (+) or worse (−) than simply waiting the move leaves you, three rounds on, once every other player has answered with their best replies.' + (A.play === 'manual' ? ' In manual mode these scores remain the computer\'s estimate, for guidance only.' : '') + '</p>';
     if (best) h += '<p><span class="tag good">Engine\'s choice</span> <b>' + esc(best.m.src.name) + '</b> — ' + (best.m.hold ? 'no available move beats waiting this round.' : sgn(best.rel, 2) + ' better than waiting, after the other players reply.') + '</p>';
     h += '<div class="filter" role="group" aria-label="Filter moves">' + cats.map(function (c) { return '<button data-a="cat" data-v="' + c + '" aria-pressed="' + (A.cat === c) + '">' + (c === 'all' ? 'All' : esc(M.cats[c])) + '</button>'; }).join('') + '</div>' +
       '<div class="moves" style="margin-top:8px">' + R.filter(function (r) { return A.cat === 'all' || r.m.src.cat === A.cat || r.m.hold; }).map(function (r, i) {
@@ -190,7 +244,7 @@
     h += '<section class="card"><div class="row between"><h2>Game record</h2><div class="row"><button class="btn small" data-a="undo"' + (stack.length ? '' : ' disabled') + '>Undo round</button><button class="btn small" data-a="reset"' + (stack.length ? '' : ' disabled') + '>New game</button><button class="btn small" data-a="share">Share</button></div></div>';
     h += stack.length ? '<ol class="history">' + stack.map(function (s) {
       var r = s.r, acts = r.replies.filter(function (y) { return !y.chosen.m.hold; });
-      return '<li><b>' + esc(P(A.pid).short) + ': ' + esc(r.move.src.name) + '</b> → ' + (acts.length ? acts.map(function (y) { return esc(P(y.pid).short) + ': ' + esc(y.chosen.m.src.name); }).join(' · ') : 'all others hold') +
+      return '<li>' + (r.manual ? '<span class="tag info">manual</span> ' : '') + '<b>' + esc(P(A.pid).short) + ': ' + esc(r.move.src.name) + '</b> → ' + (acts.length ? acts.map(function (y) { return esc(P(y.pid).short) + ': ' + esc(y.chosen.m.src.name); }).join(' · ') : 'all others hold') +
         ' <span class="tag" style="color:' + outcomeOf(r.after).color + '">' + esc(outcomeOf(r.after).name) + '</span></li>';
     }).join('') + '</ol>' : '<p class="help">No moves played yet. Select a move above to preview the predicted replies, then play it to advance the board one round (roughly six months).</p>';
     return h + '</section>';
@@ -202,19 +256,28 @@
   function viewSheet() {
     var rec = A.sel && A.tab === 'board' ? recFor(A.sel) : null;
     if (!rec) { sheet.className = 'sheet'; sheet.innerHTML = ''; document.body.classList.remove('has-sheet'); return; }
-    var r = rec.first, m = rec.m, u0 = E.utilities(C, S.x), u1 = E.utilities(C, r.after), al = E.alignment(C, S.x, A.pid), o = outcomeOf(r.after);
+    var man = A.play === 'manual', m = rec.m, r = man ? E.round(C, S, A.pid, m.id, { deep: true, forced: forcedMap() }) : rec.first;
+    var u0 = E.utilities(C, S.x), u1 = E.utilities(C, r.after), al = E.alignment(C, S.x, A.pid), o = outcomeOf(r.after), avail = {};
+    if (man) C.order.forEach(function (q) { avail[q] = E.available(C, S, q); });
     var h = '<div class="shead"><div><span class="tag">' + (m.hold ? 'Wait' : esc(M.cats[m.src.cat] || '')) + '</span><h2 style="margin:.2em 0 0">' + esc(m.src.name) + '</h2></div><button class="btn small" data-a="close" aria-label="Close">✕</button></div>';
-    h += '<section class="card"><p>' + esc(m.src.desc) + '</p>' + fxChips(m) +
+    h += '<section class="card"><p>' + esc(m.src.desc) + '</p>' + (m.hold ? '' : '<p class="help">Direct effect of the move on the position, before anyone replies:</p>') + fxChips(m) +
       (m.hold ? '' : '<p class="help" style="margin-top:8px">Chance it works as intended: <b>' + pct(m.ps) + '</b> · political cost to you: <b>' + (m.src.cost || 0) + '</b>/10' + (m.src.src ? ' · source: ' + esc(m.src.src) : '') + '</p>') +
-      (m.src.commitNote ? '<p class="help"><b>Commitment:</b> ' + esc(m.src.commitNote) + '</p>' : '') + verdict(rec) + '</section>';
+      (m.src.commitNote ? '<p class="help"><b>Commitment:</b> ' + esc(m.src.commitNote) + '</p>' : '') + (man ? '' : verdict(rec)) + '</section>';
 
-    h += '<section class="card"><h3>Predicted replies, in order of play</h3><p class="help">The percentage is the model\'s probability that the player picks that reply over its alternatives.</p>' + r.replies.map(function (y) {
+    if (man) h += '<section class="card"><h3>Choose each stakeholder\'s reply</h3><p class="help">Manual mode: you decide what every other player does this round. The tag shows what each choice does to your payoff. Pick "Let the computer choose" for any player you would rather leave to the app.</p>' + r.replies.map(function (y) {
+      var imp = replyImpact(y), cur = A.manual[y.pid] === 'auto' ? 'auto' : y.chosen.m.id;
+      return '<div class="reply"><span class="av" style="--c:' + P(y.pid).color + '">' + esc(P(y.pid).short) + '</span><div><label><b>' + esc(P(y.pid).name) + '</b><br><select data-c="man" data-v="' + y.pid + '" style="width:100%;margin-top:4px">' +
+        avail[y.pid].map(function (k) { return '<option value="' + k.id + '"' + (cur === k.id ? ' selected' : '') + '>' + esc(k.src.name) + '</option>'; }).join('') +
+        '<option value="auto"' + (cur === 'auto' ? ' selected' : '') + '>Let the computer choose' + (cur === 'auto' ? ' (' + esc(y.chosen.m.src.name) + ')' : '') + '</option></select></label></div>' +
+        '<span class="tag ' + (imp > 0.3 ? 'good' : imp < -0.3 ? 'bad' : '') + '">' + (imp > 0.3 ? 'helps ' + sgn(imp) : imp < -0.3 ? 'hurts ' + sgn(imp) : 'neutral') + '</span></div>';
+    }).join('') + '</section>';
+    else h += '<section class="card"><h3>Predicted replies, in order of play</h3><p class="help">Computer mode: the app plays the other stakeholders. The percentage is the model\'s probability that the player picks that reply over its alternatives.</p>' + r.replies.map(function (y) {
       var imp = replyImpact(y), alt = y.ranked.filter(function (k) { return k !== y.chosen; }).slice(0, 2);
       return '<div class="reply"><span class="av" style="--c:' + P(y.pid).color + '">' + esc(P(y.pid).short) + '</span><div><b>' + esc(y.chosen.m.src.name) + '</b> <span class="tag ' + (imp > 0.3 ? 'good' : imp < -0.3 ? 'bad' : '') + '">' + (imp > 0.3 ? 'helps you ' + sgn(imp) : imp < -0.3 ? 'hurts you ' + sgn(imp) : 'neutral') + '</span><br><span class="help">' + esc(P(y.pid).name) + ' · ' + STANCE[stance(al[y.pid])].toLowerCase() + '</span></div><span class="pr">' + pct(y.chosen.p) + '</span>' +
         (alt.length ? '<span class="alt">Otherwise: ' + alt.map(function (k) { return esc(k.m.src.name) + ' (' + pct(k.p) + ')'; }).join(' · ') + '</span>' : '') + '</div>';
     }).join('') + '</section>';
 
-    h += '<section class="card"><h3>Result of all moves together</h3><p><span class="tag" style="color:' + o.color + '">' + o.icon + ' ' + esc(o.name) + '</span> ' + esc(o.desc) + '</p>' +
+    h += '<section class="card"><h3>Result of all moves together</h3><p class="help">The position after your move and all nine replies, and what it does to each stakeholder.</p><p><span class="tag" style="color:' + o.color + '">' + o.icon + ' ' + esc(o.name) + '</span> ' + esc(o.desc) + '</p>' +
       '<div class="pay">' + C.order.map(function (q) {
         var d = u1[q] - u0[q], w = Math.min(50, Math.abs(d) * 5);
         return '<span>' + (q === A.pid ? '<b>' + esc(P(q).name) + '</b>' : esc(P(q).name)) + '</span><span class="pb"><i style="' + (d >= 0 ? 'left:50%' : 'right:50%') + ';width:' + w + '%;background:var(--' + (d >= 0 ? 'good' : 'bad') + ')"></i></span><b class="num ' + cls(d) + '">' + sgn(d) + '</b>';
@@ -249,13 +312,19 @@
       return '<p class="loading">Searching ' + A.horizon + ' rounds ahead…</p>';
     }
     var k = cache.path, p = k.p, u0 = E.utility(C, A.pid, S.x), uE = E.utility(C, A.pid, p.s.x), uN = E.utility(C, A.pid, k.dn.s.x);
-    var h = '<section class="card"><div class="row between"><h1>Best path for ' + esc(P(A.pid).name) + '</h1></div>' +
+    var h = intro('Best path', 'The strongest sequence of moves the computer can find for <b>' + esc(P(A.pid).name) + '</b>, looking several rounds ahead with the app playing every other stakeholder. It is the critical path: the order matters, because early moves open later ones.', [
+      'Choose what to optimise: your own payoff, a sustainable outcome, or the collective good.',
+      'Choose how many rounds to look ahead (one round is about six months).',
+      'Read the steps in order. Each shows your move, the replies the computer predicts, and where the position stands afterwards.',
+      'Compare with <b>if you only wait</b>, then check the <b>odds</b> to see how the path fares when things go wrong.',
+      'Press <b>Play step 1</b> to take the first move onto the board.']) +
+      '<section class="card"><div class="row between"><h2>Settings and headline result</h2></div>' +
       '<div class="row" style="margin:8px 0"><div class="seg" role="group" aria-label="Objective">' + Object.keys(MODES).map(function (m) { return '<button data-a="mode" data-v="' + m + '" aria-pressed="' + (A.mode === m) + '">' + MODES[m][0] + '</button>'; }).join('') + '</div>' +
       '<label class="help">Rounds ahead <select data-c="horizon">' + [3, 4, 6, 8, 10].map(function (n) { return '<option' + (n === A.horizon ? ' selected' : '') + '>' + n + '</option>'; }).join('') + '</select></label></div>' +
       '<p class="help">' + esc(MODES[A.mode][1]) + ' One round is roughly six months. The search keeps the three most promising lines alive at every step and assumes each other player answers with its own best reply.</p>' +
       '<div class="kv"><div><b>' + u0.toFixed(0) + '</b><span>your payoff today</span></div><div><b class="' + cls(uE - u0) + '">' + uE.toFixed(0) + '</b><span>on the best path (' + sgn(uE - u0) + ')</span></div><div><b class="' + cls(uN - u0) + '">' + uN.toFixed(0) + '</b><span>if you only wait (' + sgn(uN - u0) + ')</span></div><div><b style="color:' + outcomeOf(p.s.x).color + ';font-size:1rem">' + esc(outcomeOf(p.s.x).name) + '</b><span>where the path leads</span></div></div></section>';
 
-    h += '<section class="card"><h2>Critical path, step by step</h2><ol class="steps">' + p.steps.map(function (r, i) {
+    h += '<section class="card"><h2>Critical path, step by step</h2><p class="help">Your recommended moves in order. Replies in green help you, in red hurt you; the percentage is how likely the computer thinks each reply is.</p><ol class="steps">' + p.steps.map(function (r, i) {
       var acts = r.replies.filter(function (y) { return !y.chosen.m.hold; }), o = outcomeOf(r.after), du = E.utility(C, A.pid, r.after) - E.utility(C, A.pid, r.before);
       return '<li><b>' + esc(r.move.src.name) + '</b> <span class="tag">' + (r.move.hold ? 'wait' : pct(r.move.ps) + ' success') + '</span><br><span class="help">' + esc(r.move.src.desc) + '</span>' +
         '<div style="margin:6px 0;font-size:.86rem">' + (acts.length ? '<b>Predicted replies:</b> ' + acts.map(function (y) { var im = E.utility(C, A.pid, y.after) - E.utility(C, A.pid, y.before); return '<span class="' + cls(im) + '">' + esc(P(y.pid).short) + ' — ' + esc(y.chosen.m.src.name) + ' (' + pct(y.chosen.p) + ')</span>'; }).join('; ') : 'All other players hold.') + '</div>' +
@@ -401,7 +470,7 @@
     var ids = m.src.prec || [], list = M.precedents.filter(function (p) { return ids.indexOf(p.id) >= 0; });
     if (!list.length) list = M.precedents.filter(function (p) { return (p.cats || []).indexOf(m.src.cat) >= 0; }).slice(0, 3);
     if (!list.length) return '';
-    return '<section class="card"><h2>What history says about moves like this</h2>' + list.map(precItem).join('') + '</section>';
+    return '<section class="card"><h2>What history says about moves like this</h2><p class="help">Real past attempts that resemble this move, on Cyprus or elsewhere, with how they ended and the lesson. Tap one to open it.</p>' + list.map(precItem).join('') + '</section>';
   }
   function precItem(p) {
     var w = (L.get() || {}).wiki || {}, x = w[p.wiki];
@@ -411,14 +480,18 @@
 
   function viewAnalysis() {
     var R = recs(), rec = (A.sel && recFor(A.sel)) || R[0];
-    var h = '<section class="card"><div class="row between"><h1>Analysis</h1><button class="btn small" data-a="print">Print / save PDF</button></div>' +
+    var h = intro('Analysis', 'A full assessment of one move for <b>' + esc(P(A.pid).name) + '</b> in the current position: strengths and weaknesses, risks, how it plays against a chosen opponent, who holds power, and how far the advice can be trusted. All of it is calculated with the computer playing the other stakeholders.', [
+      'Pick the move to analyse in the first box (it starts on the move you selected on the board, or the engine\'s choice).',
+      'Read each section from top to bottom; every section begins with a line saying what it shows.',
+      'Use <b>Print / save PDF</b> to keep or share the assessment.']) +
+      '<section class="card"><div class="row between"><h2>Move under analysis</h2><button class="btn small" data-a="print">Print / save PDF</button></div>' +
       '<label class="help">Move under analysis <select data-c="sel">' + R.map(function (r) { return '<option value="' + r.m.id + '"' + (r === rec ? ' selected' : '') + '>' + esc(r.m.src.name) + ' (' + sgn(r.rel, 2) + ')</option>'; }).join('') + '</select></label>' +
       '<p style="margin-top:8px">' + esc(rec.m.src.desc) + '</p>' + verdict(rec) + '</section>';
     h += '<section class="card"><h2>SWOT for ' + esc(P(A.pid).name) + '</h2><p class="help">Generated from this exact position: your own leverage and exposure, plus what the other players are predicted to do in reply.</p>' + swot(rec) + '</section>';
-    h += '<section class="card"><h2>Risk register</h2>' + risks(rec) + '</section>';
-    h += '<section class="card"><h2>Head-to-head payoff matrix</h2>' + matrix() + '</section>';
-    h += '<div class="grid two"><section class="card"><h2>Stakeholder map</h2>' + map() + '</section><section class="card"><h2>How sure is the recommendation?</h2>' + sens() + '</section></div>';
-    h += '<section class="card"><h2>Political, security, economic, energy, legal and social lens</h2>' + lens(rec) + '</section>';
+    h += '<section class="card"><h2>Risk register</h2><p class="help">What could go wrong with this move in the coming round, how likely it is, how much it would cost you, and what to do about it.</p>' + risks(rec) + '</section>';
+    h += '<section class="card"><h2>Head-to-head payoff matrix</h2><p class="help">The classic game-theory table: your five strongest options against one opponent\'s five strongest. Choose the opponent below.</p>' + matrix() + '</section>';
+    h += '<div class="grid two"><section class="card"><h2>Stakeholder map</h2><p class="help">Every other stakeholder placed by how much power it has (height) and whether it currently pulls with you or against you (left to right).</p>' + map() + '</section><section class="card"><h2>How sure is the recommendation?</h2><p class="help">A stress test. The model\'s assumptions are judgments, so this re-runs the advice many times with those judgments deliberately disturbed.</p>' + sens() + '</section></div>';
+    h += '<section class="card"><h2>Political, security, economic, energy, legal and social lens</h2><p class="help">The same result sorted by field, so a specialist in any one area can see what changes for them after this round.</p>' + lens(rec) + '</section>';
     h += precedents(rec.m);
     return h;
   }
@@ -426,8 +499,12 @@
   /* ---------- live ---------- */
   function viewLive() {
     var d = L.get() || {}, st = d.status || {};
-    var h = '<section class="card"><div class="row between"><h1>Live intelligence</h1><button class="btn accent small" data-a="refresh"' + (L.busy ? ' disabled' : '') + '>' + (L.busy ? 'Updating…' : 'Refresh now') + '</button></div>' +
-      '<p class="help">Fetched by this device directly from open public sources whenever the app is open and online, then kept on the device for offline use. Nothing passes through a private server.</p>' +
+    var h = intro('Live intelligence', 'Real, current data from public sources, so the board starts from today\'s situation rather than a fixed snapshot. Your device fetches it directly whenever the app is open and online, and keeps the last copy for offline use.', [
+      '<b>Sources</b> shows where each kind of data comes from and whether the last fetch worked.',
+      '<b>Signals feeding the model</b> shows exactly how the data nudges the starting position. Untick any signal you do not want used.',
+      'The charts, table and headlines below are the raw material, for your own reading.']) +
+      '<section class="card"><div class="row between"><h2>Sources</h2><button class="btn accent small" data-a="refresh"' + (L.busy ? ' disabled' : '') + '>' + (L.busy ? 'Updating…' : 'Refresh now') + '</button></div>' +
+      '<p class="help">Nothing passes through a private server: this device asks each source directly.</p>' +
       '<div class="tblwrap"><table><thead><tr><th>Source</th><th>Provides</th><th>Status</th></tr></thead><tbody>' + L.sources.map(function (s) {
         var x = st[s.id];
         return '<tr><td><a href="' + s.url + '" target="_blank" rel="noopener">' + esc(s.name) + '</a></td><td>' + esc(s.what) + '</td><td>' + (!x ? '<span class="tag">not yet fetched</span>' : x.ok ? '<span class="tag good">ok</span> ' + new Date(x.t).toLocaleString() : '<span class="tag warn">unreachable</span> ' + (x.kept ? 'showing last saved copy' : 'no data')) + '</td></tr>';
@@ -441,19 +518,19 @@
     h += '</section>';
 
     h += '<div class="grid two">';
-    if (d.fx) h += '<section class="card"><h2>Lira against the euro</h2><div class="kv"><div><b>₺' + d.fx.try.toFixed(2) + '</b><span>per €1 on ' + esc(d.fx.date) + '</span></div><div><b class="' + (d.fx.change > 0 ? 'bad' : 'good') + '">' + sgn(d.fx.change) + '%</b><span>euro price in lira, 12 months</span></div></div>' + spark(d.fx.series, 'var(--accent)') + '<p class="help">A sliding lira raises Ankara\'s need for foreign capital and market access — the main economic lever in several strategies.</p></section>';
-    if (d.tone) h += '<section class="card"><h2>Tone of Cyprus–Türkiye coverage</h2><div class="kv"><div><b>' + d.tone.recent.toFixed(2) + '</b><span>last two weeks</span></div><div><b>' + d.tone.base.toFixed(2) + '</b><span>four-month average</span></div></div>' + spark(d.tone.series, 'var(--info)') + '<p class="help">GDELT tone score: below zero is negative language; a falling line means more hostile coverage.</p></section>';
+    if (d.fx) h += '<section class="card"><h2>Lira against the euro</h2><div class="kv"><div><b>₺' + d.fx.try.toFixed(2) + '</b><span>per €1 on ' + esc(d.fx.date) + '</span></div><div><b class="' + (d.fx.change > 0 ? 'bad' : 'good') + '">' + sgn(d.fx.change) + '%</b><span>euro price in lira, 12 months</span></div></div>' + spark(d.fx.series, 'var(--accent)') + '<p class="help"><b>Why this is here.</b> Türkiye is the player whose decision matters most, and its economy is where outside incentives and pressure bite. The lira is the one daily, public, hard number that shows how exposed that economy is. When it has fallen a lot over twelve months, Ankara needs foreign capital, trade access and investor confidence more, so offers such as a customs-union upgrade, and threats to them, weigh more in its calculation. The model therefore raises the weight Türkiye gives to its Western ties and to the economy, by at most 40%. The north of Cyprus also uses the lira, so the same slide erodes Turkish Cypriot living standards. Untick the lira signal above to switch this off.</p></section>';
+    if (d.tone) h += '<section class="card"><h2>Tone of Cyprus–Türkiye coverage</h2><div class="kv"><div><b>' + d.tone.recent.toFixed(2) + '</b><span>last two weeks</span></div><div><b>' + d.tone.base.toFixed(2) + '</b><span>four-month average</span></div></div>' + spark(d.tone.series, 'var(--info)') + '<p class="help"><b>Why this is here.</b> It is an early-warning gauge. GDELT scores the language of worldwide news coverage: below zero is negative, and a falling line means more hostile reporting about Cyprus and Türkiye. If the last two weeks are clearly worse than the four-month average, the model starts with slightly lower stability.</p></section>';
     h += '</div>';
 
     if (d.wb) {
-      h += '<section class="card"><h2>Balance of resources</h2><div class="tblwrap"><table><thead><tr><th>Indicator</th><th>Cyprus</th><th>Türkiye</th><th>Greece</th><th>Year</th></tr></thead><tbody>' + Object.keys(d.wb).map(function (k) {
+      h += '<section class="card"><h2>Balance of resources</h2><p class="help">The size of each economy, population and military budget, for context on who can afford what. These figures are shown for reference and do not change the model.</p><div class="tblwrap"><table><thead><tr><th>Indicator</th><th>Cyprus</th><th>Türkiye</th><th>Greece</th><th>Year</th></tr></thead><tbody>' + Object.keys(d.wb).map(function (k) {
         var r = d.wb[k]; function f(v) { return v === undefined || v === null ? '–' : v.toFixed(r.dp); }
         return '<tr><td>' + esc(r.label) + '</td><td class="c">' + f(r.CYP) + '</td><td class="c">' + f(r.TUR) + '</td><td class="c">' + f(r.GRC) + '</td><td class="c">' + esc(r.year || '') + '</td></tr>';
       }).join('') + '</tbody></table></div><p class="help">World Bank, latest available year. Cyprus figures cover the government-controlled area.</p></section>';
     }
 
     var themes = ['all', 'talks', 'military', 'energy', 'europe', 'pressure'], news = (d.news || []).filter(function (a) { return A.newsTheme === 'all' || a.themes.indexOf(A.newsTheme) >= 0; });
-    h += '<section class="card"><h2>Latest headlines</h2><div class="filter">' + themes.map(function (t) { return '<button data-a="ntheme" data-v="' + t + '" aria-pressed="' + (A.newsTheme === t) + '">' + t.charAt(0).toUpperCase() + t.slice(1) + '</button>'; }).join('') + '</div>' +
+    h += '<section class="card"><h2>Latest headlines</h2><p class="help">News from the last three weeks that mentions the Cyprus question, newest first. Filter by theme; tap a headline to read it at its source. The mix of themes feeds the signals above.</p><div class="filter">' + themes.map(function (t) { return '<button data-a="ntheme" data-v="' + t + '" aria-pressed="' + (A.newsTheme === t) + '">' + t.charAt(0).toUpperCase() + t.slice(1) + '</button>'; }).join('') + '</div>' +
       (news.length ? '<ul class="news">' + news.map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.title) + '</a><br><span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + ' ' + a.themes.map(function (t) { return '<span class="tag">' + t + '</span>'; }).join(' ') + '</span></li>'; }).join('') + '</ul>' : '<p class="help">' + (d.news ? 'No headlines under this theme.' : 'Headlines appear after the first successful refresh.') + '</p>') + '</section>';
     return h;
   }
@@ -462,10 +539,15 @@
   var LIBS = [['players', 'Stakeholders'], ['blueprints', 'Blueprint strategies'], ['history', 'Precedents'], ['assume', 'Assumptions'], ['about', 'Method & install']];
 
   function viewLibrary() {
-    var h = '<div class="filter" style="margin-bottom:12px">' + LIBS.map(function (l) { return '<button data-a="lib" data-v="' + l[0] + '" aria-pressed="' + (A.lib === l[0]) + '">' + l[1] + '</button>'; }).join('') + '</div>';
+    var h = intro('Library', 'The reference shelf behind the board: who the stakeholders are, the strategies in the source blueprints, what history teaches, the assumptions you can change, and how the tool works.', [
+      'Use the buttons below to switch between the five shelves.',
+      '<b>Stakeholders</b>: interests, red lines, leverage and weak points of each player, and the moves the model gives them.',
+      '<b>Blueprint strategies</b>: search the full catalogue of proposals the moves are drawn from.',
+      '<b>Precedents</b>: past successes and failures. <b>Assumptions</b>: every number in the model, adjustable. <b>Method & install</b>: how predictions are made, and how to install or download the tool.']) +
+      '<div class="filter" style="margin-bottom:12px">' + LIBS.map(function (l) { return '<button data-a="lib" data-v="' + l[0] + '" aria-pressed="' + (A.lib === l[0]) + '">' + l[1] + '</button>'; }).join('') + '</div>';
     if (A.lib === 'players') {
       var u = E.utilities(C, S.x);
-      h += M.players.map(function (p) {
+      h += '<p class="help">One card per stakeholder. "Power" is relative influence on the outcome (0–100); "payoff now" is how close today\'s position is to that player\'s ideal (100 would be its perfect world).</p>' + M.players.map(function (p) {
         function li(t, a) { return a && a.length ? '<h3>' + t + '</h3><ul class="list">' + a.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; }
         var cp = C.players[p.id], top = M.dims.map(function (d, i) { return [d, cp.w[i], cp.ideal[i]]; }).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 4);
         return '<section class="card" id="pl-' + p.id + '" style="border-left:5px solid ' + p.color + '"><div class="row between"><h2>' + esc(p.name) + '</h2><span class="help">power ' + p.power + ' · payoff now ' + u[p.id].toFixed(0) + (p.veto ? ' · <b>can block a settlement</b>' : '') + '</span></div><p>' + esc(p.role) + '</p>' +
@@ -475,13 +557,13 @@
           (p.id !== A.pid ? '<p style="margin-top:10px"><button class="btn small" data-a="pick" data-v="' + p.id + '">Play as ' + esc(p.short) + '</button></p>' : '') + '</section>';
       }).join('');
     } else if (A.lib === 'blueprints') {
-      h += '<section class="card"><h1>Blueprint strategies</h1><p class="help">The strategies set out in the source blueprints by Samuel Akosa Onyejekwe, searchable. These are proposals, not established facts; figures and timings inside them are the author\'s planning estimates. The moves on the board are drawn from them.</p><input type="search" placeholder="Search strategies, actors, risks…" value="' + esc(A.q) + '" data-c="q" aria-label="Search strategies" style="width:100%">';
+      h += '<section class="card"><h2>Blueprint strategies</h2><p class="help">The strategies set out in the source blueprints by Samuel Akosa Onyejekwe, searchable. These are proposals, not established facts; figures and timings inside them are the author\'s planning estimates. The moves on the board are drawn from them.</p><input type="search" placeholder="Search strategies, actors, risks…" value="' + esc(A.q) + '" data-c="q" aria-label="Search strategies" style="width:100%">';
       if (!KB && window.KNOWLEDGE) KB = window.KNOWLEDGE;
       if (!KB) { loadKB(); h += '<p class="loading">Loading the library…</p></section>'; return h; }
       var q = A.q.toLowerCase().trim(), n = 0;
       h += '<div id="kbres">' + kbResults(q) + '</div></section>';
     } else if (A.lib === 'history') {
-      h += '<section class="card"><h1>Precedents: what worked, what failed</h1><p class="help">Past attempts on Cyprus and comparable cases elsewhere. Summaries update from Wikipedia when online.</p>' + ['Cyprus', 'Elsewhere'].map(function (g) {
+      h += '<section class="card"><h2>Precedents: what worked, what failed</h2><p class="help">Past attempts on Cyprus and comparable cases elsewhere. Summaries update from Wikipedia when online.</p>' + ['Cyprus', 'Elsewhere'].map(function (g) {
         return '<h2 style="margin-top:14px">' + g + '</h2>' + M.precedents.filter(function (p) { return (p.scope === 'cy') === (g === 'Cyprus'); }).map(precItem).join('');
       }).join('') + '</section>';
     } else if (A.lib === 'assume') {
@@ -515,9 +597,9 @@
 
   function viewAssume() {
     var p = P(A.pid), cp = C.players[A.pid];
-    var h = '<section class="card"><div class="row between"><h1>Assumptions</h1><button class="btn small" data-a="resetassume">Restore defaults</button></div><p class="help">Nothing in the model is hidden. Change any number and every prediction is recalculated. Your edits stay on this device.</p>' +
-      '<h2>Starting position</h2><div class="adj">' + M.dims.map(function (d, i) { return '<label for="b-' + d.id + '">' + esc(d.name) + '</label><input id="b-' + d.id + '" type="range" min="0" max="100" value="' + Math.round(C.x0[i]) + '" data-c="base" data-v="' + d.id + '"><b class="num">' + Math.round(C.x0[i]) + '</b>'; }).join('') + '</div></section>';
-    h += '<section class="card"><h2>What a player wants, and how much it cares</h2><label class="help">Player <select data-c="assumep">' + M.players.map(function (q) { return '<option value="' + q.id + '"' + (q.id === (A.ap || A.pid) ? ' selected' : '') + '>' + esc(q.name) + '</option>'; }).join('') + '</select></label>';
+    var h = '<section class="card"><div class="row between"><h2>Assumptions</h2><button class="btn small" data-a="resetassume">Restore defaults</button></div><p class="help">Nothing in the model is hidden. Change any number and every prediction is recalculated. Your edits stay on this device.</p>' +
+      '<h3>Starting position</h3><p class="help">Where each of the ten measures stands today, 0–100. The facts behind each score are listed below the sliders.</p><div class="adj">' + M.dims.map(function (d, i) { return '<label for="b-' + d.id + '">' + esc(d.name) + '</label><input id="b-' + d.id + '" type="range" min="0" max="100" value="' + Math.round(C.x0[i]) + '" data-c="base" data-v="' + d.id + '"><b class="num">' + Math.round(C.x0[i]) + '</b>'; }).join('') + '</div><details class="explain" style="margin-top:10px"><summary>The facts behind each starting score</summary><ul class="list">' + M.dims.map(function (d) { return '<li><b>' + esc(d.name) + '</b> (' + esc(d.lo) + ' ↔ ' + esc(d.hi) + '): ' + esc(d.basis) + '</li>'; }).join('') + '</ul></details></section>';
+    h += '<section class="card"><h2>What a player wants, and how much it cares</h2><p class="help">For the chosen player: the "ideal point" is where it would like each measure to be, and the "weight" is how much that measure matters to it. These two numbers drive every prediction of that player\'s behaviour.</p><label class="help">Player <select data-c="assumep">' + M.players.map(function (q) { return '<option value="' + q.id + '"' + (q.id === (A.ap || A.pid) ? ' selected' : '') + '>' + esc(q.name) + '</option>'; }).join('') + '</select></label>';
     var q = C.players[A.ap || A.pid];
     h += '<div class="tblwrap" style="margin-top:8px"><table><thead><tr><th>Dimension</th><th>Ideal point (0–100)</th><th>Weight</th></tr></thead><tbody>' + M.dims.map(function (d, i) {
       return '<tr><td>' + esc(d.name) + '<br><span class="help">' + esc(d.lo) + ' ↔ ' + esc(d.hi) + '</span></td><td><input type="range" min="0" max="100" value="' + Math.round(q.ideal[i]) + '" data-c="ideal" data-v="' + d.id + '" aria-label="Ideal for ' + esc(d.name) + '"> <b class="num">' + Math.round(q.ideal[i]) + '</b></td><td><input type="range" min="0" max="40" value="' + Math.round(q.w[i] * 100) + '" data-c="w" data-v="' + d.id + '" aria-label="Weight for ' + esc(d.name) + '"> <b class="num">' + pct(q.w[i]) + '</b></td></tr>';
@@ -527,7 +609,7 @@
 
   function viewAbout() {
     var mirrors = (M.mirrors || []).map(function (u) { return '<li><a href="' + u + '" rel="noopener">' + esc(u.replace(/^https?:\/\//, '')) + '</a></li>'; }).join('');
-    return '<section class="card"><h1>Method</h1>' +
+    return '<section class="card"><h2>Method</h2>' +
       '<p>The board is a <b>spatial bargaining game</b>. The Cyprus question is described by ten dimensions scored 0–100. Each of ten stakeholders has an ideal point on every dimension and a weight for how much it cares. A player\'s payoff is its weighted closeness to its ideals — 100 would be its perfect world.</p>' +
       '<p><b>Moves</b> shift dimensions by stated amounts, carry a chance of success, and may cost the mover political capital. Some need a precondition: a level of trust, or another player\'s earlier move.</p>' +
       '<p><b>Prediction.</b> After your move every other player replies in turn. Each values its options by its payoff once the remaining players have also replied, and the reply probabilities follow from how far apart those values are (a quantal-response rule: close calls are uncertain, clear ones are near-certain).</p>' +
@@ -548,17 +630,23 @@
     if (!A.pid) { view.innerHTML = viewPick(); sheet.className = 'sheet'; document.body.classList.remove('has-sheet'); return; }
     var f = { board: viewBoard, path: viewPath, analysis: viewAnalysis, live: viewLive, library: viewLibrary }[A.tab] || viewBoard;
     var keep = document.activeElement && document.activeElement.getAttribute('data-c') === 'q';
-    view.innerHTML = f();
+    var ti = TABS.map(function (t) { return t[0]; }).indexOf(A.tab), prev = TABS[ti - 1], next = TABS[ti + 1];
+    view.innerHTML = f() + '<nav class="pager" aria-label="Previous and next page">' +
+      (prev ? '<button class="btn" data-a="tab" data-v="' + prev[0] + '">← ' + prev[2] + '</button>' : '<button class="btn" data-a="home">← Choose stakeholder</button>') +
+      (next ? '<button class="btn accent" data-a="tab" data-v="' + next[0] + '">' + next[2] + ' →</button>' : '<button class="btn" data-a="tab" data-v="board">Back to the board ↺</button>') + '</nav>';
     viewSheet();
     if (keep) { var i = $('[data-c="q"]'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }
   }
-  function go(tab) { A.tab = tab; save(); render(); window.scrollTo(0, 0); }
+  function go(tab) { if (A.tab === tab) return; A.tab = tab; A.sel = tab === 'board' ? A.sel : A.sel; navPush(); render(); window.scrollTo(0, 0); }
 
   function play(id) {
     var mv = C.moves[id];
     if (!mv || E.blocked(C, S, mv)) return;
-    var r = E.round(C, S, A.pid, id, { deep: true });
-    stack.push({ S: S, r: r }); S = r.state; A.own.push(id); A.sel = null; cache = {};
+    var forced = A.play === 'manual' ? forcedMap() : null;
+    var r = E.round(C, S, A.pid, id, { deep: true, forced: forced });
+    r.manual = !!forced;
+    stack.push({ S: S, r: r }); S = r.state; A.sel = null; A.manual = {}; cache = {};
+    A.own.push(forced ? id + Object.keys(forced).map(function (k) { return '~' + k + '=' + forced[k]; }).join('') : id);
     save(); render(); window.scrollTo(0, 0);
     var acts = r.replies.filter(function (y) { return !y.chosen.m.hold; }).length;
     toast('Round ' + S.round + ' played. ' + (acts ? acts + ' player' + (acts > 1 ? 's' : '') + ' answered.' : 'Everyone else held.'));
@@ -581,13 +669,16 @@
 
   /* ---------- events ---------- */
   var acts = {
-    home: function () { A.pid = null; A.sel = null; save(); render(); },
-    pick: function (v) { A.pid = v; A.own = []; A.sel = null; A.tab = 'board'; A.cat = 'all'; replay(); save(); render(); window.scrollTo(0, 0); },
+    home: function () { if (!A.pid) return; A.pid = null; A.sel = null; navPush(); render(); window.scrollTo(0, 0); },
+    back: function () { history.back(); },
+    fwd: function () { history.forward(); },
+    pick: function (v) { A.pid = v; A.own = []; A.sel = null; A.tab = 'board'; A.cat = 'all'; replay(); navPush(); render(); window.scrollTo(0, 0); },
     tab: function (v) { go(v); },
-    sel: function (v) { A.sel = A.sel === v ? null : v; render(); },
+    sel: function (v) { A.sel = A.sel === v ? null : v; A.manual = {}; render(); },
+    playmode: function (v) { A.play = v; A.manual = {}; save(); render(); },
     close: function () { A.sel = null; render(); },
     play: function () { play(A.sel); },
-    playfirst: function () { var st = cache.path.p.steps[0]; A.tab = 'board'; play(st.move.id); },
+    playfirst: function () { var st = cache.path.p.steps[0]; A.tab = 'board'; navPush(); play(st.move.id); },
     analyse: function () { go('analysis'); },
     mode: function (v) { A.mode = v; cache = {}; save(); render(); },
     cat: function (v) { A.cat = v; render(); },
@@ -599,8 +690,8 @@
       else if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { toast('Link to this game copied.'); });
       else modal('<h2>Link to this game</h2><p style="word-break:break-all">' + esc(url) + '</p><button class="btn accent" data-a="closemodal">Done</button>');
     },
-    player: function (v) { A.tab = 'library'; A.lib = 'players'; render(); var el = $('#pl-' + v); if (el) el.scrollIntoView(); },
-    lib: function (v) { A.lib = v; render(); },
+    player: function (v) { A.tab = 'library'; A.lib = 'players'; A.sel = null; navPush(); render(); var el = $('#pl-' + v); if (el) el.scrollIntoView(); },
+    lib: function (v) { if (A.lib === v) return; A.lib = v; navPush(); render(); },
     ntheme: function (v) { A.newsTheme = v; render(); },
     refresh: function () { refresh(true); },
     install: install,
@@ -623,6 +714,7 @@
     if (!c) return;
     if (c === 'horizon') { A.horizon = +t.value; cache.path = null; }
     else if (c === 'opp') A.opp = t.value;
+    else if (c === 'man') { A.manual[v] = t.value; render(); return; }
     else if (c === 'sel') A.sel = t.value;
     else if (c === 'live') { A.live = t.checked; build(); }
     else if (c === 'sig') { A.sigOff[v] = !t.checked; build(); }
@@ -668,7 +760,9 @@
   restore();
   if (A.theme) document.documentElement.setAttribute('data-theme', A.theme);
   lastSig = JSON.stringify((L.get() || {}).signals || []);
-  build(); installUI(); render();
+  build(); installUI();
+  try { history.replaceState(navState(), '', location.href); } catch (e) {}
+  render();
   if (L.stale()) setTimeout(refresh, 800);
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     var hadSW = !!navigator.serviceWorker.controller;

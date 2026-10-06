@@ -32,6 +32,12 @@ small,.mute{color:var(--mute)}
 .brand b{font-family:var(--serif);font-size:1.02rem;white-space:nowrap}
 .brand small{color:#b9cad6;font-size:.74rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .top-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.navarrows{display:flex;gap:4px;flex-shrink:0}
+.navarrows .btn.icon{width:34px;min-height:34px;font-size:1.05rem}
+.brand{flex:1}
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:6px}
+.pager .btn{flex:1;max-width:48%}
+@media (max-width:560px){.top .pill{display:none}.brand small{display:none}.brand svg{display:none}}
 .pill{font-size:.72rem;padding:3px 8px;border-radius:99px;background:rgba(255,255,255,.12);color:#dbe6ee;white-space:nowrap}
 .pill.off{background:#7a4a14;color:#ffe2b8}
 
@@ -55,6 +61,7 @@ main{max-width:1180px;margin:0 auto;padding:14px 14px 30px;outline:0}
 .loading{padding:3rem 0;text-align:center;color:var(--mute)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);margin-bottom:14px}
 .card>h2:first-child,.card>h3:first-child{margin-top:0}
+.card.intro{border-left:5px solid var(--accent)}.card.intro .lead{color:var(--ink);margin-bottom:.4em}
 .grid{display:grid;gap:14px}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .between{justify-content:space-between}

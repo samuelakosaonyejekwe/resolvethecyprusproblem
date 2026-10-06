@@ -207,9 +207,13 @@
     for (var i = 0; i < order.length; i++) {
       var q = order[i], before = x;
       var ranked = E.rank(C, { used: used }, x, q, order.slice(i + 1), avail, { deep: opt.deep, tau: opt.tau });
-      var ch = rand ? pick(ranked, rand()) : ranked[0];
+      var ch = rand ? pick(ranked, rand()) : ranked[0], forced = false;
+      if (opt.forced && opt.forced[q]) {
+        var want = ranked.filter(function (o) { return o.m.id === opt.forced[q]; })[0];
+        if (want) { ch = want; forced = true; }
+      }
       var ok = play(ch.m);
-      res.replies.push({ pid: q, chosen: ch, ranked: ranked, ok: ok, before: before, after: x });
+      res.replies.push({ pid: q, chosen: ch, ranked: ranked, ok: ok, before: before, after: x, forced: forced });
     }
     for (var d = 0; d < C.n; d++) x[d] = clamp(x[d] + C.drift[d]);
     res.after = x;
