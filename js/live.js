@@ -27,14 +27,17 @@
   function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
   function iso(d) { return d.toISOString().slice(0, 10); }
 
-  var GQ = encodeURIComponent('(cyprus OR "turkish cypriot" OR "greek cypriot") (reunification OR talks OR "buffer zone" OR UNFICYP OR occupation OR settlement OR "two-state" OR Varosha OR Erdogan OR Erhurman OR Christodoulides) sourcelang:english');
+  var GQ = encodeURIComponent('("cyprus problem" OR "cyprus issue" OR "cyprus talks" OR "turkish cypriot" OR "greek cypriot" OR "northern cyprus" OR "occupied cyprus" OR UNFICYP OR Varosha OR Erhurman OR Christodoulides) sourcelang:english');
+  var ABOUT = /cypr|nicosia|varosha|famagusta|unficyp|erh[uü]rman|christodoulides|green line|buffer zone/i;
 
-  function news() {
-    return get('https://api.gdeltproject.org/api/v2/doc/doc?query=' + GQ + '&mode=artlist&maxrecords=60&timespan=21d&sort=datedesc&format=json', 20000).then(function (j) {
+  var GQ2 = encodeURIComponent('cyprus (turkish OR reunification OR UNFICYP OR talks) sourcelang:english');
+
+  function articles(q) {
+    return get('https://api.gdeltproject.org/api/v2/doc/doc?query=' + q + '&mode=artlist&maxrecords=150&timespan=21d&sort=datedesc&format=json', 20000).then(function (j) {
       var seen = {};
       return (j.articles || []).filter(function (a) {
         var k = (a.title || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').slice(0, 60);
-        if (!a.title || seen[k]) return false;
+        if (!a.title || seen[k] || !ABOUT.test(a.title)) return false;
         seen[k] = 1; return true;
       }).slice(0, 40).map(function (a) {
         var themes = Object.keys(THEMES).filter(function (k) { return THEMES[k].test(a.title); });
@@ -43,6 +46,12 @@
           date: d ? d.slice(0, 4) + '-' + d.slice(4, 6) + '-' + d.slice(6, 8) : '', themes: themes };
       });
     });
+  }
+
+  /* Precise query first; a broader one if it fails or returns too little. */
+  function news() {
+    function broad() { return wait(6000).then(function () { return articles(GQ2); }); }
+    return articles(GQ).then(function (list) { return list.length >= 5 ? list : broad().then(function (l2) { return l2.length > list.length ? l2 : list; }, function () { return list; }); }, broad);
   }
 
   function tone() {
