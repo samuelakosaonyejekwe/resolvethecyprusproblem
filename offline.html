@@ -256,6 +256,23 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   .top #installBtn::before{content:"";position:absolute;left:50%;top:50%;width:14px;height:9px;margin:-1px 0 0 -9px;border:2.5px solid currentColor;border-top:0;border-radius:0 0 4px 4px}
   .top #installBtn::after{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-11px 0 0 -5.5px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(45deg)}
 }
+
+/* previous / next page buttons at the foot of every page */
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:10px}
+.pager .pg{flex:1;max-width:49%;display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:var(--shadow);text-align:left;transition:border-color .15s,transform .1s,box-shadow .15s}
+.pager .pg.next{flex-direction:row-reverse;text-align:right;margin-left:auto}
+.pager .pg span{display:flex;flex-direction:column;min-width:0}
+.pager .pg small{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.pager .pg b{font-family:var(--serif);font-size:1rem;line-height:1.2;overflow-wrap:anywhere}
+.pager .pg i{flex-shrink:0;position:relative;width:38px;height:38px;border-radius:50%;background:var(--panel2);transition:background .15s}
+.pager .pg.next i{background:var(--accent)}
+.pager .pg i::before{content:"";position:absolute;left:50%;top:50%;width:10px;height:10px;border-left:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);border-radius:1.5px;transform:translate(-30%,-50%) rotate(45deg)}
+.pager .pg.next i::before{border-color:var(--accent-ink);transform:translate(-70%,-50%) rotate(-135deg)}
+.pager .pg:hover{border-color:var(--accent);box-shadow:0 2px 4px rgba(20,33,43,.1),0 10px 26px rgba(20,33,43,.1)}
+.pager .pg:hover i{background:var(--accent)}
+.pager .pg:hover i::before{border-color:var(--accent-ink)}
+.pager .pg:active{transform:scale(.98)}
+@media print{.pager{display:none}}
 </style>
 </head>
 <body>
@@ -1168,7 +1185,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     '{0} weights {1} ×{2}': '{0}: στάθμιση για {1} ×{2}',
     '{0} · success {1}': '{0} · επιτυχία {1}',
     '▼ = your ideal': '▼ = το ιδεώδες σας',
-    '▼ = your ideal · coloured band = after this round': '▼ = το ιδεώδες σας · έγχρωμη ζώνη = μετά από αυτόν τον γύρο'
+    '▼ = your ideal · coloured band = after this round': '▼ = το ιδεώδες σας · έγχρωμη ζώνη = μετά από αυτόν τον γύρο',
+    'Previous': 'Προηγούμενη',
+    'Next': 'Επόμενη',
+    'Start again': 'Από την αρχή'
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -2465,7 +2485,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     '{0} weights {1} ×{2}': '{0}: {1} ağırlığı ×{2}',
     '{0} · success {1}': '{0} · başarı {1}',
     '▼ = your ideal': '▼ = idealiniz',
-    '▼ = your ideal · coloured band = after this round': '▼ = idealiniz · renkli bant = bu turdan sonra'
+    '▼ = your ideal · coloured band = after this round': '▼ = idealiniz · renkli bant = bu turdan sonra',
+    'Previous': 'Önceki',
+    'Next': 'Sonraki',
+    'Start again': 'Baştan'
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -4743,17 +4766,22 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       window.GUIDE(T, M, esc) + '</section>';
   }
 
+  /* A previous / next page button: round chevron, small caption, page name. */
+  function pagerBtn(dir, act, v, cap, label) {
+    return '<button class="pg ' + dir + '" data-a="' + act + '"' + (v ? ' data-v="' + v + '"' : '') + '><i aria-hidden="true"></i><span><small>' + esc(cap) + '</small><b>' + esc(label) + '</b></span></button>';
+  }
+
   /* ---------- render ---------- */
   function render() {
     chrome();
-    if (!A.pid && A.tab === 'guide') { view.innerHTML = viewGuide() + '<nav class="pager"><button class="btn accent" data-a="start">← ' + T('Choose stakeholder') + '</button></nav>'; sheet.className = 'sheet'; document.body.classList.remove('has-sheet'); return; }
+    if (!A.pid && A.tab === 'guide') { view.innerHTML = viewGuide() + '<nav class="pager">' + pagerBtn('prev', 'start', '', T('Previous'), T('Choose stakeholder')) + '</nav>'; sheet.className = 'sheet'; document.body.classList.remove('has-sheet'); return; }
     if (!A.pid) { view.innerHTML = viewPick(); sheet.className = 'sheet'; document.body.classList.remove('has-sheet'); return; }
     var f = { board: viewBoard, path: viewPath, analysis: viewAnalysis, live: viewLive, library: viewLibrary, guide: viewGuide }[A.tab] || viewBoard;
     var keep = document.activeElement && document.activeElement.getAttribute('data-c') === 'q';
     var tabs = TABS(), ti = tabs.map(function (t) { return t[0]; }).indexOf(A.tab), prev = tabs[ti - 1], next = tabs[ti + 1];
     view.innerHTML = f() + '<nav class="pager" aria-label="' + esc(T('Previous and next page')) + '">' +
-      (prev ? '<button class="btn" data-a="tab" data-v="' + prev[0] + '">← ' + prev[2] + '</button>' : '<button class="btn" data-a="home">← ' + T('Choose stakeholder') + '</button>') +
-      (next ? '<button class="btn accent" data-a="tab" data-v="' + next[0] + '">' + next[2] + ' →</button>' : '<button class="btn" data-a="tab" data-v="board">' + T('Back to the board') + ' ↺</button>') + '</nav>';
+      (prev ? pagerBtn('prev', 'tab', prev[0], T('Previous'), prev[2]) : pagerBtn('prev', 'home', '', T('Previous'), T('Choose stakeholder'))) +
+      (next ? pagerBtn('next', 'tab', next[0], T('Next'), next[2]) : pagerBtn('next', 'tab', 'board', T('Start again'), T('Back to the board'))) + '</nav>';
     viewSheet();
     if (keep) { var i = $('[data-c="q"]'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }
   }

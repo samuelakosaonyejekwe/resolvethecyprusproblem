@@ -436,6 +436,9 @@
     '{0} weights {1} ×{2}': '{0}: {1} ağırlığı ×{2}',
     '{0} · success {1}': '{0} · başarı {1}',
     '▼ = your ideal': '▼ = idealiniz',
-    '▼ = your ideal · coloured band = after this round': '▼ = idealiniz · renkli bant = bu turdan sonra'
+    '▼ = your ideal · coloured band = after this round': '▼ = idealiniz · renkli bant = bu turdan sonra',
+    'Previous': 'Önceki',
+    'Next': 'Sonraki',
+    'Start again': 'Baştan'
   };
 })(typeof self !== 'undefined' ? self : this);

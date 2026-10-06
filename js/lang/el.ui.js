@@ -436,6 +436,9 @@
     '{0} weights {1} ×{2}': '{0}: στάθμιση για {1} ×{2}',
     '{0} · success {1}': '{0} · επιτυχία {1}',
     '▼ = your ideal': '▼ = το ιδεώδες σας',
-    '▼ = your ideal · coloured band = after this round': '▼ = το ιδεώδες σας · έγχρωμη ζώνη = μετά από αυτόν τον γύρο'
+    '▼ = your ideal · coloured band = after this round': '▼ = το ιδεώδες σας · έγχρωμη ζώνη = μετά από αυτόν τον γύρο',
+    'Previous': 'Προηγούμενη',
+    'Next': 'Επόμενη',
+    'Start again': 'Από την αρχή'
   };
 })(typeof self !== 'undefined' ? self : this);

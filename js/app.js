@@ -678,17 +678,22 @@
       window.GUIDE(T, M, esc) + '</section>';
   }
 
+  /* A previous / next page button: round chevron, small caption, page name. */
+  function pagerBtn(dir, act, v, cap, label) {
+    return '<button class="pg ' + dir + '" data-a="' + act + '"' + (v ? ' data-v="' + v + '"' : '') + '><i aria-hidden="true"></i><span><small>' + esc(cap) + '</small><b>' + esc(label) + '</b></span></button>';
+  }
+
   /* ---------- render ---------- */
   function render() {
     chrome();
-    if (!A.pid && A.tab === 'guide') { view.innerHTML = viewGuide() + '<nav class="pager"><button class="btn accent" data-a="start">← ' + T('Choose stakeholder') + '</button></nav>'; sheet.className = 'sheet'; document.body.classList.remove('has-sheet'); return; }
+    if (!A.pid && A.tab === 'guide') { view.innerHTML = viewGuide() + '<nav class="pager">' + pagerBtn('prev', 'start', '', T('Previous'), T('Choose stakeholder')) + '</nav>'; sheet.className = 'sheet'; document.body.classList.remove('has-sheet'); return; }
     if (!A.pid) { view.innerHTML = viewPick(); sheet.className = 'sheet'; document.body.classList.remove('has-sheet'); return; }
     var f = { board: viewBoard, path: viewPath, analysis: viewAnalysis, live: viewLive, library: viewLibrary, guide: viewGuide }[A.tab] || viewBoard;
     var keep = document.activeElement && document.activeElement.getAttribute('data-c') === 'q';
     var tabs = TABS(), ti = tabs.map(function (t) { return t[0]; }).indexOf(A.tab), prev = tabs[ti - 1], next = tabs[ti + 1];
     view.innerHTML = f() + '<nav class="pager" aria-label="' + esc(T('Previous and next page')) + '">' +
-      (prev ? '<button class="btn" data-a="tab" data-v="' + prev[0] + '">← ' + prev[2] + '</button>' : '<button class="btn" data-a="home">← ' + T('Choose stakeholder') + '</button>') +
-      (next ? '<button class="btn accent" data-a="tab" data-v="' + next[0] + '">' + next[2] + ' →</button>' : '<button class="btn" data-a="tab" data-v="board">' + T('Back to the board') + ' ↺</button>') + '</nav>';
+      (prev ? pagerBtn('prev', 'tab', prev[0], T('Previous'), prev[2]) : pagerBtn('prev', 'home', '', T('Previous'), T('Choose stakeholder'))) +
+      (next ? pagerBtn('next', 'tab', next[0], T('Next'), next[2]) : pagerBtn('next', 'tab', 'board', T('Start again'), T('Back to the board'))) + '</nav>';
     viewSheet();
     if (keep) { var i = $('[data-c="q"]'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }
   }
