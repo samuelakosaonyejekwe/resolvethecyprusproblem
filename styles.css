@@ -281,3 +281,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .rec-desk{display:none}
 .card.intro .lead{max-width:none}
 @media (min-width:1000px){.rec-desk{display:block}.rec-mob{display:none}}
+
+/* small control to leave a wrongly sorted headline out */
+button.x{border:1px solid var(--line);background:none;color:var(--mute);border-radius:50%;width:22px;height:22px;line-height:1;font-size:.9rem;padding:0;vertical-align:middle}
+button.x:hover{border-color:var(--bad);color:var(--bad)}
+@media print{button.x{display:none}}

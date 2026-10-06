@@ -550,19 +550,19 @@
     society: { name: 'Public opinion and civil society', q: '(cyprus OR cypriot) (referendum OR poll OR "public opinion" OR diaspora OR "civil society" OR education OR heritage)' }
   };
   /* A report counts only if its headline is plainly about the subject. */
-  var CY = 'cypr|nicosia|varosha|famagusta|unficyp|erh[uü]rman|christodoulides', TK = 'turk|türk|ankara|erdo[gğ]an';
+  var CY = 'cypr|nicosia|varosha|famagusta|unficyp|erh[uü]rman|christodoulides', TK = 'turk|türk|ankara|erdo[gğ]an|τουρκ|άγκυρα|ερντογάν';
   Object.keys(M.topics).forEach(function (t) { M.topics[t].must = CY; });
   M.topics.euturkey.must = TK; M.topics.sanctions.must = TK; M.topics.usturkey.must = TK;
-  M.topics.greeceturkey.must = 'gree|athens|mitsotakis|aegean'; M.topics.russia.must = 'russia|putin|kremlin|moscow|akkuyu';
+  M.topics.greeceturkey.must = 'gree|athens|mitsotakis|aegean|ελλάδ|αθήνα|μητσοτάκ|yunanistan|atina'; M.topics.russia.must = 'russia|putin|kremlin|moscow|akkuyu|ρωσί|πούτιν|rusya';
   M.topics.maritime.must = CY + '|' + TK;
   var SUB = {
     talks: 'talks|negotiat|settlement|solution|reunif|federa|peace|envoy|two-state|cyprus problem|holgu|three-way|informal meeting|window of opportunity', security: 'guarant|peacekeep|unficyp|neutrality|security (guarantee|arrangement|council)|troop withdraw|withdrawal of',
-    troops: 'troop|turkish army|turkish military|turkish forces|occup|soldier|garrison', property: 'refugee|restitut|compensat|missing persons|the missing|displaced|immovable|property (claim|commission|right|issue|dispute)|usurp',
+    troops: 'turkish troops|turkish army|turkish military|turkish forces|turkish soldiers|occupation (army|forces|troops)|garrison', property: 'refugee|restitut|compensat|missing persons|the missing|displaced|immovable|property (claim|commission|right|issue|dispute)|usurp',
     cbm: 'crossing|confidence|buffer|bi-?communal|checkpoint', trade: 'green line|\\btrade|halloumi|direct flights?|ercan|turkish cypriot (econom|business|chamber)|north.{0,20}econom',
     gas: 'gas|drill|aphrodite|cronos|exxon|chevron|eez|hydrocarbon', grid: 'interconnector|cable|electric|hydrogen|grid|power link',
     euturkey: 'customs|visa|accession|\\beu\\b|european|brussels|membership', sanctions: 'sanction|restrictive|caatsa|designat|embargo',
     uscyprus: '\\bu\\.?s\\.?\\b|united states|washington|american|pentagon|congress|visa waiver', usturkey: 'f-?35|f-?16|caatsa|s-?400|washington|\\bu\\.?s\\.?\\b|congress',
-    courts: 'court|echr|ruling|lawsuit|arbitrat|judg|legal action|council of europe', maritime: 'maritime|warship|navtex|naval|navy|vessel|\\bsea\\b',
+    courts: 'court|echr|ruling|lawsuit|arbitrat|judg|legal action|council of europe', maritime: 'warship|navtex|naval (exercise|drill|vessel)|navy|oruc reis|law of the sea|maritime (zone|boundar|dispute|deal|jurisdiction)|continental shelf',
     varosha: 'varosha|mara[sş]', recognition: 'two-state|trnc|recogni|sovereign|turkic|direct flight',
     defence: 'defen[cs]e|guard|military|exercise|nato|missile|frontex|\\barms\\b|army', regional: 'israel|egypt|emirates|\\buae\\b|saudi|india|trilateral|imec|gulf|jordan|leban',
     greeceturkey: 'turk|türk|erdo[gğ]an|ankara', britain: 'brit|\\buk\\b|bases|akrotiri|dhekelia|\\braf\\b|london',

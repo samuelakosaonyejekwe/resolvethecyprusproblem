@@ -294,6 +294,11 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .rec-desk{display:none}
 .card.intro .lead{max-width:none}
 @media (min-width:1000px){.rec-desk{display:block}.rec-mob{display:none}}
+
+/* small control to leave a wrongly sorted headline out */
+button.x{border:1px solid var(--line);background:none;color:var(--mute);border-radius:50%;width:22px;height:22px;line-height:1;font-size:.9rem;padding:0;vertical-align:middle}
+button.x:hover{border-color:var(--bad);color:var(--bad)}
+@media print{button.x{display:none}}
 </style>
 </head>
 <body>
@@ -1333,7 +1338,29 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     'hard-line': 'σκληρή',
     'no tilt': 'καμία κλίση',
     'none found': 'δεν βρέθηκε',
-    '{0} headlines on this subject in the last 21 days, from newspapers and the news index. Headlines are shown as published, those in your language first.': '{0} τίτλοι για αυτό το θέμα τις τελευταίες 21 ημέρες, από εφημερίδες και από το ευρετήριο ειδήσεων. Οι τίτλοι εμφανίζονται όπως δημοσιεύτηκαν, με πρώτους όσους είναι στη γλώσσα σας.'
+    '{0} headlines on this subject in the last 21 days, from newspapers and the news index. Headlines are shown as published, those in your language first.': '{0} τίτλοι για αυτό το θέμα τις τελευταίες 21 ημέρες, από εφημερίδες και από το ευρετήριο ειδήσεων. Οι τίτλοι εμφανίζονται όπως δημοσιεύτηκαν, με πρώτους όσους είναι στη γλώσσα σας.',
+    'Does': 'Πράττει',
+    'Governments\' own publications': 'Δημοσιεύσεις των ίδιων των κυβερνήσεων',
+    'Headlines about legal pressure and recognition': 'Τίτλοι για νομική πίεση και αναγνώριση',
+    'Headlines about military matters': 'Τίτλοι για στρατιωτικά θέματα',
+    'Headlines about talks and contacts': 'Τίτλοι για συνομιλίες και επαφές',
+    'Headlines read directly from Greek Cypriot, Turkish Cypriot, Greek and Turkish newspapers, in their own languages (last 21 days)': 'Τίτλοι που διαβάζονται απευθείας από ελληνοκυπριακές, τουρκοκυπριακές, ελληνικές και τουρκικές εφημερίδες, στη γλώσσα της καθεμίας (τελευταίες 21 ημέρες)',
+    'In each pair the first number is conciliatory, the second hard-line. A stakeholder needs a weighted total of at least three before any tilt is applied. If a headline is attributed or read wrongly, press × beside it and it is left out of every count.': 'Σε κάθε ζεύγος ο πρώτος αριθμός αφορά τα διαλλακτικά και ο δεύτερος τα σκληρά. Ένα ενδιαφερόμενο μέρος χρειάζεται σταθμισμένο σύνολο τουλάχιστον τρία προτού εφαρμοστεί οποιαδήποτε κλίση. Αν ένας τίτλος έχει αποδοθεί ή χαρακτηριστεί λανθασμένα, πατήστε το × δίπλα του και θα εξαιρεθεί από κάθε καταμέτρηση.',
+    'Latest': 'Τελευταίο',
+    'Left out. You can restore hidden headlines on the Live intel page.': 'Εξαιρέθηκε. Μπορείτε να επαναφέρετε τους κρυμμένους τίτλους στη σελίδα Ζωντανά δεδομένα.',
+    'Let this tilt predictions': 'Να επηρεάζει την κλίση των προβλέψεων',
+    'Not about this: leave it out': 'Δεν αφορά αυτό: να εξαιρεθεί',
+    'Readership shows attention, not intent. To get as close to intent as public evidence allows, the tool separates <b>words</b> from <b>deeds</b>. Words are statements: those published by governments themselves, and newspaper headlines reporting a named leader or office speaking about the Cyprus question. Deeds are headlines reporting an act, such as signing, opening, withdrawing, deploying or blocking. Each is read as conciliatory or hard-line. Deeds and governments\' own statements count double. The balance tilts that stakeholder\'s predicted choices slightly the same way, and the table warns when words and deeds point in opposite directions.': 'Η αναγνωσιμότητα δείχνει προσοχή, όχι πρόθεση. Για να πλησιάσει την πρόθεση όσο το επιτρέπουν τα δημόσια τεκμήρια, το εργαλείο διαχωρίζει τα <b>λόγια</b> από τα <b>έργα</b>. Λόγια είναι οι δηλώσεις: όσες δημοσιεύουν οι ίδιες οι κυβερνήσεις, και οι τίτλοι εφημερίδων που μεταφέρουν δηλώσεις κατονομαζόμενου ηγέτη ή αξιώματος για το Κυπριακό. Έργα είναι οι τίτλοι που αναφέρουν μια πράξη, όπως υπογραφή, άνοιγμα, αποχώρηση, ανάπτυξη δυνάμεων ή μπλοκάρισμα. Το καθένα χαρακτηρίζεται διαλλακτικό ή σκληρό. Τα έργα και οι δηλώσεις των ίδιων των κυβερνήσεων μετρούν διπλά. Η αναλογία δίνει στις προβλεπόμενες επιλογές του αντίστοιχου μέρους ελαφρά κλίση προς την ίδια κατεύθυνση, και ο πίνακας προειδοποιεί όταν λόγια και έργα δείχνουν προς αντίθετες κατευθύνσεις.',
+    'Restore them': 'Επαναφορά',
+    'Says': 'Λέει',
+    'Statements, answers to parliament, bills and formal notices published by the governments of Cyprus, Greece, the United Kingdom and the United States and by the European Commission': 'Δηλώσεις, απαντήσεις στο κοινοβούλιο, νομοσχέδια και επίσημες ανακοινώσεις που δημοσιεύουν οι κυβερνήσεις της Κύπρου, της Ελλάδας, του Ηνωμένου Βασιλείου και των Ηνωμένων Πολιτειών και η Ευρωπαϊκή Επιτροπή',
+    'What each government says and does': 'Τι λέει και τι πράττει κάθε κυβέρνηση',
+    'What governments themselves have published, fetched from their own sites: {0}. Statements here also feed the table above. Each source is kept from its last successful fetch, so a source that is slow today still shows what it gave before.': 'Τι έχουν δημοσιεύσει οι ίδιες οι κυβερνήσεις, όπως αντλείται από τους δικούς τους ιστοτόπους: {0}. Οι δηλώσεις που εμφανίζονται εδώ τροφοδοτούν και τον παραπάνω πίνακα. Κάθε πηγή διατηρείται από την τελευταία επιτυχή άντλησή της, άρα μια πηγή που σήμερα αργεί εξακολουθεί να δείχνει όσα είχε δώσει προηγουμένως.',
+    'deed': 'έργο',
+    'official': 'επίσημο',
+    'words and deeds differ': 'λόγια και έργα αποκλίνουν',
+    '{0} headlines are hidden.': '{0} τίτλοι είναι κρυμμένοι.',
+    '{0} this week, {1} a week before': '{0} αυτή την εβδομάδα, {1} την προηγούμενη'
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -1523,7 +1550,14 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     'What governments are saying, and what they have put on record': 'Τι λένε οι κυβερνήσεις και τι έχουν καταθέσει επισήμως',
     'Attention is not intent. To get closer to intent, the tool reads current headlines directly from newspapers on both sides of the island and in Greece, in Greek, Turkish and English, as well as from the news index. A headline that reports a named leader or office speaking about the Cyprus question is attributed to that stakeholder and read, from its wording, as conciliatory or hard-line.': 'Η προσοχή δεν είναι πρόθεση. Για να πλησιάσει την πρόθεση, το εργαλείο διαβάζει τρέχοντες τίτλους απευθείας από εφημερίδες και των δύο πλευρών του νησιού και της Ελλάδας, στα ελληνικά, τα τουρκικά και τα αγγλικά, καθώς και από το ευρετήριο ειδήσεων. Ένας τίτλος που μεταφέρει δηλώσεις κατονομαζόμενου ηγέτη ή αξιώματος για το Κυπριακό αποδίδεται στο αντίστοιχο ενδιαφερόμενο μέρος και χαρακτηρίζεται, από τη διατύπωσή του, διαλλακτικός ή σκληρός.',
     'When a stakeholder has at least three such statements in the last three weeks, the balance between conciliatory and hard-line ones tilts its predicted choices slightly toward moves of the same kind. A government that has been talking about dialogue is judged a little more likely to choose a cooperative reply; one that has been issuing warnings, a little more likely to choose a confrontational one. The table under Live intel → "What each government is saying" shows the counts and the latest statement for each stakeholder, and the tilt can be switched off there.': 'Όταν ένα ενδιαφερόμενο μέρος έχει τουλάχιστον τρεις τέτοιες δηλώσεις τις τελευταίες τρεις εβδομάδες, η αναλογία ανάμεσα στις διαλλακτικές και στις σκληρές δίνει στις προβλεπόμενες επιλογές του ελαφρά κλίση προς κινήσεις του ίδιου είδους. Μια κυβέρνηση που μιλά για διάλογο κρίνεται λίγο πιθανότερο να επιλέξει απάντηση συνεργασίας· μια κυβέρνηση που εκδίδει προειδοποιήσεις, λίγο πιθανότερο να επιλέξει απάντηση αντιπαράθεσης. Ο πίνακας στα Ζωντανά δεδομένα → «Τι λέει κάθε κυβέρνηση» δείχνει τους αριθμούς και την τελευταία δήλωση για κάθε μέρος, και η κλίση μπορεί να απενεργοποιηθεί εκεί.',
-    'The Live intel page also shows the official record from primary sources: written answers given by United Kingdom ministers to Parliament on Cyprus, and notices and rules published by the United States government. Public words and official records are evidence of stated policy. They can still differ from what a government privately intends, which no tool can observe.': 'Η σελίδα Ζωντανά δεδομένα δείχνει επίσης τα επίσημα αρχεία από πρωτογενείς πηγές: γραπτές απαντήσεις υπουργών του Ηνωμένου Βασιλείου στο Κοινοβούλιο για την Κύπρο, και ανακοινώσεις και κανονισμούς που δημοσιεύει η κυβέρνηση των Ηνωμένων Πολιτειών. Οι δημόσιοι λόγοι και τα επίσημα αρχεία είναι τεκμήρια της δηλωμένης πολιτικής. Μπορεί ωστόσο να διαφέρουν από όσα σκοπεύει ιδιωτικά μια κυβέρνηση, τα οποία κανένα εργαλείο δεν μπορεί να παρατηρήσει.'
+    'The Live intel page also shows the official record from primary sources: written answers given by United Kingdom ministers to Parliament on Cyprus, and notices and rules published by the United States government. Public words and official records are evidence of stated policy. They can still differ from what a government privately intends, which no tool can observe.': 'Η σελίδα Ζωντανά δεδομένα δείχνει επίσης τα επίσημα αρχεία από πρωτογενείς πηγές: γραπτές απαντήσεις υπουργών του Ηνωμένου Βασιλείου στο Κοινοβούλιο για την Κύπρο, και ανακοινώσεις και κανονισμούς που δημοσιεύει η κυβέρνηση των Ηνωμένων Πολιτειών. Οι δημόσιοι λόγοι και τα επίσημα αρχεία είναι τεκμήρια της δηλωμένης πολιτικής. Μπορεί ωστόσο να διαφέρουν από όσα σκοπεύει ιδιωτικά μια κυβέρνηση, τα οποία κανένα εργαλείο δεν μπορεί να παρατηρήσει.',
+    '<b>Newspapers\' own feeds</b>: headlines read directly from nineteen Greek Cypriot, Turkish Cypriot, Greek and Turkish newspapers that publish an open feed, in their own languages.': '<b>Ροές ειδήσεων των ίδιων των εφημερίδων</b>: τίτλοι που διαβάζονται απευθείας από δεκαεννέα ελληνοκυπριακές, τουρκοκυπριακές, ελληνικές και τουρκικές εφημερίδες που δημοσιεύουν ανοικτή ροή ειδήσεων, στη γλώσσα της καθεμίας.',
+    '<b>Governments\' own publications</b>: statements, answers to parliament, bills and formal notices from the governments of Cyprus, Greece, the United Kingdom and the United States and from the European Commission.': '<b>Δημοσιεύσεις των ίδιων των κυβερνήσεων</b>: δηλώσεις, απαντήσεις στο κοινοβούλιο, νομοσχέδια και επίσημες ανακοινώσεις των κυβερνήσεων της Κύπρου, της Ελλάδας, του Ηνωμένου Βασιλείου και των Ηνωμένων Πολιτειών και της Ευρωπαϊκής Επιτροπής.',
+    'What governments say and do': 'Τι λένε και τι πράττουν οι κυβερνήσεις',
+    'Attention is not intent. Nobody can observe what a government privately intends, so the tool gathers the best public evidence of it and keeps two kinds apart. <b>Words</b> are statements: those governments publish themselves, and newspaper headlines that report a named leader or office speaking about the Cyprus question. <b>Deeds</b> are headlines that report an act: signing, opening, withdrawing, lifting, deploying, blocking, holding exercises. Deeds are harder to fake than words, so they count double, as do governments\' own published statements.': 'Η προσοχή δεν είναι πρόθεση. Κανείς δεν μπορεί να παρατηρήσει τι σκοπεύει ιδιωτικά μια κυβέρνηση· γι\' αυτό το εργαλείο συγκεντρώνει τα καλύτερα δημόσια τεκμήρια για την πρόθεση και κρατά χωριστά δύο είδη. <b>Λόγια</b> είναι οι δηλώσεις: όσες δημοσιεύουν οι ίδιες οι κυβερνήσεις, και οι τίτλοι εφημερίδων που μεταφέρουν δηλώσεις κατονομαζόμενου ηγέτη ή αξιώματος για το Κυπριακό. <b>Έργα</b> είναι οι τίτλοι που αναφέρουν μια πράξη: υπογραφή, άνοιγμα, αποχώρηση, άρση, ανάπτυξη δυνάμεων, μπλοκάρισμα, διεξαγωγή ασκήσεων. Τα έργα είναι δυσκολότερο να προσποιηθεί κανείς από τα λόγια, άρα μετρούν διπλά, όπως και οι δηλώσεις που δημοσιεύουν οι ίδιες οι κυβερνήσεις.',
+    'Headlines are read directly from newspapers on every side: Greek Cypriot, Turkish Cypriot, Greek and Turkish, in Greek, Turkish and English. Official material comes from the governments\' own sites: the Republic of Cyprus, the Greek Prime Minister and Foreign Ministry, the United Kingdom Foreign Office and ministers\' answers to Parliament, the United States Congress and Federal Register, and the European Commission.': 'Οι τίτλοι διαβάζονται απευθείας από εφημερίδες κάθε πλευράς: ελληνοκυπριακές, τουρκοκυπριακές, ελληνικές και τουρκικές, στα ελληνικά, τα τουρκικά και τα αγγλικά. Το επίσημο υλικό προέρχεται από τους ιστοτόπους των ίδιων των κυβερνήσεων: την Κυπριακή Δημοκρατία, τον Έλληνα Πρωθυπουργό και το ελληνικό Υπουργείο Εξωτερικών, το Υπουργείο Εξωτερικών του Ηνωμένου Βασιλείου και τις απαντήσεις υπουργών στο Κοινοβούλιο, το Κογκρέσο και το Federal Register των Ηνωμένων Πολιτειών, και την Ευρωπαϊκή Επιτροπή.',
+    'Each item is read from its wording as conciliatory or hard-line. When a stakeholder\'s weighted total reaches three, the balance tilts its predicted choices slightly toward moves of the same kind. The table under Live intel → "What each government says and does" shows the counts for words and for deeds, the resulting tilt, and a warning when a stakeholder\'s words and deeds point in opposite directions, which is itself a signal worth weighing.': 'Κάθε στοιχείο χαρακτηρίζεται, από τη διατύπωσή του, διαλλακτικό ή σκληρό. Όταν το σταθμισμένο σύνολο ενός ενδιαφερόμενου μέρους φτάσει το τρία, η αναλογία δίνει στις προβλεπόμενες επιλογές του ελαφρά κλίση προς κινήσεις του ίδιου είδους. Ο πίνακας στα Ζωντανά δεδομένα → «Τι λέει και τι πράττει κάθε κυβέρνηση» δείχνει τους αριθμούς για τα λόγια και για τα έργα, την κλίση που προκύπτει, και προειδοποίηση όταν τα λόγια και τα έργα ενός μέρους δείχνουν προς αντίθετες κατευθύνσεις, κάτι που είναι από μόνο του σήμα που αξίζει να σταθμιστεί.',
+    'Sorting by keyword is imperfect. Beside every headline there is a small × that takes it out of every count if it has been attributed or read wrongly; hidden headlines can be restored on the Live intel page. The tilt can also be switched off there.': 'Η ταξινόμηση με λέξεις-κλειδιά δεν είναι τέλεια. Δίπλα σε κάθε τίτλο υπάρχει ένα μικρό × που τον αφαιρεί από κάθε καταμέτρηση αν έχει αποδοθεί ή χαρακτηριστεί λανθασμένα· οι κρυμμένοι τίτλοι μπορούν να επαναφερθούν στη σελίδα Ζωντανά δεδομένα. Και η κλίση μπορεί να απενεργοποιηθεί εκεί.'
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -2780,7 +2814,29 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     'hard-line': 'sert',
     'no tilt': 'eğilim yok',
     'none found': 'bulunamadı',
-    '{0} headlines on this subject in the last 21 days, from newspapers and the news index. Headlines are shown as published, those in your language first.': 'Son 21 günde gazetelerden ve haber dizininden bu konuda {0} başlık. Başlıklar yayımlandığı gibi gösterilir; kendi dilinizdekiler önce gelir.'
+    '{0} headlines on this subject in the last 21 days, from newspapers and the news index. Headlines are shown as published, those in your language first.': 'Son 21 günde gazetelerden ve haber dizininden bu konuda {0} başlık. Başlıklar yayımlandığı gibi gösterilir; kendi dilinizdekiler önce gelir.',
+    'Does': 'Yaptığı',
+    'Governments\' own publications': 'Hükûmetlerin kendi yayınları',
+    'Headlines about legal pressure and recognition': 'Hukuki baskı ve tanınmaya ilişkin başlıklar',
+    'Headlines about military matters': 'Askerî konulara ilişkin başlıklar',
+    'Headlines about talks and contacts': 'Görüşmelere ve temaslara ilişkin başlıklar',
+    'Headlines read directly from Greek Cypriot, Turkish Cypriot, Greek and Turkish newspapers, in their own languages (last 21 days)': 'Kıbrıs Rum, Kıbrıs Türk, Yunan ve Türk gazetelerinden kendi dillerinde doğrudan okunan başlıklar (son 21 gün)',
+    'In each pair the first number is conciliatory, the second hard-line. A stakeholder needs a weighted total of at least three before any tilt is applied. If a headline is attributed or read wrongly, press × beside it and it is left out of every count.': 'Her çiftte ilk sayı uzlaşmacı, ikincisi serttir. Herhangi bir eğilim uygulanmadan önce bir paydaşın ağırlıklı toplamının en az üç olması gerekir. Bir başlık yanlış atfedilmiş veya yanlış okunmuşsa yanındaki × işaretine basın; başlık bütün sayımların dışında bırakılır.',
+    'Latest': 'En son',
+    'Left out. You can restore hidden headlines on the Live intel page.': 'Dışarıda bırakıldı. Gizlenen başlıkları Canlı bilgi sayfasında geri getirebilirsiniz.',
+    'Let this tilt predictions': 'Bu, öngörülere eğilim versin',
+    'Not about this: leave it out': 'Bununla ilgili değil: dışarıda bırak',
+    'Readership shows attention, not intent. To get as close to intent as public evidence allows, the tool separates <b>words</b> from <b>deeds</b>. Words are statements: those published by governments themselves, and newspaper headlines reporting a named leader or office speaking about the Cyprus question. Deeds are headlines reporting an act, such as signing, opening, withdrawing, deploying or blocking. Each is read as conciliatory or hard-line. Deeds and governments\' own statements count double. The balance tilts that stakeholder\'s predicted choices slightly the same way, and the table warns when words and deeds point in opposite directions.': 'Okur sayısı niyeti değil, ilgiyi gösterir. Kamuya açık kanıtın elverdiği ölçüde niyete yaklaşmak için araç <b>sözleri</b> <b>eylemlerden</b> ayırır. Sözler açıklamalardır: hükûmetlerin kendilerinin yayımladıkları ve adı belirtilen bir liderin veya makamın Kıbrıs sorunu hakkında konuştuğunu aktaran gazete başlıkları. Eylemler ise imzalama, açma, geri çekme, konuşlandırma veya engelleme gibi bir fiili aktaran başlıklardır. Her biri uzlaşmacı veya sert olarak okunur. Eylemler ve hükûmetlerin kendi açıklamaları iki kat sayılır. Denge, o paydaşın öngörülen tercihlerine aynı yönde hafif bir eğilim verir; sözler ve eylemler zıt yönleri gösterdiğinde tablo uyarır.',
+    'Restore them': 'Geri getir',
+    'Says': 'Söylediği',
+    'Statements, answers to parliament, bills and formal notices published by the governments of Cyprus, Greece, the United Kingdom and the United States and by the European Commission': 'Kıbrıs, Yunanistan, Birleşik Krallık ve Amerika Birleşik Devletleri hükûmetlerinin ve Avrupa Komisyonu\'nun yayımladığı açıklamalar, parlamentoya verilen yanıtlar, yasa tasarıları ve resmî duyurular',
+    'What each government says and does': 'Her hükûmet ne diyor ve ne yapıyor',
+    'What governments themselves have published, fetched from their own sites: {0}. Statements here also feed the table above. Each source is kept from its last successful fetch, so a source that is slow today still shows what it gave before.': 'Hükûmetlerin kendilerinin yayımladıkları, kendi sitelerinden çekilir: {0}. Buradaki açıklamalar yukarıdaki tabloyu da besler. Her kaynak son başarılı çekme işlemindeki hâliyle saklanır; böylece bugün yavaş olan bir kaynak daha önce verdiğini yine gösterir.',
+    'deed': 'eylem',
+    'official': 'resmî',
+    'words and deeds differ': 'sözler ve eylemler ayrışıyor',
+    '{0} headlines are hidden.': '{0} başlık gizli.',
+    '{0} this week, {1} a week before': '{0} bu hafta, {1} bir hafta önce'
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -2970,7 +3026,14 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     'What governments are saying, and what they have put on record': 'Hükûmetler ne diyor ve neyi kayda geçirdiler',
     'Attention is not intent. To get closer to intent, the tool reads current headlines directly from newspapers on both sides of the island and in Greece, in Greek, Turkish and English, as well as from the news index. A headline that reports a named leader or office speaking about the Cyprus question is attributed to that stakeholder and read, from its wording, as conciliatory or hard-line.': 'İlgi niyet değildir. Niyete yaklaşmak için araç, güncel başlıkları haber dizininin yanı sıra adanın iki yanındaki ve Yunanistan\'daki gazetelerden Yunanca, Türkçe ve İngilizce olarak doğrudan okur. Adı belirtilen bir liderin veya makamın Kıbrıs sorunu hakkında konuştuğunu aktaran bir başlık o paydaşa atfedilir ve ifadesine göre uzlaşmacı veya sert olarak okunur.',
     'When a stakeholder has at least three such statements in the last three weeks, the balance between conciliatory and hard-line ones tilts its predicted choices slightly toward moves of the same kind. A government that has been talking about dialogue is judged a little more likely to choose a cooperative reply; one that has been issuing warnings, a little more likely to choose a confrontational one. The table under Live intel → "What each government is saying" shows the counts and the latest statement for each stakeholder, and the tilt can be switched off there.': 'Bir paydaşın son üç haftada bu türden en az üç açıklaması olduğunda, uzlaşmacı ve sert olanlar arasındaki denge o paydaşın öngörülen tercihlerine aynı türden hamleler yönünde hafif bir eğilim verir. Diyalogdan söz etmekte olan bir hükûmetin iş birliğine dönük bir karşılık seçmesi biraz daha olası sayılır; uyarılar yayımlamakta olan bir hükûmetin ise çatışmacı bir karşılık seçmesi biraz daha olası sayılır. Canlı bilgi → "Her hükûmet ne diyor" altındaki tablo her paydaş için sayıları ve son açıklamayı gösterir; eğilim de oradan kapatılabilir.',
-    'The Live intel page also shows the official record from primary sources: written answers given by United Kingdom ministers to Parliament on Cyprus, and notices and rules published by the United States government. Public words and official records are evidence of stated policy. They can still differ from what a government privately intends, which no tool can observe.': 'Canlı bilgi sayfası ayrıca birincil kaynaklardan resmî kayıtları gösterir: Birleşik Krallık bakanlarının Kıbrıs konusunda Parlamento\'ya verdiği yazılı yanıtlar ve Amerika Birleşik Devletleri hükûmetinin yayımladığı duyurular ve kurallar. Kamuya açık sözler ve resmî kayıtlar, beyan edilen politikanın kanıtıdır. Yine de bir hükûmetin gizlice niyet ettiğinden farklı olabilirler; bunu ise hiçbir araç gözlemleyemez.'
+    'The Live intel page also shows the official record from primary sources: written answers given by United Kingdom ministers to Parliament on Cyprus, and notices and rules published by the United States government. Public words and official records are evidence of stated policy. They can still differ from what a government privately intends, which no tool can observe.': 'Canlı bilgi sayfası ayrıca birincil kaynaklardan resmî kayıtları gösterir: Birleşik Krallık bakanlarının Kıbrıs konusunda Parlamento\'ya verdiği yazılı yanıtlar ve Amerika Birleşik Devletleri hükûmetinin yayımladığı duyurular ve kurallar. Kamuya açık sözler ve resmî kayıtlar, beyan edilen politikanın kanıtıdır. Yine de bir hükûmetin gizlice niyet ettiğinden farklı olabilirler; bunu ise hiçbir araç gözlemleyemez.',
+    '<b>Newspapers\' own feeds</b>: headlines read directly from nineteen Greek Cypriot, Turkish Cypriot, Greek and Turkish newspapers that publish an open feed, in their own languages.': '<b>Gazetelerin kendi akışları</b>: açık akış yayımlayan on dokuz Kıbrıs Rum, Kıbrıs Türk, Yunan ve Türk gazetesinden kendi dillerinde doğrudan okunan başlıklar.',
+    '<b>Governments\' own publications</b>: statements, answers to parliament, bills and formal notices from the governments of Cyprus, Greece, the United Kingdom and the United States and from the European Commission.': '<b>Hükûmetlerin kendi yayınları</b>: Kıbrıs, Yunanistan, Birleşik Krallık ve Amerika Birleşik Devletleri hükûmetlerinden ve Avrupa Komisyonu\'ndan açıklamalar, parlamentoya verilen yanıtlar, yasa tasarıları ve resmî duyurular.',
+    'What governments say and do': 'Hükûmetler ne diyor ve ne yapıyor',
+    'Attention is not intent. Nobody can observe what a government privately intends, so the tool gathers the best public evidence of it and keeps two kinds apart. <b>Words</b> are statements: those governments publish themselves, and newspaper headlines that report a named leader or office speaking about the Cyprus question. <b>Deeds</b> are headlines that report an act: signing, opening, withdrawing, lifting, deploying, blocking, holding exercises. Deeds are harder to fake than words, so they count double, as do governments\' own published statements.': 'İlgi niyet değildir. Bir hükûmetin gizlice neye niyet ettiğini kimse gözlemleyemez; bu nedenle araç buna ilişkin en iyi kamuya açık kanıtı toplar ve iki türü birbirinden ayrı tutar. <b>Sözler</b> açıklamalardır: hükûmetlerin kendilerinin yayımladıkları ve adı belirtilen bir liderin veya makamın Kıbrıs sorunu hakkında konuştuğunu aktaran gazete başlıkları. <b>Eylemler</b> bir fiili aktaran başlıklardır: imzalama, açma, geri çekme, kaldırma, konuşlandırma, engelleme, tatbikat yapma. Eylemleri taklit etmek sözlere göre daha zordur; bu nedenle, hükûmetlerin kendi yayımladığı açıklamalar gibi, iki kat sayılırlar.',
+    'Headlines are read directly from newspapers on every side: Greek Cypriot, Turkish Cypriot, Greek and Turkish, in Greek, Turkish and English. Official material comes from the governments\' own sites: the Republic of Cyprus, the Greek Prime Minister and Foreign Ministry, the United Kingdom Foreign Office and ministers\' answers to Parliament, the United States Congress and Federal Register, and the European Commission.': 'Başlıklar her taraftaki gazetelerden doğrudan okunur: Kıbrıs Rum, Kıbrıs Türk, Yunan ve Türk gazetelerinden, Yunanca, Türkçe ve İngilizce olarak. Resmî malzeme hükûmetlerin kendi sitelerinden gelir: Kıbrıs Cumhuriyeti, Yunanistan Başbakanlığı ve Dışişleri Bakanlığı, Birleşik Krallık Dışişleri Bakanlığı ve bakanların Parlamento\'ya verdiği yanıtlar, Amerika Birleşik Devletleri Kongresi ve Federal Register ile Avrupa Komisyonu.',
+    'Each item is read from its wording as conciliatory or hard-line. When a stakeholder\'s weighted total reaches three, the balance tilts its predicted choices slightly toward moves of the same kind. The table under Live intel → "What each government says and does" shows the counts for words and for deeds, the resulting tilt, and a warning when a stakeholder\'s words and deeds point in opposite directions, which is itself a signal worth weighing.': 'Her öğe ifadesine göre uzlaşmacı veya sert olarak okunur. Bir paydaşın ağırlıklı toplamı üçe ulaştığında denge, o paydaşın öngörülen tercihlerine aynı türden hamleler yönünde hafif bir eğilim verir. Canlı bilgi → "Her hükûmet ne diyor ve ne yapıyor" altındaki tablo sözlere ve eylemlere ilişkin sayıları, ortaya çıkan eğilimi ve bir paydaşın sözleri ile eylemleri zıt yönleri gösterdiğinde bir uyarıyı gösterir; bu da başlı başına tartılmaya değer bir sinyaldir.',
+    'Sorting by keyword is imperfect. Beside every headline there is a small × that takes it out of every count if it has been attributed or read wrongly; hidden headlines can be restored on the Live intel page. The tilt can also be switched off there.': 'Anahtar sözcüğe göre ayırma kusursuz değildir. Her başlığın yanında, yanlış atfedilmiş veya yanlış okunmuşsa onu bütün sayımlardan çıkaran küçük bir × vardır; gizlenen başlıklar Canlı bilgi sayfasında geri getirilebilir. Eğilim de oradan kapatılabilir.'
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -3526,19 +3589,19 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     society: { name: 'Public opinion and civil society', q: '(cyprus OR cypriot) (referendum OR poll OR "public opinion" OR diaspora OR "civil society" OR education OR heritage)' }
   };
   /* A report counts only if its headline is plainly about the subject. */
-  var CY = 'cypr|nicosia|varosha|famagusta|unficyp|erh[uü]rman|christodoulides', TK = 'turk|türk|ankara|erdo[gğ]an';
+  var CY = 'cypr|nicosia|varosha|famagusta|unficyp|erh[uü]rman|christodoulides', TK = 'turk|türk|ankara|erdo[gğ]an|τουρκ|άγκυρα|ερντογάν';
   Object.keys(M.topics).forEach(function (t) { M.topics[t].must = CY; });
   M.topics.euturkey.must = TK; M.topics.sanctions.must = TK; M.topics.usturkey.must = TK;
-  M.topics.greeceturkey.must = 'gree|athens|mitsotakis|aegean'; M.topics.russia.must = 'russia|putin|kremlin|moscow|akkuyu';
+  M.topics.greeceturkey.must = 'gree|athens|mitsotakis|aegean|ελλάδ|αθήνα|μητσοτάκ|yunanistan|atina'; M.topics.russia.must = 'russia|putin|kremlin|moscow|akkuyu|ρωσί|πούτιν|rusya';
   M.topics.maritime.must = CY + '|' + TK;
   var SUB = {
     talks: 'talks|negotiat|settlement|solution|reunif|federa|peace|envoy|two-state|cyprus problem|holgu|three-way|informal meeting|window of opportunity', security: 'guarant|peacekeep|unficyp|neutrality|security (guarantee|arrangement|council)|troop withdraw|withdrawal of',
-    troops: 'troop|turkish army|turkish military|turkish forces|occup|soldier|garrison', property: 'refugee|restitut|compensat|missing persons|the missing|displaced|immovable|property (claim|commission|right|issue|dispute)|usurp',
+    troops: 'turkish troops|turkish army|turkish military|turkish forces|turkish soldiers|occupation (army|forces|troops)|garrison', property: 'refugee|restitut|compensat|missing persons|the missing|displaced|immovable|property (claim|commission|right|issue|dispute)|usurp',
     cbm: 'crossing|confidence|buffer|bi-?communal|checkpoint', trade: 'green line|\\btrade|halloumi|direct flights?|ercan|turkish cypriot (econom|business|chamber)|north.{0,20}econom',
     gas: 'gas|drill|aphrodite|cronos|exxon|chevron|eez|hydrocarbon', grid: 'interconnector|cable|electric|hydrogen|grid|power link',
     euturkey: 'customs|visa|accession|\\beu\\b|european|brussels|membership', sanctions: 'sanction|restrictive|caatsa|designat|embargo',
     uscyprus: '\\bu\\.?s\\.?\\b|united states|washington|american|pentagon|congress|visa waiver', usturkey: 'f-?35|f-?16|caatsa|s-?400|washington|\\bu\\.?s\\.?\\b|congress',
-    courts: 'court|echr|ruling|lawsuit|arbitrat|judg|legal action|council of europe', maritime: 'maritime|warship|navtex|naval|navy|vessel|\\bsea\\b',
+    courts: 'court|echr|ruling|lawsuit|arbitrat|judg|legal action|council of europe', maritime: 'warship|navtex|naval (exercise|drill|vessel)|navy|oruc reis|law of the sea|maritime (zone|boundar|dispute|deal|jurisdiction)|continental shelf',
     varosha: 'varosha|mara[sş]', recognition: 'two-state|trnc|recogni|sovereign|turkic|direct flight',
     defence: 'defen[cs]e|guard|military|exercise|nato|missile|frontex|\\barms\\b|army', regional: 'israel|egypt|emirates|\\buae\\b|saudi|india|trilateral|imec|gulf|jordan|leban',
     greeceturkey: 'turk|türk|erdo[gğ]an|ankara', britain: 'brit|\\buk\\b|bases|akrotiri|dhekelia|\\braf\\b|london',
@@ -4184,13 +4247,27 @@ input[type=range]{width:100%;accent-color:var(--accent)}
      Newspapers that publish an open headline feed are read directly, in their
      own language: Greek Cypriot, Turkish Cypriot, Greek and regional titles.
      This does not pass through any news index. */
+  var EL_CY = ['Κυπριακό', 'κατεχόμενα', 'Τουρκία'], EL_GR = ['Κυπριακό', 'Κύπρος'], TR_CY = ['Kıbrıs sorunu', 'Erhürman', 'müzakere'], TR_TR = ['Kıbrıs'];
   var PRESS = [
-    { name: 'Financial Mirror', host: 'www.financialmirror.com', lang: 'en', cy: true, q: ['Cyprus problem', 'Turkish Cypriot', 'Turkey'] },
-    { name: 'Philenews', host: 'philenews.com', lang: 'el', cy: true, q: ['Κυπριακό', 'κατεχόμενα', 'Τουρκία'] },
-    { name: 'Havadis', host: 'www.havadiskibris.com', lang: 'tr', cy: true, q: ['Kıbrıs sorunu', 'Erhürman', 'müzakere'] },
-    { name: 'Kıbrıs Gazetesi', host: 'kibrisgazetesi.com', lang: 'tr', cy: true, q: ['Kıbrıs sorunu', 'Erhürman', 'müzakere'] },
-    { name: 'Greek City Times', host: 'greekcitytimes.com', lang: 'en', q: ['Cyprus'] },
-    { name: 'Balkan Insight', host: 'balkaninsight.com', lang: 'en', q: ['Cyprus'] }
+    { name: 'Philenews', host: 'philenews.com', lang: 'el', cy: true, side: 'gc', q: EL_CY },
+    { name: 'Dialogos', host: 'dialogos.com.cy', lang: 'el', cy: true, side: 'gc', q: EL_CY },
+    { name: 'Alpha News', host: 'www.alphanews.live', lang: 'el', cy: true, side: 'gc', q: EL_CY },
+    { name: '24h', host: 'www.24h.com.cy', lang: 'el', cy: true, side: 'gc', q: EL_CY },
+    { name: 'Financial Mirror', host: 'www.financialmirror.com', lang: 'en', cy: true, side: 'gc', q: ['Cyprus problem', 'Turkish Cypriot', 'Turkey'] },
+    { name: 'Kıbrıs Gazetesi', host: 'kibrisgazetesi.com', lang: 'tr', cy: true, side: 'tc', q: TR_CY },
+    { name: 'Havadis', host: 'www.havadiskibris.com', lang: 'tr', cy: true, side: 'tc', q: TR_CY },
+    { name: 'Yeni Bakış', host: 'www.yenibakisgazetesi.com', lang: 'tr', cy: true, side: 'tc', q: TR_CY },
+    { name: 'Özgür Gazete', host: 'ozgurgazetekibris.com', lang: 'tr', cy: true, side: 'tc', q: TR_CY },
+    { name: 'Gazedda', host: 'www.gazeddakibris.com', lang: 'tr', cy: true, side: 'tc', q: TR_CY },
+    { name: 'ERT News', host: 'www.ertnews.gr', lang: 'el', side: 'gr', q: EL_GR },
+    { name: 'Hellenic News', host: 'hellenicnews.com', lang: 'el', side: 'gr', q: EL_GR },
+    { name: 'Greek News USA', host: 'www.greeknewsusa.com', lang: 'el', side: 'gr', q: EL_GR },
+    { name: 'Greek City Times', host: 'greekcitytimes.com', lang: 'en', side: 'gr', q: ['Cyprus'] },
+    { name: 'Naftemporiki', host: 'www.naftemporiki.gr', lang: 'en', side: 'gr', q: ['Cyprus'] },
+    { name: 'Pappas Post', host: 'www.pappaspost.com', lang: 'en', side: 'gr', q: ['Cyprus'] },
+    { name: 'Diken', host: 'www.diken.com.tr', lang: 'tr', side: 'tr', q: TR_TR },
+    { name: 'Medyascope', host: 'medyascope.tv', lang: 'tr', side: 'tr', q: TR_TR },
+    { name: 'Serbestiyet', host: 'serbestiyet.com', lang: 'tr', side: 'tr', q: TR_TR }
   ];
   function plain(h) {
     return String(h || '').replace(/<[^>]+>/g, '').replace(/&#(\d+);/g, function (m, n) { return String.fromCharCode(+n); })
@@ -4209,45 +4286,90 @@ input[type=range]{width:100%;accent-color:var(--accent)}
           var t = plain((x.title || {}).rendered), k = t.toLowerCase().slice(0, 70);
           if (!t || seen[k]) return;
           seen[k] = 1;
-          out.push({ title: t, url: x.link, domain: job.src.name, date: String(x.date || '').slice(0, 10), lang: job.src.lang, cy: !!job.src.cy });
+          out.push({ title: t, url: x.link, domain: job.src.name, date: String(x.date || '').slice(0, 10), lang: job.src.lang, cy: !!job.src.cy, side: job.src.side });
         });
       }).catch(function () {});
     }
     function worker() { return i < jobs.length ? one(jobs[i++]).then(worker) : Promise.resolve(); }
-    return Promise.all([worker(), worker(), worker()]).then(function () {
+    return Promise.all([worker(), worker(), worker(), worker(), worker()]).then(function () {
       PRESS.forEach(function (x) { if (x.ok) okSources += 1; });
       if (!out.length) throw new Error('no newspaper feed answered');
       out.sort(function (a, b) { return a.date < b.date ? 1 : -1; });
-      out = out.slice(0, 600);
-      out.sources = okSources;
-      return { n: okSources, items: out };
+      return { n: okSources, items: out.slice(0, 900) };
     });
   }
   L.pressNames = PRESS.map(function (x) { return x.name; });
 
   /* ---------- official records ----------
-     What governments have put on the record: answers given by UK ministers to
-     Parliament, and notices and rules published by the US government. */
-  function official() {
-    var out = { uk: [], us: [] };
-    var uk = get('https://questions-statements-api.parliament.uk/api/writtenquestions/questions?searchTerm=Cyprus&take=20&answered=Answered', 20000).then(function (j) {
-      out.uk = (j.results || []).map(function (r) { return r.value || {}; }).filter(function (v) { return v.answerText && /cypr/i.test(v.questionText + ' ' + v.answerText); })
-        .sort(function (a, b) { return String(a.dateAnswered || a.dateTabled) < String(b.dateAnswered || b.dateTabled) ? 1 : -1; }).slice(0, 6).map(function (v) {
+     What governments themselves have published: statements on their own
+     websites, answers to parliament, bills and formal notices. Each source is
+     tried on its own; one that fails keeps what it gave last time. */
+  var CYQ = /cyprus problem|cyprus issue|cyprus question|turk|türk|occup|settlement|reunif|talks|unficyp|united nations|missing persons|enclaved|buffer zone|famagusta|varosha|κυπριακ|τουρκ|κατοχ|κατεχ/i;
+  function wpPosts(host, q) {
+    var after = new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 19);
+    return get('https://' + host + '/wp-json/wp/v2/posts?per_page=30&_fields=title,link,date&after=' + after + '&search=' + encodeURIComponent(q), 20000).then(function (l) {
+      return (Array.isArray(l) ? l : []).map(function (x) { return { title: plain((x.title || {}).rendered), date: String(x.date || '').slice(0, 10), url: x.link }; });
+    });
+  }
+  var OFFICIAL = {
+    govcy: { actor: 'ROC', body: 'Government of the Republic of Cyprus', kind: 'statement', run: function () {
+      return Promise.all([wpPosts('www.gov.cy', 'Cyprus problem'), wpPosts('www.gov.cy', 'Turkish')]).then(function (r) { return r[0].concat(r[1]).filter(function (x) { return CYQ.test(x.title); }); }); } },
+    grpm: { actor: 'GR', body: 'Prime Minister of Greece', kind: 'statement', run: function () {
+      return Promise.all([wpPosts('www.primeminister.gr', 'Cyprus'), wpPosts('www.primeminister.gr', 'Κύπρος')]).then(function (r) { return r[0].concat(r[1]); }); } },
+    grmfa: { actor: 'GR', body: 'Ministry of Foreign Affairs of Greece', kind: 'statement', run: function () {
+      return Promise.all([wpPosts('www.mfa.gr', 'Κυπριακό'), wpPosts('www.mfa.gr', 'Cyprus')]).then(function (r) { return r[0].concat(r[1]); }); } },
+    govuk: { actor: 'UK', body: 'UK Foreign, Commonwealth and Development Office', kind: 'statement', run: function () {
+      return get('https://www.gov.uk/api/search.json?q=cyprus&filter_organisations=foreign-commonwealth-development-office&order=-public_timestamp&count=40&fields=title,link,public_timestamp,description', 20000).then(function (j) {
+        return (j.results || []).filter(function (r) { return /cypr/i.test(r.title || '') && !/travel advice|living in|tax|visa|passport|consular|hospital|doctors|lawyers|funeral|prisoner/i.test(r.title || ''); }).map(function (r) { return { title: r.title, date: String(r.public_timestamp || '').slice(0, 10), url: 'https://www.gov.uk' + r.link, detail: r.description || '' }; });
+      }); } },
+    ukparl: { actor: 'UK', body: 'UK ministers\' written answers to Parliament', kind: 'answer', run: function () {
+      return get('https://questions-statements-api.parliament.uk/api/writtenquestions/questions?searchTerm=Cyprus&take=20&answered=Answered', 20000).then(function (j) {
+        return (j.results || []).map(function (r) { return r.value || {}; }).filter(function (v) { return v.answerText && /cypr/i.test(v.questionText || ''); }).map(function (v) {
           var d = String(v.dateTabled || '').slice(0, 10), ans = plain(v.answerText);
-          return { date: String(v.dateAnswered || v.dateTabled || '').slice(0, 10), body: v.answeringBodyName || '', q: plain(v.questionText).slice(0, 260), a: ans.length > 420 ? ans.slice(0, ans.lastIndexOf(' ', 420)) + '…' : ans,
-            url: 'https://questions-statements.parliament.uk/written-questions/detail/' + d + '/' + encodeURIComponent(v.uin || '') };
+          return { title: plain(v.questionText).replace(/^To ask (His Majesty's Government|the Secretary of State[^,]*,)\s*/i, '').slice(0, 240), date: String(v.dateAnswered || v.dateTabled || '').slice(0, 10), body: v.answeringBodyName || '',
+            detail: ans.length > 420 ? ans.slice(0, ans.lastIndexOf(' ', 420)) + '…' : ans, url: 'https://questions-statements.parliament.uk/written-questions/detail/' + d + '/' + encodeURIComponent(v.uin || '') };
         });
-    }).catch(function () {});
-    var us = get('https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=Cyprus&per_page=40&order=newest', 20000).then(function (j) {
-      out.us = (j.results || []).filter(function (r) { return /cyprus|turkey|türkiye|arms regulations|mediterranean|sanction/i.test(r.title || ''); }).slice(0, 6).map(function (r) {
-        return { date: r.publication_date, title: r.title, body: ((r.agencies || [])[0] || {}).name || '', type: r.type || '', url: r.html_url };
-      });
-    }).catch(function () {});
-    return Promise.all([uk, us]).then(function () {
-      if (!out.uk.length && !out.us.length) throw new Error('no official records');
+      }); } },
+    uscong: { actor: 'US', body: 'United States Congress', kind: 'record', run: function () {
+      return get('https://www.govtrack.us/api/v2/bill?q=Cyprus&order_by=-introduced_date&limit=15', 20000).then(function (j) {
+        return (j.objects || []).filter(function (o) { return /cyprus|turk|hellenic|eastern mediterranean/i.test(o.title || ''); }).map(function (o) { return { title: o.title, date: o.current_status_date || o.introduced_date, url: o.link, detail: o.current_status_label || '' }; });
+      }); } },
+    usfr: { actor: 'US', body: 'United States Federal Register', kind: 'record', run: function () {
+      return get('https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=Cyprus&per_page=40&order=newest', 20000).then(function (j) {
+        return (j.results || []).filter(function (r) { return /cyprus|turkey|türkiye|arms regulations/i.test(r.title || ''); }).map(function (r) { return { title: r.title, date: r.publication_date, url: r.html_url, body: ((r.agencies || [])[0] || {}).name || '', detail: r.type || '' }; });
+      }); } },
+    ec: { actor: 'EU', body: 'European Commission', kind: 'statement', run: function () {
+      return get('https://ec.europa.eu/commission/presscorner/api/search?language=en&text=Cyprus&pagesize=50', 20000).then(function (j) {
+        return (j.docuLanguageListResources || []).filter(function (r) { return /cyprus (problem|issue|settlement|talks|reunification)|representative for cyprus|cyprus.{0,40}(türkiye|turkey)|türkiye|turkey|eastern mediterranean/i.test(r.title || ''); }).map(function (r) {
+          return { title: r.title, date: r.eventDate, url: 'https://ec.europa.eu/commission/presscorner/detail/en/' + String(r.refCode || '').replace(/\//g, '_'), detail: r.leadText && r.leadText !== 'None' ? plain(r.leadText).slice(0, 300) : '' };
+        });
+      }); } }
+  };
+  L.officialBodies = Object.keys(OFFICIAL).map(function (k) { return OFFICIAL[k].body; });
+  function official() {
+    var prev = (load() || {}).official || {}, out = {}, fresh = 0;
+    function one(k) {
+      var src = OFFICIAL[k];
+      function attempt() { return src.run(); }
+      return attempt().catch(function () { return wait(2500).then(attempt); }).then(function (items) {
+        var seen = {};
+        items = (items || []).filter(function (x) { var q = (x.title || '').toLowerCase().slice(0, 70); if (!x.title || seen[q]) return false; seen[q] = 1; return true; })
+          .sort(function (a, b) { return String(a.date) < String(b.date) ? 1 : -1; }).slice(0, 8)
+          .map(function (x) { return { title: x.title, date: x.date || '', url: x.url || '', body: x.body || src.body, detail: x.detail || '', actor: src.actor, kind: src.kind, src: k }; });
+        if (!items.length && prev[k] && prev[k].items && prev[k].items.length) { out[k] = prev[k]; return; }
+        out[k] = { t: Date.now(), items: items }; fresh += 1;
+      }).catch(function () { if (prev[k]) out[k] = prev[k]; });
+    }
+    return Promise.all(Object.keys(OFFICIAL).map(one)).then(function () {
+      if (!Object.keys(out).some(function (k) { return out[k].items && out[k].items.length; })) throw new Error('no official source answered');
       return out;
     });
   }
+  L.officialItems = function () {
+    var o = (load() || {}).official || {}, all = [];
+    Object.keys(o).forEach(function (k) { if (o[k] && o[k].items) all = all.concat(o[k].items); });
+    return all.sort(function (a, b) { return String(a.date) < String(b.date) ? 1 : -1; });
+  };
 
   function tone() {
     return get('https://api.gdeltproject.org/api/v2/doc/doc?query=' + encodeURIComponent('cyprus (turkey OR turkish) sourcelang:english') + '&mode=timelinetone&timespan=4m&format=json', 20000).then(function (j) {
@@ -4430,29 +4552,37 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     var ratio = o.r7 / o.r28;
     return { r7: o.r7, r28: o.r28, ratio: ratio, series: o.series, k: ratio >= 1.25 ? 'rising' : ratio <= 0.8 ? 'fading' : 'steady' };
   };
+  /* Headlines the user has marked as wrongly sorted are left out everywhere. */
+  var HKEY = 'cy.hide.v1', hidden = null;
+  function hid() { if (!hidden) { try { hidden = JSON.parse(localStorage.getItem(HKEY) || '{}') || {}; } catch (e) { hidden = {}; } } return hidden; }
+  function hkey(t) { return String(t || '').toLowerCase().replace(/\s+/g, ' ').slice(0, 80); }
+  L.hide = function (title) { hid()[hkey(title)] = 1; try { localStorage.setItem(HKEY, JSON.stringify(hidden)); } catch (e) {} emit(); };
+  L.hiddenCount = function () { return Object.keys(hid()).length; };
+  L.unhideAll = function () { hidden = {}; try { localStorage.removeItem(HKEY); } catch (e) {} emit(); };
+
   /* Subject words for the Greek- and Turkish-language press. */
   var SUB_EL = {
-    talks: 'το κυπριακό|του κυπριακού|στο κυπριακό|συνομιλ|διαπραγματ|επανένωσ|ομοσπονδ|χόλγκιν|ολγκίν|άτυπη διάσκεψη|διευρυμέν|επίλυση|κοινή συνάντηση', security: 'εγγυήσ|εγγυησ|ειρηνευτικ|ουνφικυπ|ουδετερότ|αποχώρηση στρατ',
+    talks: 'το κυπριακό(?! (ποδόσφαιρο|μπάσκετ|πρωτάθλημα|κράτος|διαβατήριο|χαλλούμι))|του κυπριακού(?! (ποδοσφαίρου|κράτους|λαού))|στο κυπριακό(?! (ποδόσφαιρο|πρωτάθλημα))|συνομιλ|διαπραγματ|επανένωσ|ομοσπονδ|χόλγκιν|ολγκίν|άτυπη διάσκεψη|διευρυμέν|επίλυση|κοινή συνάντηση', security: 'εγγυήσ|εγγυησ|ειρηνευτικ|ουνφικυπ|ουδετερότ|αποχώρηση στρατ',
     troops: 'κατοχικός στρατός|κατοχικού στρατού|κατοχικά στρατεύματα|κατοχικές δυνάμεις|τουρκικά στρατεύματα|τούρκοι στρατιώτες', property: 'περιουσι|εκτοπισμ|επιτροπή αγνοουμένων|σφετερισ',
     cbm: 'οδόφραγμα|οδοφράγμ|μέτρα οικοδόμησης|νεκρή ζώνη|νεκρής ζώνης|δικοινοτικ', trade: 'πράσινης γραμμής|πράσινη γραμμή|χαλλούμι|απευθείας πτήσ|τουρκοκυπριακή οικονομ',
-    gas: 'φυσικό αέριο|φυσικού αερίου|γεώτρησ|γεωτρήσ|αοζ|κοίτασμα|κοιτάσμ|chevron|exxon', grid: 'διασύνδεσ|διασυνδέσ|καλώδιο|καλωδίου|great sea',
+    gas: 'φυσικό αέριο|φυσικού αερίου|γεώτρησ.{0,40}(αοζ|κύπρ|οικόπεδ)|αοζ|κοίτασμα|κοιτάσμ|chevron|exxon|αγωγό', grid: 'ηλεκτρική διασύνδεσ|ηλεκτρικής διασύνδεσης|καλώδιο|καλωδίου|great sea|\\bgsi\\b',
     euturkey: 'τελωνειακή ένωση|τελωνειακής ένωσης|ενταξιακ|ευρωτουρκικ|βίζα|safe', sanctions: 'κυρώσ', uscyprus: '(ηπα|αμερικ|ρούμπιο|τραμπ).{0,60}(κύπρ|κυπρ|χριστοδουλίδ)|(κύπρ|κυπρ|χριστοδουλίδ).{0,60}(ηπα|αμερικ|ρούμπιο|τραμπ)',
-    usturkey: 'f-?35|f-?16|s-?400|caatsa', courts: 'εδαδ|εδδα|ευρωπαϊκό δικαστήριο|διεθνές δικαστήριο|συμβούλιο της ευρώπης', maritime: 'navtex|πολεμικό πλοίο|πολεμικά πλοία|ναυτικ|γαλάζια πατρίδα|θαλάσσι',
+    usturkey: 'f-?35|f-?16|s-?400|caatsa', courts: '(εδαδ|εδδα|ευρωπαϊκό δικαστήριο).{0,90}(τουρκ|κατεχ|περιουσ|αγνοούμεν)|(τουρκ|κατεχ|περιουσ).{0,90}(εδαδ|εδδα)|διεθνές δικαστήριο|συμβούλιο της ευρώπης.{0,60}(τουρκ|κυπριακ)', maritime: 'navtex|πολεμικό πλοίο|πολεμικά πλοία|ναυτικ|γαλάζια πατρίδα|θαλάσσι',
     varosha: 'βαρώσι|βαρωσί|αμμόχωστ|αμμοχώστ', recognition: 'δύο κράτ|δύο κρατ|αναγνώρισ|αναγνωρίσ|κυριαρχική ισότητα|κυριαρχικής ισότητας|ψευδοκράτ',
-    defence: 'εθνική φρουρά|εθνικής φρουράς|αμυντική θωράκιση|εξοπλισ|αντιαεροπορικ|στρατιωτική άσκηση|στρατιωτική παρέλαση', regional: 'ισραήλ|αίγυπτ|αιγύπτ|εμιράτ|ινδία|τριμερ|imec',
+    defence: 'εθνική φρουρά|εθνικής φρουράς|αμυντική θωράκιση|εξοπλισ|αντιαεροπορικ|στρατιωτική άσκηση|στρατιωτική παρέλαση', regional: 'ισραήλ|αίγυπτ|αιγύπτ|εμιράτ|ινδία|τριμερής συνεργασία|τριμερούς συνεργασίας|imec',
     greeceturkey: 'ελληνοτουρκικ|μητσοτάκ|γεραπετρίτ|αιγαίο', britain: 'βρετανικ|βάσεις|βάσεων|ακρωτήρι', un: 'γκουτέρες.{0,80}(κυπρ|κύπρ|χριστοδουλίδ|έρχιουρμαν)|(κυπρ|κύπρ|χριστοδουλίδ|έρχιουρμαν).{0,80}(οηε|γκουτέρες|συμβούλιο ασφαλείας)|χόλγκιν|ολγκίν|ουνφικυπ',
-    russia: 'ρωσία|ρωσίας|ρωσικ|πούτιν|λαβρόφ', society: 'δημοψήφισμ|δημοσκόπησ|διασπορά|κοινωνία των πολιτών|κοινωνίας των πολιτών'
+    russia: '(ρωσία|ρωσίας|ρωσικ|πούτιν|λαβρόφ).{0,80}(κύπρ|κυπρ|τουρκ|ακούγιου)|(κύπρ|κυπρ).{0,80}(ρωσία|ρωσίας|ρωσικ|πούτιν|λαβρόφ)', society: 'δημοψήφισμ|δημοσκόπησ|διασπορά|κοινωνία των πολιτών|κοινωνίας των πολιτών'
   };
   var SUB_TR = {
-    talks: 'kıbrıs sorunu|müzakere|çözüm|federasyon|holguin|gayriresmi|5\\+1|genişletilmiş|üçlü görüşme', security: 'garanti|garantör|barış gücü|unficyp|tarafsızlık',
+    talks: 'kıbrıs sorunu|müzakere|federal çözüm|çözüm süreci|çözüme ulaş|federasyon|holguin|gayriresmi|5\\+1|üçlü görüşme|üçlü zirve', security: 'garanti|garantör|barış gücü|unficyp|tarafsızlık',
     troops: 'türk askeri|işgal|barış harekâtı|barış harekatı', property: 'mülkiyet|taşınmaz mal|\\btmk\\b|kayıp şahıs|tazminat|göçmen',
     cbm: 'geçiş kapı|sınır kapı|kapıların|güven artırıcı|ara bölge|iki toplumlu', trade: 'yeşil hat|hellim|ercan|doğrudan uçuş|doğrudan ticaret',
     gas: 'doğal gaz|doğalgaz|sondaj|\\bmeb\\b|hidrokarbon|chevron|exxon', grid: 'enterkonnekt|elektrik kablosu|great sea',
     euturkey: 'gümrük birliği|üyelik müzakere|vize serbest|ab-türkiye|\\bsafe\\b', sanctions: 'yaptırım', uscyprus: '(\\babd\\b|amerika|rubio|trump).{0,60}(kıbrıs|rum|hristodulidis)|(kıbrıs|rum|hristodulidis).{0,60}(\\babd\\b|amerika|rubio|trump)',
     usturkey: 'f-?35|f-?16|s-?400|caatsa', courts: 'aihm|avrupa insan hakları|uluslararası adalet', maritime: 'navtex|savaş gemisi|donanma|mavi vatan|deniz yetki',
-    varosha: 'maraş', recognition: 'iki devlet|tanınma|tanınması|egemen eşit', defence: 'milli muhafız|savunma|tatbikat|silahlan|nato',
-    regional: 'israil|mısır|\\bbae\\b|hindistan|üçlü', greeceturkey: 'yunanistan|miçotakis|\\bege\\b', britain: 'ingiliz|ingiltere|üsler|ağrotur|dikelya',
-    un: '(guterres|\\bbm\\b|güvenlik konseyi|birleşmiş milletler).{0,80}(kıbrıs|erhürman|müzakere)|(kıbrıs|erhürman).{0,80}(guterres|\\bbm\\b|güvenlik konseyi)|holguin|unficyp', russia: 'rusya|putin|lavrov', society: 'referandum|anket|diaspora|sivil toplum'
+    varosha: 'maraş', recognition: 'iki devlet|tanınma|tanınması|egemen eşit', defence: 'milli muhafız|savunma.{0,50}(kıbrıs|rum|hristodulidis)|(kıbrıs|rum|hristodulidis).{0,60}savunma|tatbikat|silahlan',
+    regional: 'israil|mısır|\\bbae\\b|hindistan|üçlü mekanizma|üçlü iş ?birliği', greeceturkey: 'yunanistan|miçotakis|\\bege\\b', britain: 'ingiliz|ingiltere|üsler|ağrotur|dikelya',
+    un: '(guterres|\\bbm\\b|güvenlik konseyi|birleşmiş milletler).{0,80}(kıbrıs|erhürman|müzakere)|(kıbrıs|erhürman).{0,80}(guterres|\\bbm\\b|güvenlik konseyi)|holguin|unficyp', russia: '(rusya|putin|lavrov).{0,80}(kıbrıs|kktc|türkiye|akkuyu)|(kıbrıs|kktc).{0,80}(rusya|putin|lavrov)|akkuyu', society: 'referandum|anket|diaspora|sivil toplum'
   };
   var SAID_ANY = /\b(says?|said|tells?|told|interview|speech|remarks|statement|warns?|urges?|calls? (for|on)|vows?|pledges?|rejects?|insists?|accuses?|announces?)\b|δήλωσ|δηλώσ|είπε|ανέφερε|τόνισε|προειδοπ|κάλεσε|απάντησε|μήνυμα|συνέντευξη|dedi|açıkla|söyledi|belirtti|vurgula|uyardı|çağrı|röportaj|mesaj/i;
   var MEET_ANY = /\b(summit|conference|council|meeting|meets?|talks|forum|assembly|visit|session|dialogue|trilateral)\b|συνάντησ|συναντήσ|σύνοδ|συνόδ|διάσκεψ|συνέδρι|επίσκεψ|τριμερ|görüş|toplantı|zirve|konferans|ziyaret|buluş/i;
@@ -4465,7 +4595,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     var all = (d.news || []).concat(d.feed || [], own && own.items ? own.items : [], (d.press || {}).items || []);
     return all.filter(function (a) {
       var k = (a.title || '').toLowerCase().replace(/\s+/g, ' ').slice(0, 60), on = re[a.lang || 'en'];
-      if (!a.title || seen[k] || !on || !on.test(a.title)) return false;
+      if (!a.title || seen[k] || hid()[hkey(a.title)] || !on || !on.test(a.title)) return false;
       if ((!a.cy || def.own) && re.must && !re.must.test(a.title)) return false;
       seen[k] = 1; return true;
     }).map(function (a) { return { title: a.title, url: a.url, domain: a.domain, date: a.date, lang: a.lang || 'en', said: SAID_ANY.test(a.title), meet: MEET_ANY.test(a.title) }; })
@@ -4491,30 +4621,42 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   var HARD = /\b(rejects?|warns?|threat|condemn|illegal|never|two-state|sovereign equality|accus|slams?|violat|provoc|occup|red line|not accept|refus|blames?|sanction)|απορρίπτ|απέρριψ|προειδοπ|απειλ|καταδικ|παράνομ|ποτέ|δύο κράτ|κυριαρχική ισότητα|κατηγορ|παραβίασ|πρόκλησ|προκλητικ|κατοχ|κόκκινη γραμμή|δεν δεχ|tanınması|tanınmalı|recognition of the|αναγνώριση του ψευδοκράτους|reddet|uyardı|tehdit|kınadı|kınıyor|yasa dışı|asla|iki devlet|egemen eşit|suçla|ihlal|provokasyon|işgal|kırmızı çizgi|kabul etme/i;
   /* Only statements about the Cyprus question itself are counted. */
   var CORE = /cyprus (problem|issue|talks|settlement|solution)|negotiat|two-state|federa|sovereign|recogni|reunif|guarant|troops|occup|turkish cypriot|greek cypriot|northern cyprus|το κυπριακό|του κυπριακού|στο κυπριακό|συνομιλ|διαπραγματ|δύο κράτ|ομοσπονδ|κατοχ|εγγυήσ|επανένωσ|τουρκοκύπρι|κοινή συνάντηση|kıbrıs sorunu|müzakere|iki devlet|federasyon|egemen eşit|tanınma|garanti|kıbrıs türk|rum lider|çözüm/i;
+  /* Deeds: a headline that reports an act, not a remark. Deeds count double. */
+  var ACT = /\b(signs?|signed|deploys?|deployed|opens?|opened|closes?|closed|sends?|sent|withdraws?|withdrew|votes?|voted|approves?|approved|blocks?|blocked|imposes?|imposed|lifts?|lifted|launch(es|ed)?|drills?|exercise|seizes?|seized|arrests?|arrested|inaugurat\w*|allocat\w*|adopts?|adopted|ratif\w*|extends?|suspends?|cancels?|violat\w*|builds?|expands?)\b|υπέγραψ|υπογράφ|ανέπτυξ|άνοιξ|ανοίγει|έκλεισ|απέστειλ|αποσύρ|ψήφισ|ενέκριν|μπλόκαρ|επέβαλ|ήρε |ξεκίνησ|άσκηση|συνέλαβ|εγκαινί|παραβίασ|imzala|konuşlandır|açtı|açıldı|açılıyor|kapattı|gönderdi|çekti|oyladı|onayladı|engelledi|uyguladı|kaldırdı|başlattı|tatbikat|tutukla|ihlal etti/i;
+  var ACT_SOFT = /\b(signs?|signed|opens?|opened|withdraws?|withdrew|lifts?|lifted|approves?|approved|inaugurat\w*|ratif\w*|allocat\w*)\b|υπέγραψ|υπογράφ|άνοιξ|ανοίγει|αποσύρ|ήρε |ενέκριν|εγκαινί|imzala|açtı|açıldı|açılıyor|çekti|kaldırdı|onayladı/i;
+  var ACT_HARD = /\b(deploys?|deployed|drills?|exercise|blocks?|blocked|violat\w*|imposes?|imposed|seizes?|seized|arrests?|arrested|suspends?|cancels?|closes?|closed)\b|ανέπτυξ|άσκηση|παραβίασ|μπλόκαρ|επέβαλ|συνέλαβ|έκλεισ|konuşlandır|tatbikat|engelledi|ihlal etti|tutukla|kapattı/i;
   L.voices = function () {
-    var d = load() || {}, seen = {}, out = {};
+    var d = load() || {}, out = {}, res = {}, seen = {};
     var all = (d.news || []).concat(d.feed || [], (d.press || {}).items || []);
     Object.keys(tload()).forEach(function (t) { all = all.concat((topics[t] || {}).items || []); });
-    var res = {};
-    Object.keys(VOICE).forEach(function (pid) { res[pid] = new RegExp(VOICE[pid], 'i'); });
+    Object.keys(VOICE).forEach(function (pid) { res[pid] = new RegExp(VOICE[pid], 'i'); out[pid] = { says: { soft: 0, hard: 0 }, does: { soft: 0, hard: 0 }, n: 0, w: 0, score: 0, items: [] }; });
     /* a headline belongs to whoever is named first in it */
     function speaker(t) { var best = null, at = 1e9; Object.keys(res).forEach(function (q) { var m = res[q].exec(t); if (m && m.index < at) { at = m.index; best = q; } }); return best; }
-    Object.keys(VOICE).forEach(function (pid) {
-      var o = { soft: 0, hard: 0, n: 0, items: [] };
-      all.forEach(function (a) {
-        var k = pid + (a.title || '').toLowerCase().slice(0, 60);
-        if (!a.title || seen[k] || !CORE.test(a.title) || speaker(a.title) !== pid) return;
-        var hard = HARD.test(a.title), soft = SOFT.test(a.title);
-        if (!hard && !soft && !SAID_ANY.test(a.title)) return;
-        seen[k] = 1;
-        var tone = hard ? 'hard' : soft ? 'soft' : 'plain';
-        if (tone === 'hard') o.hard += 1; else if (tone === 'soft') o.soft += 1;
-        o.n += 1;
-        o.items.push({ title: a.title, url: a.url, domain: a.domain, date: a.date, lang: a.lang || 'en', tone: tone });
-      });
-      o.items.sort(function (x, y) { return x.date < y.date ? 1 : -1; });
-      o.lean = o.soft + o.hard >= 3 ? (o.soft - o.hard) / (o.soft + o.hard + 3) : 0;
-      out[pid] = o;
+    function add(pid, a, weight, official) {
+      var k = pid + hkey(a.title), o = out[pid];
+      if (!o || seen[k] || hid()[hkey(a.title)]) return;
+      var text = a.title + ' ' + (a.detail || ''), deed = !official && ACT.test(a.title);
+      var hard = deed ? ACT_HARD.test(a.title) || HARD.test(text) : HARD.test(text), soft = deed ? ACT_SOFT.test(a.title) || SOFT.test(text) : SOFT.test(text);
+      if (!hard && !soft && !deed && !official && !SAID_ANY.test(a.title)) return;
+      seen[k] = 1;
+      var tone = hard ? 'hard' : soft ? 'soft' : 'plain', w = deed ? 2 : weight;
+      if (tone !== 'plain') { (deed ? o.does : o.says)[tone] += 1; o.w += w; o.score += tone === 'soft' ? w : -w; }
+      o.n += 1;
+      o.items.push({ title: a.title, url: a.url, domain: a.domain || a.body, date: a.date, lang: a.lang || 'en', tone: tone, deed: deed, official: !!official });
+    }
+    var CYMARK = /cypr|kıbrıs|κυπρ|κύπρ|kktc|trnc|τ\/κ|ε\/κ|turkish cypriot|rum (lider|yönetim)|τουρκοκύπρι|ψευδοκράτ/i;
+    all.forEach(function (a) {
+      if (!a.title || !CORE.test(a.title)) return;
+      var sp = speaker(a.title);
+      if (sp && (sp === 'ROC' || sp === 'TC' || CYMARK.test(a.title))) add(sp, a, 1, false);
+    });
+    L.officialItems().forEach(function (a) { if (a.kind !== 'record' && CYQ.test(a.title + ' ' + a.detail)) add(a.actor, a, 2, true); });
+    Object.keys(out).forEach(function (pid) {
+      var o = out[pid];
+      o.items.sort(function (x, y) { return (y.official - x.official) || (x.date < y.date ? 1 : -1); });
+      o.lean = o.w >= 3 ? o.score / (o.w + 3) : 0;
+      var s = o.says.soft - o.says.hard, dd = o.does.soft - o.does.hard;
+      o.gap = o.says.soft + o.says.hard >= 2 && o.does.soft + o.does.hard >= 2 && s * dd < 0;
     });
     return out;
   };
@@ -4522,11 +4664,31 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   /* Convert raw feeds into small, capped, transparent adjustments of the model.
      Only numbers are kept here; the wording is produced by L.sigText when shown,
      so saved data reads in whatever language is current. */
+  var TOP = null;
+  L.setTopics = function (t) { TOP = t; };
   function signals(d) {
     var s = [], cap = function (v, m) { return Math.max(-m, Math.min(m, v)); };
     if (d.tone) {
       var dt = d.tone.recent - d.tone.base;
       s.push({ id: 'tone', dim: 'stability', adj: Math.round(cap(dt * 4, 8)), dt: dt });
+    }
+    var pool = ((d.press || {}).items || []).length >= 40 && TOP ? d.press.items : null;
+    if (pool && !(d.news && d.news.length >= 8)) {
+      var wk = iso(new Date(Date.now() - 7 * 864e5)), now = {}, before = {};
+      pool.forEach(function (a) {
+        ['talks', 'cbm', 'troops', 'defence', 'maritime', 'courts', 'sanctions', 'recognition'].forEach(function (t) {
+          var re = a.lang === 'el' ? SUB_EL[t] : a.lang === 'tr' ? SUB_TR[t] : (TOP[t] || {}).sub;
+          if (re && new RegExp(re, 'i').test(a.title)) { if (a.date >= wk) now[t] = (now[t] || 0) + 1; else before[t] = (before[t] || 0) + 1; }
+        });
+      });
+      var trend = function (id, dim, list, sign) {
+        var n = list.reduce(function (p, t) { return p + (now[t] || 0); }, 0), b = list.reduce(function (p, t) { return p + (before[t] || 0); }, 0) / 2;
+        if (n + b < 6) return;
+        s.push({ id: id, dim: dim, adj: Math.round(cap(sign * ((n + 2) / (b + 2) - 1) * 5, 5)), now: n, before: Math.round(b), press: true });
+      };
+      trend('talks', 'trust', ['talks', 'cbm'], 1);
+      trend('mil', 'stability', ['troops', 'defence', 'maritime'], -1);
+      trend('press', 'pressure', ['courts', 'sanctions', 'recognition'], 1);
     }
     if (d.news && d.news.length >= 8) {
       var n = d.news.length, c = {};
@@ -4544,12 +4706,12 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 
   /* Label, reading and reasoning of one signal, in the current language. */
   L.sigText = function (s) {
-    var share = Math.round((s.share || 0) * 100) + '%';
+    var share = s.press ? T('{0} this week, {1} a week before', s.now, s.before) : Math.round((s.share || 0) * 100) + '%';
     if (s.id === 'tone') return { label: T('News tone on Cyprus–Türkiye'), value: T('{0} vs 4-month average', (s.dt >= 0 ? '+' : '') + s.dt.toFixed(2)),
       why: s.dt >= 0 ? T('Coverage over the last two weeks is calmer than the four-month norm.') : T('Coverage over the last two weeks is more hostile than the four-month norm.') };
-    if (s.id === 'talks') return { label: T('Share of headlines about talks'), value: share, why: T('A busy negotiation agenda signals diplomatic momentum; silence signals drift.') };
-    if (s.id === 'mil') return { label: T('Share of headlines about military matters'), value: share, why: T('Heavier military coverage is treated as a sign of rising friction.') };
-    if (s.id === 'press') return { label: T('Share of headlines about legal / sanctions pressure'), value: share, why: T('More court, sanctions and resolution coverage means more live pressure on the status quo.') };
+    if (s.id === 'talks') return { label: s.press ? T('Headlines about talks and contacts') : T('Share of headlines about talks'), value: share, why: T('A busy negotiation agenda signals diplomatic momentum; silence signals drift.') };
+    if (s.id === 'mil') return { label: s.press ? T('Headlines about military matters') : T('Share of headlines about military matters'), value: share, why: T('Heavier military coverage is treated as a sign of rising friction.') };
+    if (s.id === 'press') return { label: s.press ? T('Headlines about legal pressure and recognition') : T('Share of headlines about legal / sanctions pressure'), value: share, why: T('More court, sanctions and resolution coverage means more live pressure on the status quo.') };
     if (s.id === 'lira') return { label: T('Lira against the euro, 12 months'), value: (s.dep >= 0 ? '−' : '+') + Math.abs(s.dep).toFixed(1) + '% (€1 = ₺' + s.rate.toFixed(2) + ')',
       why: T('A weaker lira raises the value Ankara places on Western capital, trade and market access.') };
     return { label: s.id, value: '', why: '' };
@@ -4588,8 +4750,15 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     }
     /* GDELT asks for at most one request every five seconds. */
     function retry(f) { return gate().then(f).catch(function () { return gate().then(f); }); }
-    var gd = part('news', retry(news)).then(function () { return part('tone', retry(tone)); });
-    return Promise.all([gd, part('fx', lira()), part('wb', worldBank()), part('wiki', wiki(wikiTitles || [])), part('research', research()), part('attn', attention(pvMap || {})), part('press', press()), part('official', official()), gd.then(function () { return part('feed', retry(feed)); })]).then(function () {
+    /* The news index is an extra. If it refused us lately, leave it alone for
+       half an hour and rely on the newspapers. */
+    var idxOff = d.idxFail && Date.now() - d.idxFail < 30 * 60 * 1000;
+    function idx(name, f) {
+      if (idxOff) return Promise.resolve();
+      return part(name, gate().then(f)).then(function () { if (d.status[name] && !d.status[name].ok) { d.idxFail = Date.now(); idxOff = true; } else d.idxFail = 0; });
+    }
+    var gd = idx('news', news).then(function () { return idx('tone', tone); });
+    return Promise.all([gd, part('fx', lira()), part('wb', worldBank()), part('wiki', wiki(wikiTitles || [])), part('research', research()), part('attn', attention(pvMap || {})), part('press', press()), part('official', official()), gd.then(function () { return idx('feed', feed); })]).then(function () {
       var ok = Object.keys(d.status).some(function (k) { return d.status[k].ok && Date.now() - d.status[k].t < 60000; });
       if (ok) d.t = Date.now();
       L.data = d; L.busy = false; save(); emit();
@@ -4601,8 +4770,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     return [
       { id: 'research', name: 'OpenAlex', what: T('Recent scholarly articles on the Cyprus question'), url: 'https://openalex.org/' },
       { id: 'attn', name: T('Wikimedia pageviews'), what: T('Daily readership of the reference articles for each subject: a measure of world attention (last five weeks)'), url: 'https://wikimedia.org/api/rest_v1/' },
-      { id: 'press', name: T('Newspapers\' own feeds'), what: T('Headlines read directly from Greek Cypriot, Turkish Cypriot, Greek and regional newspapers, in their own languages (last 21 days)'), url: 'https://philenews.com/' },
-      { id: 'official', name: T('UK Parliament and US Federal Register'), what: T('What governments have put on the record: ministers\' written answers on Cyprus, and US government notices and rules'), url: 'https://questions-statements.parliament.uk/' },
+      { id: 'press', name: T('Newspapers\' own feeds'), what: T('Headlines read directly from Greek Cypriot, Turkish Cypriot, Greek and Turkish newspapers, in their own languages (last 21 days)'), url: 'https://philenews.com/' },
+      { id: 'official', name: T('Governments\' own publications'), what: T('Statements, answers to parliament, bills and formal notices published by the governments of Cyprus, Greece, the United Kingdom and the United States and by the European Commission'), url: 'https://www.gov.cy/' },
       { id: 'feed', name: T('GDELT Project'), what: T('Current headlines, statements and meetings sorted by the subject of each move (last 21 days)'), url: 'https://www.gdeltproject.org/' },
       { id: 'news', name: T('GDELT Project'), what: T('Worldwide news index: headlines mentioning the Cyprus question (last 21 days)'), url: 'https://www.gdeltproject.org/' },
       { id: 'tone', name: T('GDELT Project'), what: T('Average tone of Cyprus–Türkiye coverage (four months)'), url: 'https://www.gdeltproject.org/' },
@@ -4735,8 +4904,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         T('<b>European Central Bank reference rates</b> (through the Frankfurter service): the euro–lira exchange rate over the last twelve months.'),
         T('<b>World Bank Open Data</b>: GDP, growth, inflation, military spending and population for Cyprus, Türkiye and Greece.'),
         T('<b>Wikipedia</b>: current summaries for the precedents in the Library.'),
-        T('<b>Newspapers\' own feeds</b>: headlines read directly from Greek Cypriot, Turkish Cypriot, Greek and regional newspapers that publish an open feed, in their own languages.'),
-        T('<b>UK Parliament and US Federal Register</b>: the official record of ministers\' answers on Cyprus and of United States government notices and rules.'),
+        T('<b>Newspapers\' own feeds</b>: headlines read directly from nineteen Greek Cypriot, Turkish Cypriot, Greek and Turkish newspapers that publish an open feed, in their own languages.'),
+        T('<b>Governments\' own publications</b>: statements, answers to parliament, bills and formal notices from the governments of Cyprus, Greece, the United Kingdom and the United States and from the European Commission.'),
         T('<b>Wikimedia pageviews</b>: the public count of how many people read each Wikipedia article each day. Used to measure world attention to the subject of every move.'),
         T('<b>OpenAlex</b>: an open index of the world\'s scholarly research. Used for the most recent articles on the Cyprus question.')]) +
       h(T('How live data changes the model')) +
@@ -4751,10 +4920,11 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       p(T('Every move belongs to a subject, such as settlement talks, offshore gas, sanctions or the crossings. For each subject the tool gathers two kinds of current evidence. The first is attention: how many people a day are reading the reference articles on that subject on Wikipedia, taken from Wikimedia\'s public readership figures for the last five weeks. The second is headlines: the current news feeds are sorted on your device by subject, and reports of what leaders have said and of summits, conferences and meetings are picked out. Only headlines plainly about the subject are counted.')) +
       p(T('When you select a move, in computer mode or manual mode, the panel shows this evidence under the heading "Live evidence": readers a day in the last week and in the four weeks before, the change between them, a small chart, and the latest statements, meetings and reports with links to their sources. The same card appears on the Analysis page.')) +
       p(T('The evidence also enters the calculation. When attention to a subject has risen by a quarter or more, 5 percentage points are added to the chance of success of its moves, because attention gives decision-makers reason and cover to act. When attention has dropped by a fifth or more, 3 points are taken off. Otherwise nothing changes. This applies to every stakeholder\'s moves, so the predicted replies, the scores, the best path and the odds all reflect the present state of the world. The rule can be switched off under Live intel → Evidence by subject.')) +
-      h(T('What governments are saying, and what they have put on record')) +
-      p(T('Attention is not intent. To get closer to intent, the tool reads current headlines directly from newspapers on both sides of the island and in Greece, in Greek, Turkish and English, as well as from the news index. A headline that reports a named leader or office speaking about the Cyprus question is attributed to that stakeholder and read, from its wording, as conciliatory or hard-line.')) +
-      p(T('When a stakeholder has at least three such statements in the last three weeks, the balance between conciliatory and hard-line ones tilts its predicted choices slightly toward moves of the same kind. A government that has been talking about dialogue is judged a little more likely to choose a cooperative reply; one that has been issuing warnings, a little more likely to choose a confrontational one. The table under Live intel → "What each government is saying" shows the counts and the latest statement for each stakeholder, and the tilt can be switched off there.')) +
-      p(T('The Live intel page also shows the official record from primary sources: written answers given by United Kingdom ministers to Parliament on Cyprus, and notices and rules published by the United States government. Public words and official records are evidence of stated policy. They can still differ from what a government privately intends, which no tool can observe.')) +
+      h(T('What governments say and do')) +
+      p(T('Attention is not intent. Nobody can observe what a government privately intends, so the tool gathers the best public evidence of it and keeps two kinds apart. <b>Words</b> are statements: those governments publish themselves, and newspaper headlines that report a named leader or office speaking about the Cyprus question. <b>Deeds</b> are headlines that report an act: signing, opening, withdrawing, lifting, deploying, blocking, holding exercises. Deeds are harder to fake than words, so they count double, as do governments\' own published statements.')) +
+      p(T('Headlines are read directly from newspapers on every side: Greek Cypriot, Turkish Cypriot, Greek and Turkish, in Greek, Turkish and English. Official material comes from the governments\' own sites: the Republic of Cyprus, the Greek Prime Minister and Foreign Ministry, the United Kingdom Foreign Office and ministers\' answers to Parliament, the United States Congress and Federal Register, and the European Commission.')) +
+      p(T('Each item is read from its wording as conciliatory or hard-line. When a stakeholder\'s weighted total reaches three, the balance tilts its predicted choices slightly toward moves of the same kind. The table under Live intel → "What each government says and does" shows the counts for words and for deeds, the resulting tilt, and a warning when a stakeholder\'s words and deeds point in opposite directions, which is itself a signal worth weighing.')) +
+      p(T('Sorting by keyword is imperfect. Beside every headline there is a small × that takes it out of every count if it has been attributed or read wrongly; hidden headlines can be restored on the Live intel page. The tilt can also be switched off there.')) +
       p(T('The Live intel page also lists the most recent scholarly articles on the Cyprus question from the OpenAlex index of world research, for background reading.')) +
       h(T('Why the lira is there')) +
       p(T('Türkiye\'s decision is the one on which the outcome turns, and most of the levers available to others are economic: a customs-union upgrade, investment, sanctions, access to markets and capital. How heavily such levers weigh depends on how much Türkiye\'s economy needs outside money and confidence at that moment. The lira\'s exchange rate is the one hard, public, daily number that shows this. A sharply weaker lira means incentives and pressure count for more in Ankara. The north of Cyprus also uses the lira, so the same slide erodes living standards there.')) +
@@ -4957,7 +5127,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         T('Attention is steady: chance of success unchanged at {0}.', pct(m.ps));
       h += '<p style="margin-top:8px"><b>' + T('Effect on the result:') + '</b> ' + eff + '</p>';
     } else h += '<p class="help">' + T('Readership figures for this subject are not available yet; the chance of success is unchanged.') + '</p>';
-    function items(f, n) { return rp.filter(f).slice(0, n).map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener" lang="' + a.lang + '">' + esc(a.title) + '</a> <span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + '</span></li>'; }).join(''); }
+    function items(f, n) { return rp.filter(f).slice(0, n).map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener" lang="' + a.lang + '">' + esc(a.title) + '</a> <span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + '</span> ' + hideBtn(a.title) + '</li>'; }).join(''); }
     rp = rp.slice().sort(function (x, y) { return (y.lang === I18N.lang) - (x.lang === I18N.lang) || (x.date < y.date ? 1 : x.date > y.date ? -1 : 0); });
     var said = items(function (a) { return a.said; }, 3), meet = items(function (a) { return a.meet && !a.said; }, 3), rest = items(function (a) { return !a.said && !a.meet; }, 3);
     if (said) h += '<h3>' + T('What is being said') + '</h3><ul class="news">' + said + '</ul>';
@@ -4967,6 +5137,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     else h += '<p class="help">' + T('{0} headlines on this subject in the last 21 days, from newspapers and the news index. Headlines are shown as published, those in your language first.', rp.length) + '</p>';
     return h + '</section>';
   }
+  /* Lets the reader take a wrongly sorted headline out of every count. */
+  function hideBtn(title) { return '<button class="x" data-a="hide" data-v="' + esc(title) + '" title="' + esc(T('Not about this: leave it out')) + '" aria-label="' + esc(T('Not about this: leave it out')) + '">×</button>'; }
   function M0move(id) { var r = M.moves.filter(function (x) { return x.id === id; })[0]; return r && r.ps !== undefined ? r.ps : 0.8; }
   function locale() { return I18N.lang === 'en' ? 'en-GB' : I18N.lang; }
   function replay() {
@@ -5461,23 +5633,25 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       }).join('') + '</tbody></table></div></section>';
 
     var vs = L.voices(), any = M.players.some(function (pl) { return vs[pl.id] && vs[pl.id].n; });
-    h += '<section class="card"><div class="row between"><h2>' + T('What each government is saying') + '</h2><label class="row help"><input type="checkbox" data-c="sig" data-v="voices"' + (A.sigOff.voices ? '' : ' checked') + (A.live ? '' : ' disabled') + '> ' + T('Let statements tilt predictions') + '</label></div>' +
-      '<p class="help">' + T('Readership shows attention, not intent. For intent the tool reads what leaders and governments have actually said. Current headlines that report a named leader or office speaking about the Cyprus question are attributed to that stakeholder and read as conciliatory or hard-line from their wording. When a stakeholder has at least three such statements, the balance between the two tilts its predicted choices slightly toward moves of the same kind. This is a reading of public words, which can differ from private intentions.') + '</p>' +
-      (any ? '<div class="tblwrap"><table><thead><tr><th>' + T('Stakeholder') + '</th><th>' + T('Conciliatory') + '</th><th>' + T('Hard-line') + '</th><th>' + T('Tilt') + '</th><th>' + T('Latest statement reported') + '</th></tr></thead><tbody>' + M.players.map(function (pl) {
-        var v = vs[pl.id] || { soft: 0, hard: 0, n: 0, lean: 0, items: [] }, it = v.items[0];
-        return '<tr><td>' + esc(pl.name) + '</td><td class="c good">' + v.soft + '</td><td class="c bad">' + v.hard + '</td><td class="c">' + (v.lean > 0.05 ? '<span class="tag good">' + T('conciliatory') + '</span>' : v.lean < -0.05 ? '<span class="tag bad">' + T('hard-line') + '</span>' : '<span class="tag">' + T('no tilt') + '</span>') + '</td><td>' + (it ? '<a href="' + esc(it.url) + '" target="_blank" rel="noopener" lang="' + (it.lang || '') + '">' + esc(it.title) + '</a> <span class="help">' + esc(it.domain) + ' · ' + esc(it.date) + '</span>' : '<span class="mute">' + T('none found') + '</span>') + '</td></tr>';
-      }).join('') + '</tbody></table></div>' : '<p class="help">' + T('No statements found yet. They appear after the newspaper feeds have been read.') + '</p>') + '</section>';
+    h += '<section class="card"><div class="row between"><h2>' + T('What each government says and does') + '</h2><label class="row help"><input type="checkbox" data-c="sig" data-v="voices"' + (A.sigOff.voices ? '' : ' checked') + (A.live ? '' : ' disabled') + '> ' + T('Let this tilt predictions') + '</label></div>' +
+      '<p class="help">' + T('Readership shows attention, not intent. To get as close to intent as public evidence allows, the tool separates <b>words</b> from <b>deeds</b>. Words are statements: those published by governments themselves, and newspaper headlines reporting a named leader or office speaking about the Cyprus question. Deeds are headlines reporting an act, such as signing, opening, withdrawing, deploying or blocking. Each is read as conciliatory or hard-line. Deeds and governments\' own statements count double. The balance tilts that stakeholder\'s predicted choices slightly the same way, and the table warns when words and deeds point in opposite directions.') + '</p>' +
+      (any ? '<div class="tblwrap"><table><thead><tr><th>' + T('Stakeholder') + '</th><th>' + T('Says') + '</th><th>' + T('Does') + '</th><th>' + T('Tilt') + '</th><th>' + T('Latest') + '</th></tr></thead><tbody>' + M.players.map(function (pl) {
+        var v = vs[pl.id] || { says: { soft: 0, hard: 0 }, does: { soft: 0, hard: 0 }, n: 0, lean: 0, items: [] }, it = v.items[0];
+        function pair(o) { return o.soft + o.hard ? '<span class="good">' + o.soft + '</span> / <span class="bad">' + o.hard + '</span>' : '<span class="mute">–</span>'; }
+        return '<tr><td>' + esc(pl.name) + '</td><td class="c">' + pair(v.says) + '</td><td class="c">' + pair(v.does) + '</td><td class="c">' + (v.lean > 0.05 ? '<span class="tag good">' + T('conciliatory') + '</span>' : v.lean < -0.05 ? '<span class="tag bad">' + T('hard-line') + '</span>' : '<span class="tag">' + T('no tilt') + '</span>') + (v.gap ? '<br><span class="tag warn">' + T('words and deeds differ') + '</span>' : '') + '</td><td>' +
+          (it ? (it.official ? '<span class="tag info">' + T('official') + '</span> ' : it.deed ? '<span class="tag">' + T('deed') + '</span> ' : '') + '<a href="' + esc(it.url) + '" target="_blank" rel="noopener" lang="' + (it.lang || '') + '">' + esc(it.title) + '</a> <span class="help">' + esc(it.domain) + ' · ' + esc(it.date) + '</span> ' + hideBtn(it.title) : '<span class="mute">' + T('none found') + '</span>') + '</td></tr>';
+      }).join('') + '</tbody></table></div><p class="help">' + T('In each pair the first number is conciliatory, the second hard-line. A stakeholder needs a weighted total of at least three before any tilt is applied. If a headline is attributed or read wrongly, press × beside it and it is left out of every count.') + (L.hiddenCount() ? ' ' + T('{0} headlines are hidden.', L.hiddenCount()) + ' <button class="btn small" data-a="unhide">' + T('Restore them') + '</button>' : '') + '</p>' : '<p class="help">' + T('No statements found yet. They appear after the newspaper feeds have been read.') + '</p>') + '</section>';
 
-    var of = d.official || {};
-    if ((of.uk && of.uk.length) || (of.us && of.us.length)) {
-      h += '<section class="card"><h2>' + T('On the official record') + '</h2><p class="help">' + T('What governments have formally stated or done, from primary sources. These are for your own reading and do not change the model.') + '</p>';
-      if (of.uk && of.uk.length) h += '<h3>' + T('United Kingdom: ministers\' written answers to Parliament') + '</h3>' + of.uk.map(function (x) {
-        return '<details class="lib-item"><summary>' + esc(x.q) + '</summary><p class="meta">' + esc(x.body) + ' · ' + esc(x.date) + '</p><p>' + esc(x.a) + ' <a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + T('Full answer') + '</a></p></details>';
-      }).join('');
-      if (of.us && of.us.length) h += '<h3 style="margin-top:12px">' + T('United States: Federal Register notices and rules') + '</h3><ul class="news">' + of.us.map(function (x) {
-        return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.title) + '</a><br><span class="help">' + esc(x.body) + ' · ' + esc(x.type) + ' · ' + esc(x.date) + '</span></li>';
-      }).join('') + '</ul>';
-      h += '</section>';
+    var off = L.officialItems();
+    if (off.length) {
+      var byActor = {};
+      off.forEach(function (x) { (byActor[x.actor] = byActor[x.actor] || []).push(x); });
+      h += '<section class="card"><h2>' + T('On the official record') + '</h2><p class="help">' + T('What governments themselves have published, fetched from their own sites: {0}. Statements here also feed the table above. Each source is kept from its last successful fetch, so a source that is slow today still shows what it gave before.', esc(L.officialBodies.join('; '))) + '</p>' +
+        M.players.filter(function (pl) { return byActor[pl.id]; }).map(function (pl) {
+          return '<details class="lib-item"' + (pl.id === A.pid ? ' open' : '') + '><summary>' + esc(pl.name) + ' <span class="meta">(' + byActor[pl.id].length + ')</span></summary><ul class="news">' + byActor[pl.id].slice(0, 10).map(function (x) {
+            return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.title) + '</a><br><span class="help">' + esc(x.body) + ' · ' + esc(x.date) + '</span>' + (x.detail ? '<br><span class="help">' + esc(x.detail) + '</span>' : '') + '</li>';
+          }).join('') + '</ul></details>';
+        }).join('') + '</section>';
     }
 
     h += '<div class="grid two">';
@@ -5690,6 +5864,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       var cur = A.theme || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       A.theme = cur === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', A.theme); save();
     },
+    hide: function (v) { L.hide(v); build(); render(); toast(T('Left out. You can restore hidden headlines on the Live intel page.')); },
+    unhide: function () { L.unhideAll(); build(); render(); },
     print: function () { if (A.tab === 'guide') acts.gopen('1'); window.print(); },
     resetassume: function () { A.custom = { base: {}, w: {}, ideal: {} }; build(); save(); render(); }
   };
@@ -5781,6 +5957,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   if (A.theme) document.documentElement.setAttribute('data-theme', A.theme);
   lastSig = JSON.stringify((L.get() || {}).signals || []);
   fixed();
+  L.setTopics(window.MODEL.topics);
   build(); installUI();
   try { history.replaceState(navState(), '', location.href); } catch (e) {}
   render();
