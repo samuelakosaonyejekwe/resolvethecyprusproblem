@@ -4,6 +4,13 @@
   'use strict';
   var E = {};
 
+  /* Text hook. The interface points this at its translator; on its own the
+     engine answers in English. {0}, {1}… are filled from the arguments. */
+  E.T = function (s) {
+    var a = arguments;
+    return String(s).replace(/\{(\d+)\}/g, function (m, i) { return a[+i + 1] === undefined ? m : a[+i + 1]; });
+  };
+
   function clamp(v) { return v < 0 ? 0 : v > 100 ? 100 : v; }
   /* Diminishing returns: the nearer a dimension is to an extreme, the harder
      it is to push it further that way. */
@@ -41,6 +48,7 @@
   /* Turn the readable model into arrays for fast evaluation. */
   E.compile = function (M) {
     var C = { M: M, D: M.dims.map(function (d) { return d.id; }), di: {}, players: {}, order: [], moves: {}, byPlayer: {} };
+    var H = M.hold || {};
     C.D.forEach(function (d, i) { C.di[d] = i; });
     C.n = C.D.length;
     C.x0 = M.dims.map(function (d) { return d.base; });
@@ -55,8 +63,8 @@
       };
       C.order.push(p.id);
       C.byPlayer[p.id] = [];
-      var hold = { id: p.id + '.hold', p: p.id, name: 'Hold position', hold: true, cat: 'wait',
-        desc: 'Make no new move this round; keep current policy and let others act.', fx: {}, cost: 0, ps: 1 };
+      var hold = { id: p.id + '.hold', p: p.id, name: H.name || E.T('Hold position'), hold: true, cat: 'wait',
+        desc: H.desc || E.T('Make no new move this round; keep current policy and let others act.'), fx: {}, cost: 0, ps: 1 };
       addMove(C, hold);
     });
     M.moves.forEach(function (m) { addMove(C, m); });
@@ -99,20 +107,20 @@
   /* Why a move is not currently playable (null when it is). */
   E.blocked = function (C, S, m) {
     if (m.hold) return null;
-    if (m.once && S.used[m.id]) return 'Already played';
+    if (m.once && S.used[m.id]) return E.T('Already played');
     var i;
     for (i = 0; i < m.after.length; i++) if (!S.used[m.after[i]]) {
       var pre = C.moves[m.after[i]];
-      return 'Needs first: ' + (pre ? pre.src.name + ' (' + C.players[pre.p].src.short + ')' : m.after[i]);
+      return E.T('Needs first: {0}', pre ? pre.src.name + ' (' + C.players[pre.p].src.short + ')' : m.after[i]);
     }
     if (m.any.length && !m.any.some(function (a) { return S.used[a]; })) {
-      return 'Needs one of: ' + m.any.map(function (a) { var q = C.moves[a]; return q ? q.src.name + ' (' + C.players[q.p].src.short + ')' : a; }).join('; ');
+      return E.T('Needs one of: {0}', m.any.map(function (a) { var q = C.moves[a]; return q ? q.src.name + ' (' + C.players[q.p].src.short + ')' : a; }).join('; '));
     }
-    for (i = 0; i < m.not.length; i++) if (S.used[m.not[i]]) return 'Ruled out by: ' + C.moves[m.not[i]].src.name;
+    for (i = 0; i < m.not.length; i++) if (S.used[m.not[i]]) return E.T('Ruled out by: {0}', C.moves[m.not[i]].src.name);
     for (i = 0; i < m.req.length; i++) {
       var r = m.req[i], v = S.x[r[0]];
-      if (v < r[1]) return 'Needs ' + C.M.dims[r[0]].name + ' ≥ ' + r[1] + ' (now ' + Math.round(v) + ')';
-      if (v > r[2]) return 'Needs ' + C.M.dims[r[0]].name + ' ≤ ' + r[2] + ' (now ' + Math.round(v) + ')';
+      if (v < r[1]) return E.T('Needs {0} ≥ {1} (now {2})', C.M.dims[r[0]].name, r[1], Math.round(v));
+      if (v > r[2]) return E.T('Needs {0} ≤ {1} (now {2})', C.M.dims[r[0]].name, r[2], Math.round(v));
     }
     return null;
   };

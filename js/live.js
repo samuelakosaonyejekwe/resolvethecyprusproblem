@@ -6,6 +6,13 @@
   var KEY = 'cy.live.v1', MAX_AGE = 3 * 3600 * 1000;
   var L = { data: null, busy: false, listeners: [] };
 
+  /* Text goes through the interface's translator when there is one. */
+  function T(s) {
+    var a = arguments;
+    if (root.I18N) return root.I18N.T.apply(root.I18N, a);
+    return String(s).replace(/\{(\d+)\}/g, function (m, i) { return a[+i + 1] === undefined ? m : a[+i + 1]; });
+  }
+
   var THEMES = {
     talks: /\b(talks?|negotiat|envoy|guterres|settlement|reunif|federation|confidence[- ]building|crossing|informal meeting|peace process|holguin|holguín)/i,
     military: /\b(troops?|military|drill|exercise|warship|navy|naval|drone|missile|airspace|violation|buffer zone|unficyp|base|army|defen[cs]e)/i,
@@ -79,20 +86,24 @@
   }
 
   var WB = {
-    gdp: ['NY.GDP.MKTP.CD', 'GDP (US$ bn)', 1e9, 1],
-    growth: ['NY.GDP.MKTP.KD.ZG', 'GDP growth (%)', 1, 1],
-    infl: ['FP.CPI.TOTL.ZG', 'Inflation (%)', 1, 1],
-    mil: ['MS.MIL.XPND.GD.ZS', 'Military spend (% GDP)', 1, 2],
-    milusd: ['MS.MIL.XPND.CD', 'Military spend (US$ bn)', 1e9, 1],
-    pop: ['SP.POP.TOTL', 'Population (m)', 1e6, 1]
+    gdp: ['NY.GDP.MKTP.CD', 1e9, 1],
+    growth: ['NY.GDP.MKTP.KD.ZG', 1, 1],
+    infl: ['FP.CPI.TOTL.ZG', 1, 1],
+    mil: ['MS.MIL.XPND.GD.ZS', 1, 2],
+    milusd: ['MS.MIL.XPND.CD', 1e9, 1],
+    pop: ['SP.POP.TOTL', 1e6, 1]
+  };
+  L.wbLabel = function (k) {
+    return { gdp: T('GDP (US$ bn)'), growth: T('GDP growth (%)'), infl: T('Inflation (%)'), mil: T('Military spend (% GDP)'),
+      milusd: T('Military spend (US$ bn)'), pop: T('Population (m)') }[k] || k;
   };
 
   function worldBank() {
     var out = {};
     return Promise.all(Object.keys(WB).map(function (k) {
       return get('https://api.worldbank.org/v2/country/CYP;TUR;GRC/indicator/' + WB[k][0] + '?format=json&mrnev=1').then(function (j) {
-        var row = { label: WB[k][1], dp: WB[k][3] };
-        (j[1] || []).forEach(function (r) { row[r.countryiso3code] = r.value / WB[k][2]; row.year = r.date; });
+        var row = { dp: WB[k][2] };
+        (j[1] || []).forEach(function (r) { row[r.countryiso3code] = r.value / WB[k][1]; row.year = r.date; });
         out[k] = row;
       }).catch(function () {});
     })).then(function () {
@@ -122,36 +133,51 @@
     });
   }
 
-  /* Convert raw feeds into small, capped, transparent adjustments of the model. */
+  /* Convert raw feeds into small, capped, transparent adjustments of the model.
+     Only numbers are kept here; the wording is produced by L.sigText when shown,
+     so saved data reads in whatever language is current. */
   function signals(d) {
     var s = [], cap = function (v, m) { return Math.max(-m, Math.min(m, v)); };
     if (d.tone) {
-      var dt = d.tone.recent - d.tone.base, adj = Math.round(cap(dt * 4, 8));
-      s.push({ id: 'tone', label: 'News tone on Cyprus–Türkiye', value: (dt >= 0 ? '+' : '') + dt.toFixed(2) + ' vs 4-month average',
-        dim: 'stability', adj: adj, why: 'Coverage over the last two weeks is ' + (dt >= 0 ? 'calmer' : 'more hostile') + ' than the four-month norm.' });
+      var dt = d.tone.recent - d.tone.base;
+      s.push({ id: 'tone', dim: 'stability', adj: Math.round(cap(dt * 4, 8)), dt: dt });
     }
     if (d.news && d.news.length >= 8) {
       var n = d.news.length, c = {};
       Object.keys(THEMES).forEach(function (k) { c[k] = d.news.filter(function (a) { return a.themes.indexOf(k) >= 0; }).length / n; });
-      s.push({ id: 'talks', label: 'Share of headlines about talks', value: Math.round(c.talks * 100) + '%', dim: 'trust',
-        adj: Math.round(cap((c.talks - 0.3) * 15, 5)), why: 'A busy negotiation agenda signals diplomatic momentum; silence signals drift.' });
-      s.push({ id: 'mil', label: 'Share of headlines about military matters', value: Math.round(c.military * 100) + '%', dim: 'stability',
-        adj: Math.round(cap((0.25 - c.military) * 15, 5)), why: 'Heavier military coverage is treated as a sign of rising friction.' });
-      s.push({ id: 'press', label: 'Share of headlines about legal / sanctions pressure', value: Math.round(c.pressure * 100) + '%', dim: 'pressure',
-        adj: Math.round(cap((c.pressure - 0.2) * 15, 5)), why: 'More court, sanctions and resolution coverage means more live pressure on the status quo.' });
+      s.push({ id: 'talks', dim: 'trust', adj: Math.round(cap((c.talks - 0.3) * 15, 5)), share: c.talks });
+      s.push({ id: 'mil', dim: 'stability', adj: Math.round(cap((0.25 - c.military) * 15, 5)), share: c.military });
+      s.push({ id: 'press', dim: 'pressure', adj: Math.round(cap((c.pressure - 0.2) * 15, 5)), share: c.pressure });
     }
     if (d.fx) {
       var dep = d.fx.change, k = Math.max(0, Math.min(0.4, dep / 100));
-      s.push({ id: 'lira', label: 'Lira against the euro, 12 months', value: (dep >= 0 ? '−' : '+') + Math.abs(dep).toFixed(1) + '% (€1 = ₺' + d.fx.try.toFixed(2) + ')',
-        weight: { player: 'TR', dims: ['trwest', 'econ'], factor: +(1 + k).toFixed(2) },
-        why: 'A weaker lira raises the value Ankara places on Western capital, trade and market access.' });
+      s.push({ id: 'lira', weight: { player: 'TR', dims: ['trwest', 'econ'], factor: +(1 + k).toFixed(2) }, dep: dep, rate: d.fx.try });
     }
     return s;
   }
 
+  /* Label, reading and reasoning of one signal, in the current language. */
+  L.sigText = function (s) {
+    var share = Math.round((s.share || 0) * 100) + '%';
+    if (s.id === 'tone') return { label: T('News tone on Cyprus–Türkiye'), value: T('{0} vs 4-month average', (s.dt >= 0 ? '+' : '') + s.dt.toFixed(2)),
+      why: s.dt >= 0 ? T('Coverage over the last two weeks is calmer than the four-month norm.') : T('Coverage over the last two weeks is more hostile than the four-month norm.') };
+    if (s.id === 'talks') return { label: T('Share of headlines about talks'), value: share, why: T('A busy negotiation agenda signals diplomatic momentum; silence signals drift.') };
+    if (s.id === 'mil') return { label: T('Share of headlines about military matters'), value: share, why: T('Heavier military coverage is treated as a sign of rising friction.') };
+    if (s.id === 'press') return { label: T('Share of headlines about legal / sanctions pressure'), value: share, why: T('More court, sanctions and resolution coverage means more live pressure on the status quo.') };
+    if (s.id === 'lira') return { label: T('Lira against the euro, 12 months'), value: (s.dep >= 0 ? '−' : '+') + Math.abs(s.dep).toFixed(1) + '% (€1 = ₺' + s.rate.toFixed(2) + ')',
+      why: T('A weaker lira raises the value Ankara places on Western capital, trade and market access.') };
+    return { label: s.id, value: '', why: '' };
+  };
+
+  /* Theme names: as filter buttons and as the small tags on each headline. */
+  L.themes = Object.keys(THEMES);
+  L.themeName = function (k) { return { talks: T('Talks'), military: T('Military'), energy: T('Energy'), europe: T('Europe'), pressure: T('Pressure') }[k] || k; };
+  L.themeTag = function (k) { return { talks: T('talks'), military: T('military'), energy: T('energy'), europe: T('europe'), pressure: T('pressure') }[k] || k; };
+
   function load() {
     if (L.data) return L.data;
     try { L.data = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { L.data = null; }
+    if (L.data) L.data.signals = signals(L.data); /* rebuilt, so copies saved by earlier versions carry no wording */
     return L.data;
   }
 
@@ -185,13 +211,15 @@
     });
   };
 
-  L.sources = [
-    { id: 'news', name: 'GDELT Project', what: 'Worldwide news index: headlines mentioning the Cyprus question (last 21 days)', url: 'https://www.gdeltproject.org/' },
-    { id: 'tone', name: 'GDELT Project', what: 'Average tone of Cyprus–Türkiye coverage (four months)', url: 'https://www.gdeltproject.org/' },
-    { id: 'fx', name: 'Frankfurter (ECB reference rates)', what: 'Euro–lira and euro–dollar exchange rates', url: 'https://frankfurter.dev/' },
-    { id: 'wb', name: 'World Bank Open Data', what: 'GDP, growth, inflation, military spending, population for Cyprus, Türkiye, Greece', url: 'https://data.worldbank.org/' },
-    { id: 'wiki', name: 'Wikipedia', what: 'Current summaries of past plans, talks, rulings and comparable cases', url: 'https://en.wikipedia.org/' }
-  ];
+  L.sources = function () {
+    return [
+      { id: 'news', name: T('GDELT Project'), what: T('Worldwide news index: headlines mentioning the Cyprus question (last 21 days)'), url: 'https://www.gdeltproject.org/' },
+      { id: 'tone', name: T('GDELT Project'), what: T('Average tone of Cyprus–Türkiye coverage (four months)'), url: 'https://www.gdeltproject.org/' },
+      { id: 'fx', name: T('Frankfurter (ECB reference rates)'), what: T('Euro–lira and euro–dollar exchange rates'), url: 'https://frankfurter.dev/' },
+      { id: 'wb', name: T('World Bank Open Data'), what: T('GDP, growth, inflation, military spending, population for Cyprus, Türkiye, Greece'), url: 'https://data.worldbank.org/' },
+      { id: 'wiki', name: T('Wikipedia'), what: T('Current summaries of past plans, talks, rulings and comparable cases'), url: 'https://en.wikipedia.org/' }
+    ];
+  };
 
   root.Live = L;
 })(typeof self !== 'undefined' ? self : this);

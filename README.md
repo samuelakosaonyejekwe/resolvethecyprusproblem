@@ -16,6 +16,9 @@ Choose the stakeholder you are deciding for. Pick a move. The board predicts how
 - **Live intelligence:** headlines, news tone, exchange rates and economic indicators are fetched by each user's own browser from open public sources (GDELT, European Central Bank reference rates via Frankfurter, World Bank, Wikipedia) and feed small, visible adjustments into the model.
 - **Library:** the strategies of the source blueprints, stakeholder profiles, and precedents that worked or failed.
 - **Open assumptions:** every weight and starting value can be inspected and changed.
+- **Two ways to play:** let the computer play the other nine stakeholders, or choose every stakeholder's reply yourself.
+- **Complete guide:** a built-in, step-by-step guide explains every page, score and calculation.
+- **Three languages:** English, Greek and Turkish, switchable at any time.
 
 ## Install and offline use
 
@@ -32,6 +35,8 @@ python3 -m http.server 8080
 ```
 
 After changing files, regenerate the single-file copy with `node tools/build.js`.
+
+Interface text lives in the code in English and is translated by the language packs in `js/lang/`. `node tools/strings.js` rebuilds the list of strings to translate, and `node tools/strings.js --check` reports anything a pack is missing.
 
 ## Method and limits
 

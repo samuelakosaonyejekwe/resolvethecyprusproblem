@@ -37,7 +37,16 @@ small,.mute{color:var(--mute)}
 .brand{flex:1}
 .pager{display:flex;justify-content:space-between;gap:10px;margin-top:6px}
 .pager .btn{flex:1;max-width:48%}
-@media (max-width:560px){.top .pill{display:none}.brand small{display:none}.brand svg{display:none}}
+.lang{min-height:34px;padding:4px 4px;font-size:.84rem;font-weight:600;border-radius:9px;border:1px solid transparent;background:rgba(255,255,255,.1);color:#fff;flex-shrink:0}
+.lang option{color:var(--ink);background:var(--panel)}
+.top #installBtn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+.top .pill{min-width:0;overflow:hidden;text-overflow:ellipsis;flex-shrink:30}.top-actions .btn.icon{flex-shrink:0}
+.brand b{overflow:hidden;text-overflow:ellipsis}
+@media (min-width:561px){.brand{flex:1 1 auto}}
+.langrow{margin:.2em 0 1em}
+@media (max-width:560px){.top .pill{display:none}.brand small{display:none}.brand svg{display:none}
+  .top{gap:6px;padding-left:10px;padding-right:10px}.top-actions{gap:4px;min-width:0;flex-shrink:1}
+  .brand b{white-space:normal;font-size:.86rem;line-height:1.1;display:block}.top #installBtn{max-width:30vw;padding:5px 8px;flex-shrink:1;min-width:0}}
 .pill{font-size:.72rem;padding:3px 8px;border-radius:99px;background:rgba(255,255,255,.12);color:#dbe6ee;white-space:nowrap}
 .pill.off{background:#7a4a14;color:#ffe2b8}
 
@@ -218,3 +227,19 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   .sheet{position:static;transform:none;visibility:visible;display:block}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* back / forward: one pill, two round chevron buttons */
+.navarrows{gap:2px;padding:3px;border-radius:99px;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.navarrows .btn.icon{position:relative;width:32px;height:32px;min-height:32px;padding:0;border:0;border-radius:50%;background:transparent;font-size:0;transition:background .15s,transform .1s,opacity .15s}
+.navarrows .btn.icon::before{content:"";position:absolute;left:50%;top:50%;width:9px;height:9px;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;border-radius:1.5px;transform:translate(-30%,-50%) rotate(45deg)}
+.navarrows #navFwd::before{transform:translate(-70%,-50%) rotate(-135deg)}
+.navarrows .btn.icon:not(:disabled):hover{background:var(--accent)}
+.navarrows .btn.icon:not(:disabled):active{transform:scale(.9)}
+.navarrows .btn.icon:disabled{opacity:.3}
+
+/* phones: the install button becomes a download icon so longer languages fit */
+@media (max-width:560px){
+  .top #installBtn{font-size:0;width:40px;min-width:40px;padding:0;position:relative}
+  .top #installBtn::before{content:"";position:absolute;left:50%;top:50%;width:14px;height:9px;margin:-1px 0 0 -9px;border:2.5px solid currentColor;border-top:0;border-radius:0 0 4px 4px}
+  .top #installBtn::after{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-11px 0 0 -5.5px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(45deg)}
+}
