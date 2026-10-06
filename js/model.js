@@ -4,7 +4,7 @@
    in the app under Library → Assumptions. */
 (function (root) {
   'use strict';
-  var B = { R: 'Blueprint: Strategy to Reclaim the North (2025)', L: 'Blueprint: Cyprus–U.S. Strategic Leverage (2025)', U: 'Blueprint: Unified Cyprus (2025)', H: 'Blueprint: Holistic Strategy to Prevent Aggression (2025)', V: 'Proposal: A Vision for Peace and Prosperity (2024)' };
+  var B = { R: 'Blueprint: Strategy to Reclaim the North (2025)', L: 'Blueprint: Cyprus–U.S. Strategic Leverage (2025)', U: 'Blueprint: Unified Cyprus (2025)', H: 'Blueprint: Holistic Strategy to Prevent Aggression (2025)', V: 'Proposal: A Vision for Peace and Prosperity (2024)', D: 'Proposal: Bridging Divides (2024)' };
 
   var M = {
     version: '1.0.0',
@@ -12,6 +12,7 @@
     costScale: 0.25,
     mirrors: ['https://samuelakosaonyejekwe.github.io/resolvethecyprusproblem/'],
     docs: [
+      'Bridging Divides: A Vision for a Unified Cyprus (October 2024)',
       'Reunification of Cyprus: A Vision for Peace and Prosperity (October 2024)',
       'Strategic Rebirth of Cyprus: A Comprehensive Game-Theoretic Blueprint to Regain Sovereignty (June 2025)',
       'A Holistic Global Strategy to Prevent Military Aggression Against Cyprus (June 2025)',
@@ -146,7 +147,7 @@
 
     moves: [
       /* ---- Republic of Cyprus ---- */
-      { id: 'roc.talks', p: 'ROC', cat: 'deal', name: 'Table a federal deal with phased withdrawal', src: B.R, cost: 3, ps: 0.8, prec: ['annan', 'crans'],
+      { id: 'roc.talks', p: 'ROC', cat: 'deal', name: 'Table a federal deal with phased withdrawal', src: B.R + ' · ' + B.D, cost: 3, ps: 0.8, prec: ['annan', 'crans'],
         desc: 'Propose in UN-led talks a federation with political equality, a share of gas revenue for Turkish Cypriots and a dated, monitored troop withdrawal. If refused, the refusal itself is on record.',
         fx: { settle: 8, trust: 4, pressure: 2, trwest: 2 }, fail: { trust: -2 } },
       { id: 'roc.blueprint', p: 'ROC', cat: 'deal', name: 'Table the Unified Blueprint: one state, entrenched self-rule, no guarantors', src: B.U, cost: 4, ps: 0.75, req: { trust: [40, 100] }, prec: ['annan', 'aland', 'tyrol'],
@@ -183,7 +184,7 @@
       { id: 'roc.greenline', p: 'ROC', cat: 'economic', name: 'Widen Green Line trade with "Cyprus origin" certification', src: B.U, cost: 2, ps: 0.8, prec: ['greenline'],
         desc: 'Let northern producers who meet EU standards certify and sell through the Republic\'s ports, with accredited labs and electronic seals.',
         fx: { econ: 8, tcstatus: 5, trust: 3 } },
-      { id: 'roc.energyoffer', p: 'ROC', cat: 'energy', name: 'Offer a joint energy framework with escrowed revenue', src: B.R + ' · ' + B.U, cost: 4, ps: 0.75, prec: ['lebanon'],
+      { id: 'roc.energyoffer', p: 'ROC', cat: 'energy', name: 'Offer a joint energy framework with escrowed revenue', src: B.R + ' · ' + B.U + ' · ' + B.D, cost: 4, ps: 0.75, prec: ['lebanon'],
         desc: 'One national hydrocarbons authority, a Turkish Cypriot revenue share held in escrow until settlement, and a technical panel to de-risk disputed blocks.',
         fx: { energy: 8, tcstatus: 5, trust: 4, settle: 3 }, fail: { trust: -2 } },
       { id: 'roc.gas', p: 'ROC', cat: 'energy', name: 'Fast-track gas exports with Egypt and the majors', src: B.R + ' · ' + B.L, cost: 2, ps: 0.7, prec: ['yavuz', 'lebanon'],
@@ -243,6 +244,18 @@
       { id: 'roc.nato', p: 'ROC', cat: 'security', name: 'Seek a NATO partnership', src: B.H, cost: 2, ps: 0.2,
         desc: 'Apply for Partnership for Peace as a step toward closer ties. Requires consensus, so Türkiye can block it.',
         fx: { rocstand: 7, trwest: -2, stability: -2 }, fail: { rocstand: -1 } },
+      { id: 'roc.bez', p: 'ROC', cat: 'economic', name: 'Create a bi-communal economic zone', src: B.D + ' · ' + B.V, cost: 3, ps: 0.7, prec: ['greenline', 'gfa'],
+        desc: 'A shared zone straddling the line, backed by the EU, with one legal regime and incentives for investors, and its revenue split evenly between the two communities for services and infrastructure.',
+        fx: { econ: 8, trust: 4, tcstatus: 4, settle: 2 }, fail: { trust: -1 } },
+      { id: 'roc.neutral', p: 'ROC', cat: 'security', name: 'Offer permanent neutrality with international guarantees', src: B.D, cost: 3, ps: 0.65, prec: ['aland', 'crans'],
+        desc: 'A reunified Cyprus would be a neutral state with no foreign troops, its security guaranteed by a multilateral treaty and monitored by international peacekeepers during a transition.',
+        fx: { settle: 5, troops: 3, trust: 3, stability: 2, rocstand: -2 }, fail: { rocstand: -2 } },
+      { id: 'roc.pact', p: 'ROC', cat: 'diplomatic', name: 'Propose a non-aggression pact tied to Türkiye\'s EU track', src: B.D + ' · ' + B.V, cost: 3, ps: 0.5, prec: ['helsinki'],
+        desc: 'Cyprus and Türkiye renounce territorial claims and the use of force; in return Nicosia supports reopening Ankara\'s accession talks, conditional on reunification going ahead.',
+        fx: { trwest: 5, settle: 4, stability: 4, pressure: -3 }, fail: { trust: -1 } },
+      { id: 'roc.culture', p: 'ROC', cat: 'societal', name: 'Launch bicommunal education and culture exchanges', src: B.D + ' · ' + B.V, cost: 1, ps: 0.85, prec: ['cmp', 'gfa'],
+        desc: 'Language learning in both directions, joint school projects, shared heritage work and exchanges, with EU support, so the next generation grows up knowing the other community.',
+        fx: { trust: 6, settle: 2 } },
       { id: 'roc.hardline', p: 'ROC', cat: 'diplomatic', name: 'Suspend contacts until troops leave', cost: 1, ps: 0.95,
         desc: 'Refuse talks and confidence-building measures until withdrawal begins.',
         fx: { settle: -4, trust: -6, pressure: 2, tcstatus: -3 } },
@@ -280,11 +293,11 @@
       { id: 'tr.energydeal', p: 'TR', cat: 'energy', name: 'Join an inclusive East-Med energy framework', cost: 2, ps: 0.7, any: ['roc.energyoffer', 'reg.inclusive'], prec: ['lebanon'],
         desc: 'Accept a technical arrangement on disputed waters and take part in regional energy cooperation.',
         fx: { energy: 14, trwest: 8, econ: 5, tcstatus: 4, stability: 6, pressure: -4 }, fail: { energy: -3 } },
-      { id: 'tr.accept', p: 'TR', cat: 'deal', name: 'Sign a gated withdrawal-for-value roadmap', cost: 3, ps: 0.75, any: ['eu.package', 'roc.vetolift', 'us.offramp'], req: { trust: [45, 100] }, prec: ['twoplusfour', 'camp', 'baltic'],
+      { id: 'tr.accept', p: 'TR', cat: 'deal', name: 'Sign a gated withdrawal-for-value roadmap', cost: 3, ps: 0.75, any: ['eu.package', 'roc.vetolift', 'us.offramp', 'roc.pact'], req: { trust: [45, 100] }, prec: ['twoplusfour', 'camp', 'baltic'],
         desc: 'Agree a dated, verified draw-down in exchange for escrowed economic and political rewards, presented at home as redeployment by choice.',
         fx: { troops: 14, settle: 14, trwest: 8, pressure: -8, econ: 5, tcstatus: 6, stability: 5, trust: 6 }, fail: { trust: -8, settle: -5 },
         mods: [{ when: { pressure: [38, 100] }, fx: { pressure: -12, trwest: 3 } }, { used: 'eu.package', fx: { trwest: 9, econ: 3 } }, { used: 'roc.vetolift', fx: { trwest: 5 } }, { used: 'us.offramp', fx: { trwest: 7, econ: 3 } },
-          { used: 'roc.escrow', fx: { econ: 4, tcstatus: 4 } }, { used: 'roc.security', fx: { tcstatus: 5, stability: 3 } }, { used: 'roc.energyoffer', fx: { trwest: 2, tcstatus: 3 } }] },
+          { used: 'roc.escrow', fx: { econ: 4, tcstatus: 4 } }, { used: 'roc.security', fx: { tcstatus: 5, stability: 3 } }, { used: 'roc.energyoffer', fx: { trwest: 2, tcstatus: 3 } }, { used: 'roc.pact', fx: { trwest: 4, stability: 2 } }, { used: 'roc.neutral', fx: { tcstatus: 3, stability: 2 } }] },
       { id: 'tr.withdraw', p: 'TR', cat: 'security', name: 'Complete the verified withdrawal', cost: 2, ps: 0.8, after: ['tr.accept', 'roc.referendum'], prec: ['twoplusfour', 'baltic', 'camp'],
         desc: 'Carry out the roadmap: units leave on schedule, sites are handed over, verifiers certify, rewards are released.',
         fx: { troops: 48, trwest: 30, pressure: -30, stability: 8, tcstatus: 10, econ: 10, rocstand: 4 }, fail: { trust: -10, stability: -6, pressure: 10 },
@@ -508,6 +521,82 @@
         lesson: 'The war ended, but ethnic vetoes at every level produced a state that struggles to decide anything. Power-sharing needs deadlock-breaking rules.' }
     ]
   };
+
+  /* Subjects: what each move is about in the world's news. Each subject has a
+     search phrase used to pull current coverage, statements and meetings. */
+  M.topics = {
+    talks: { name: 'Settlement talks', q: '(cyprus OR cypriot) (talks OR negotiations OR settlement OR reunification OR federation)' },
+    security: { name: 'Guarantees and security arrangements', q: '(cyprus OR cypriot) (guarantees OR guarantor OR "troop withdrawal" OR peacekeeping OR UNFICYP OR neutrality)' },
+    troops: { name: 'Turkish forces on the island', q: '(cyprus OR cypriot) ("turkish troops" OR "turkish army" OR "turkish military" OR "military base" OR occupation)' },
+    property: { name: 'Property and refugees', q: '(cyprus OR cypriot) (property OR refugees OR restitution OR compensation OR "missing persons")' },
+    cbm: { name: 'Crossings and confidence-building', q: '(cyprus OR cypriot) ("crossing point" OR crossings OR "confidence-building" OR "buffer zone" OR bicommunal)' },
+    trade: { name: 'Trade and Turkish Cypriot economy', q: '("turkish cypriot" OR "northern cyprus" OR "green line") (trade OR economy OR investment OR aid OR flights)' },
+    gas: { name: 'Offshore gas', q: 'cyprus (gas OR drilling OR Aphrodite OR Cronos OR ExxonMobil OR Chevron OR "exclusive economic zone")' },
+    grid: { name: 'Energy links and interconnector', q: 'cyprus (interconnector OR "electricity cable" OR "Great Sea" OR hydrogen OR "energy corridor")' },
+    euturkey: { name: 'EU–Türkiye relations', q: '(turkey OR turkiye) ("customs union" OR "visa liberalisation" OR "accession talks" OR "european union") cyprus' },
+    sanctions: { name: 'Sanctions on Türkiye', q: '(turkey OR turkiye) (sanctions OR "restrictive measures" OR designations) (cyprus OR drilling OR CAATSA)' },
+    uscyprus: { name: 'United States–Cyprus partnership', q: 'cyprus ("united states" OR washington OR pentagon OR congress) (defense OR defence OR partnership OR "visa waiver" OR arms)' },
+    usturkey: { name: 'United States–Türkiye dealings', q: '(turkey OR turkiye) ("F-35" OR "F-16" OR CAATSA OR "S-400") ("united states" OR washington OR congress)' },
+    courts: { name: 'Courts and legal action', q: '(cyprus OR cypriot) ("court of human rights" OR ECHR OR "council of europe" OR ruling OR lawsuit OR arbitration)' },
+    maritime: { name: 'Maritime zones and naval incidents', q: 'cyprus (maritime OR warship OR NAVTEX OR "law of the sea" OR "naval exercise") (turkey OR turkiye OR turkish)' },
+    varosha: { name: 'Varosha', q: '(Varosha OR Maras) (cyprus OR cypriot OR famagusta)' },
+    recognition: { name: 'Two-state push and recognition', q: '("two-state" OR "TRNC" OR "northern cyprus") (recognition OR sovereignty OR "turkic states" OR "direct flights")' },
+    defence: { name: 'Defence of the Republic', q: 'cyprus ("national guard" OR "air defence" OR "air defense" OR "military exercise" OR NATO OR missile OR "mutual assistance" OR Frontex)' },
+    regional: { name: 'Regional partnerships', q: 'cyprus (israel OR egypt OR emirates OR saudi OR india OR trilateral OR IMEC) (cooperation OR summit OR corridor OR agreement)' },
+    greeceturkey: { name: 'Greece–Türkiye dialogue', q: 'greece (turkey OR turkiye) (dialogue OR "calm waters" OR aegean OR Mitsotakis) (Erdogan OR talks OR meeting)' },
+    britain: { name: 'United Kingdom and the bases', q: 'cyprus (britain OR british) (bases OR Akrotiri OR Dhekelia OR guarantor OR Eurofighter)' },
+    un: { name: 'United Nations process', q: 'cyprus (Guterres OR "security council" OR "united nations" OR Holguin) (envoy OR report OR meeting OR resolution)' },
+    russia: { name: 'Russia\'s role', q: '(russia OR russian) (cyprus OR "northern cyprus" OR Akkuyu OR turkey) (consulate OR gas OR nuclear OR veto OR "security council")' },
+    society: { name: 'Public opinion and civil society', q: '(cyprus OR cypriot) (referendum OR poll OR "public opinion" OR diaspora OR "civil society" OR education OR heritage)' }
+  };
+  /* A report counts only if its headline is plainly about the subject. */
+  var CY = 'cypr|nicosia|varosha|famagusta|unficyp|erh[uü]rman|christodoulides', TK = 'turk|türk|ankara|erdo[gğ]an';
+  Object.keys(M.topics).forEach(function (t) { M.topics[t].must = CY; });
+  M.topics.euturkey.must = TK; M.topics.sanctions.must = TK; M.topics.usturkey.must = TK;
+  M.topics.greeceturkey.must = 'gree|athens|mitsotakis|aegean'; M.topics.russia.must = 'russia|putin|kremlin|moscow|akkuyu';
+  M.topics.maritime.must = CY + '|' + TK;
+  var SUB = {
+    talks: 'talks|negotiat|settlement|solution|reunif|federa|peace|envoy|two-state', security: 'guarant|troop|peacekeep|unficyp|neutral|security|withdraw',
+    troops: 'troop|army|military|base|occup|soldier', property: 'refugee|restitut|compensat|missing persons|the missing|displaced|immovable|property (claim|commission|right|issue|dispute)|usurp',
+    cbm: 'crossing|confidence|buffer|bi-?communal|checkpoint', trade: 'trade|econom|invest|\\baid\\b|flight|halloumi|green line|export',
+    gas: 'gas|drill|aphrodite|cronos|exxon|chevron|eez|hydrocarbon', grid: 'interconnector|cable|electric|hydrogen|grid|power link',
+    euturkey: 'customs|visa|accession|\\beu\\b|european|brussels|membership', sanctions: 'sanction|restrictive|caatsa|designat|embargo',
+    uscyprus: '\\bu\\.?s\\.?\\b|united states|washington|american|pentagon|congress|visa waiver', usturkey: 'f-?35|f-?16|caatsa|s-?400|washington|\\bu\\.?s\\.?\\b|congress',
+    courts: 'court|echr|ruling|lawsuit|arbitrat|judg|legal|council of europe', maritime: 'maritime|warship|navtex|naval|navy|vessel|\\bsea\\b',
+    varosha: 'varosha|mara[sş]', recognition: 'two-state|trnc|recogni|sovereign|turkic|direct flight',
+    defence: 'defen[cs]e|guard|military|exercise|nato|missile|frontex|\\barms\\b|army', regional: 'israel|egypt|emirates|\\buae\\b|saudi|india|trilateral|imec|gulf|jordan|leban',
+    greeceturkey: 'turk|türk|erdo[gğ]an|ankara', britain: 'brit|\\buk\\b|bases|akrotiri|dhekelia|\\braf\\b|london',
+    un: '\\bun\\b|united nations|guterres|security council|envoy|holgu', russia: 'cypr|turk|türk|akkuyu|ankara',
+    society: 'referendum|poll|opinion|diaspora|civil society|education|heritage|youth|school'
+  };
+  Object.keys(SUB).forEach(function (t) { M.topics[t].sub = SUB[t]; });
+
+  var TOPIC = {
+    talks: ['roc.talks', 'roc.blueprint', 'roc.mediators', 'roc.gulf', 'roc.hardline', 'tr.talks', 'tr.accept', 'tc.federal', 'us.offramp', 'us.mediate', 'reg.mediate', 'eu.envoy'],
+    security: ['roc.security', 'roc.neutral', 'gr.guarantee', 'uk.guarantor', 'uk.broker', 'un.security', 'tr.withdraw'],
+    troops: ['tr.reinforce', 'tr.partial'],
+    property: ['roc.property', 'roc.escrow', 'tc.property'],
+    cbm: ['roc.crossings', 'tr.cbm', 'tc.cbm', 'un.cbm', 'tc.civic'],
+    trade: ['roc.tcbenefits', 'roc.greenline', 'roc.bez', 'tc.greenline', 'eu.tcfund', 'tr.integrate', 'roc.buffer'],
+    gas: ['roc.gas', 'roc.energyoffer', 'us.energy', 'reg.gas', 'reg.inclusive', 'tr.energydeal'],
+    grid: ['roc.energyweb', 'gr.interconnector', 'eu.energy'],
+    euturkey: ['roc.vetolift', 'roc.veto', 'roc.pact', 'eu.package', 'eu.unconditional', 'gr.linkage'],
+    sanctions: ['roc.sanctions', 'eu.sanctions', 'us.sanctions'],
+    uscyprus: ['roc.uspact', 'roc.congress', 'us.pact'],
+    usturkey: ['us.condition', 'us.transact'],
+    courts: ['roc.echr', 'roc.icj'],
+    maritime: ['tr.gunboat', 'tr.retaliate'],
+    varosha: ['tr.varosha'],
+    recognition: ['tr.twostate', 'tc.recognition', 'tc.align', 'ru.north'],
+    defence: ['roc.defence', 'roc.fortress', 'roc.cgsp', 'roc.nato', 'gr.defence', 'eu.defence'],
+    regional: ['roc.trilateral', 'roc.msc', 'roc.india', 'reg.trilateral', 'reg.normalise', 'reg.corridor'],
+    greeceturkey: ['gr.calm'],
+    britain: ['uk.sba', 'uk.ankara'],
+    un: ['un.convene', 'un.report', 'ru.shield', 'ru.support'],
+    russia: ['ru.energy'],
+    society: ['roc.consensus', 'roc.referendum', 'roc.diaspora', 'roc.narrative', 'roc.culture', 'tc.referendum']
+  };
+  Object.keys(TOPIC).forEach(function (t) { TOPIC[t].forEach(function (id) { M.moves.forEach(function (m) { if (m.id === id) m.topic = t; }); }); });
 
   root.MODEL = M;
   if (typeof module !== 'undefined' && module.exports) module.exports = M;

@@ -19,7 +19,8 @@
       'Blueprint: Cyprus–U.S. Strategic Leverage (2025)': 'Plan: Kıbrıs–ABD Stratejik Kaldıracı (2025)',
       'Blueprint: Unified Cyprus (2025)': 'Plan: Birleşik Kıbrıs (2025)',
       'Blueprint: Holistic Strategy to Prevent Aggression (2025)': 'Plan: Saldırganlığı Önlemeye Yönelik Bütüncül Strateji (2025)',
-      'Proposal: A Vision for Peace and Prosperity (2024)': 'Öneri: Barış ve Refah Vizyonu (2024)'
+      'Proposal: A Vision for Peace and Prosperity (2024)': 'Öneri: Barış ve Refah Vizyonu (2024)',
+      'Proposal: Bridging Divides (2024)': 'Öneri: Ayrılıkları Aşmak (2024)'
     },
     dims: {
       settle: {
@@ -557,6 +558,22 @@
       'reg.corridor': {
         name: 'Koridoru ve veri kablolarını Kıbrıs\'a demirle',
         desc: 'Hindistan–Orta Doğu–Avrupa altyapısını ada üzerinden geçir.'
+      },
+      'roc.bez': {
+        name: 'İki toplumlu bir ekonomik bölge oluştur',
+        desc: 'Hattın iki yanına uzanan, AB destekli ortak bir bölge; tek bir hukuki rejim ve yatırımcılar için teşvikler içerir, geliri de hizmetler ve altyapı için iki toplum arasında eşit paylaşılır.'
+      },
+      'roc.neutral': {
+        name: 'Uluslararası güvenceli kalıcı tarafsızlık öner',
+        desc: 'Yeniden birleşmiş bir Kıbrıs, yabancı askerin bulunmadığı tarafsız bir devlet olur; güvenliği çok taraflı bir antlaşmayla güvence altına alınır ve geçiş döneminde uluslararası barış gücü askerlerince izlenir.'
+      },
+      'roc.pact': {
+        name: 'Türkiye\'nin AB sürecine bağlı bir saldırmazlık paktı öner',
+        desc: 'Kıbrıs ve Türkiye toprak taleplerinden ve güç kullanımından vazgeçer; karşılığında Lefkoşa, yeniden birleşmenin ilerlemesi koşuluyla, Ankara\'nın katılım müzakerelerinin yeniden açılmasını destekler.'
+      },
+      'roc.culture': {
+        name: 'İki toplumlu eğitim ve kültür değişimleri başlat',
+        desc: 'AB desteğiyle iki yönlü dil öğrenimi, ortak okul projeleri, ortak miras çalışmaları ve değişim programları; böylece gelecek kuşak diğer toplumu tanıyarak büyür.'
       }
     },
     precedents: {
@@ -676,6 +693,31 @@
         name: 'Dayton Anlaşması',
         lesson: 'Savaş sona erdi, ancak her düzeydeki etnik vetolar herhangi bir karar almakta zorlanan bir devlet ortaya çıkardı. Güç paylaşımı, kilitlenmeyi aşan kurallar gerektirir.'
       }
+    },
+    topics: {
+      talks: 'Çözüm görüşmeleri',
+      security: 'Garantiler ve güvenlik düzenlemeleri',
+      troops: 'Adadaki Türk kuvvetleri',
+      property: 'Mülkiyet ve göçmenler',
+      cbm: 'Geçiş kapıları ve güven artırma',
+      trade: 'Ticaret ve Kıbrıs Türk ekonomisi',
+      gas: 'Açık deniz doğal gazı',
+      grid: 'Enerji bağlantıları ve enterkonnektör',
+      euturkey: 'AB–Türkiye ilişkileri',
+      sanctions: 'Türkiye\'ye yaptırımlar',
+      uscyprus: 'Amerika Birleşik Devletleri–Kıbrıs ortaklığı',
+      usturkey: 'Amerika Birleşik Devletleri–Türkiye ilişkileri',
+      courts: 'Mahkemeler ve hukuki girişimler',
+      maritime: 'Deniz yetki alanları ve deniz olayları',
+      varosha: 'Maraş',
+      recognition: 'İki devlet girişimi ve tanınma',
+      defence: 'Cumhuriyet\'in savunması',
+      regional: 'Bölgesel ortaklıklar',
+      greeceturkey: 'Yunanistan–Türkiye diyaloğu',
+      britain: 'Birleşik Krallık ve üsler',
+      un: 'Birleşmiş Milletler süreci',
+      russia: 'Rusya\'nın rolü',
+      society: 'Kamuoyu ve sivil toplum'
     }
   };
 })(typeof self !== 'undefined' ? self : this);

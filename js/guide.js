@@ -117,7 +117,8 @@
         T('<b>GDELT Project</b>: an index of worldwide news. Used for headlines about the Cyprus question from the last three weeks, and for the average tone of coverage about Cyprus and Türkiye over four months.'),
         T('<b>European Central Bank reference rates</b> (through the Frankfurter service): the euro–lira exchange rate over the last twelve months.'),
         T('<b>World Bank Open Data</b>: GDP, growth, inflation, military spending and population for Cyprus, Türkiye and Greece.'),
-        T('<b>Wikipedia</b>: current summaries for the precedents in the Library.')]) +
+        T('<b>Wikipedia</b>: current summaries for the precedents in the Library.'),
+        T('<b>OpenAlex</b>: an open index of the world\'s scholarly research. Used for the most recent articles on the Cyprus question.')]) +
       h(T('How live data changes the model')) +
       p(T('Live data is turned into a small number of <b>signals</b>. Each signal nudges the starting position, by a capped amount, and is listed on the page with its reading and its exact effect. You can untick any signal, or switch all of them off.')) +
       ul([
@@ -126,6 +127,11 @@
         T('<b>Military matters in the headlines</b>: when more than 25% of headlines are military, starting Stability falls; when fewer, it rises; at most 5 points.'),
         T('<b>Legal and sanctions pressure in the headlines</b>: when more than 20% concern courts, sanctions or resolutions, starting pressure on Ankara rises; when fewer, it falls; at most 5 points.'),
         T('<b>The lira</b>: the percentage the lira has lost against the euro in twelve months raises, by the same percentage and at most 40%, the weight Türkiye gives to its Western ties and to the economy.')]) +
+      h(T('Live evidence for every move')) +
+      p(T('Every move belongs to a subject, such as settlement talks, offshore gas, sanctions or the crossings. For each subject your device fetches the last 21 days of world news coverage from GDELT: how many reports there are, how many fall in the last week, which report what leaders have said, and which report summits, conferences and meetings. The result is kept for six hours and then renewed, so it is always current.')) +
+      p(T('When you select a move, in computer mode or manual mode, the panel shows this evidence under the heading "Live evidence": the counts, whether the subject is rising, steady, fading or quiet on the agenda, and the latest statements, meetings and reports with links to their sources. The same card appears on the Analysis page.')) +
+      p(T('The evidence also enters the calculation. A move whose subject is rising gets 5 percentage points added to its chance of success, because attention gives decision-makers reason and cover to act. A move whose subject is fading loses 3 points. Steady or quiet subjects change nothing. This applies to every stakeholder\'s moves, so the predicted replies, the scores, the best path and the odds all reflect the present state of the world. The rule can be switched off under Live intel → Evidence by subject.')) +
+      p(T('The Live intel page also lists the most recent scholarly articles on the Cyprus question from the OpenAlex index of world research, for background reading.')) +
       h(T('Why the lira is there')) +
       p(T('Türkiye\'s decision is the one on which the outcome turns, and most of the levers available to others are economic: a customs-union upgrade, investment, sanctions, access to markets and capital. How heavily such levers weigh depends on how much Türkiye\'s economy needs outside money and confidence at that moment. The lira\'s exchange rate is the one hard, public, daily number that shows this. A sharply weaker lira means incentives and pressure count for more in Ankara. The north of Cyprus also uses the lira, so the same slide erodes living standards there.')) +
       p(T('A game in progress is replayed from the adjusted start when signals change, so your moves are kept.')));

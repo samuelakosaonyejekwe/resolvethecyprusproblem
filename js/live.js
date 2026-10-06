@@ -32,6 +32,10 @@
   }
 
   function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  /* GDELT asks for at most one request every five seconds: every call to it
+     takes a numbered place in one queue. */
+  var nextSlot = 0;
+  function gate() { var now = Date.now(), at = Math.max(now, nextSlot); nextSlot = at + 6500; return wait(at - now); }
   function iso(d) { return d.toISOString().slice(0, 10); }
 
   var GQ = encodeURIComponent('("cyprus problem" OR "cyprus issue" OR "cyprus talks" OR "turkish cypriot" OR "greek cypriot" OR "northern cyprus" OR "occupied cyprus" OR UNFICYP OR Varosha OR Erhurman OR Christodoulides) sourcelang:english');
@@ -57,7 +61,7 @@
 
   /* Precise query first; a broader one if it fails or returns too little. */
   function news() {
-    function broad() { return wait(6000).then(function () { return articles(GQ2); }); }
+    function broad() { return gate().then(function () { return articles(GQ2); }); }
     return articles(GQ).then(function (list) { return list.length >= 5 ? list : broad().then(function (l2) { return l2.length > list.length ? l2 : list; }, function () { return list; }); }, broad);
   }
 
@@ -133,6 +137,93 @@
     });
   }
 
+  /* Recent scholarly work on the Cyprus question, newest first. */
+  function research() {
+    var from = iso(new Date(Date.now() - 3 * 366 * 864e5));
+    return get('https://api.openalex.org/works?search=' + encodeURIComponent('Cyprus reunification OR "Cyprus problem" OR "Cyprus conflict" OR "Turkish Cypriot"') + '&filter=from_publication_date:' + from + ',type:article&sort=publication_date:desc&per-page=40&select=id,title,publication_date,doi,primary_location').then(function (j) {
+      var seen = {};
+      return (j.results || []).filter(function (w) {
+        var k = (w.title || '').toLowerCase().slice(0, 50);
+        if (!w.title || seen[k] || !/cypr/i.test(w.title) || w.publication_date > iso(new Date())) return false;
+        seen[k] = 1; return true;
+      }).slice(0, 12).map(function (w) {
+        var src = (w.primary_location || {}).source || {};
+        return { title: String(w.title).replace(/<[^>]+>/g, ''), date: w.publication_date, venue: src.display_name || '', url: w.doi || w.id };
+      });
+    });
+  }
+
+  /* ---------- evidence by subject ----------
+     For the subject of any move, the current coverage: how much, whether it is
+     rising, who is speaking, what meetings are being held. Fetched one subject
+     at a time and kept for six hours. */
+  var TKEY = 'cy.topics.v1', TOPIC_AGE = 6 * 3600 * 1000, topics = null, queue = [], pumping = false, tListeners = [];
+  var SAID = /\b(says?|said|tells?|told|interview|speech|remarks|statement|warns?|urges?|calls? (for|on)|vows?|pledges?|rejects?|insists?|accuses?|announces?)\b/i;
+  var MEET = /\b(summit|conference|council|meeting|meets?|talks|forum|assembly|visit|session|dialogue|trilateral)\b/i;
+
+  function tload() {
+    if (!topics) { try { topics = JSON.parse(localStorage.getItem(TKEY) || '{}') || {}; } catch (e) { topics = {}; } }
+    return topics;
+  }
+  function tsave() { try { localStorage.setItem(TKEY, JSON.stringify(topics)); } catch (e) {} }
+
+  function topicFetch(q, must, sub) {
+    var about = must ? new RegExp(must, 'i') : null, on = sub ? new RegExp(sub, 'i') : null;
+    return get('https://api.gdeltproject.org/api/v2/doc/doc?query=' + encodeURIComponent(q + ' sourcelang:english') + '&mode=artlist&maxrecords=250&timespan=21d&sort=datedesc&format=json', 25000).then(function (j) {
+      var seen = {}, week = Date.now() - 7 * 864e5, n7 = 0;
+      var items = (j.articles || []).filter(function (a) {
+        var k = (a.title || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').slice(0, 60);
+        if (!a.title || seen[k] || (about && !about.test(a.title)) || (on && !on.test(a.title))) return false;
+        seen[k] = 1; return true;
+      }).map(function (a) {
+        var d = a.seendate || '', date = d ? d.slice(0, 4) + '-' + d.slice(4, 6) + '-' + d.slice(6, 8) : '';
+        if (date && new Date(date).getTime() >= week) n7 += 1;
+        return { title: a.title, url: a.url, domain: a.domain, date: date, said: SAID.test(a.title), meet: MEET.test(a.title) };
+      });
+      var keep = items.filter(function (a) { return a.said; }).slice(0, 4).concat(items.filter(function (a) { return a.meet && !a.said; }).slice(0, 4), items.filter(function (a) { return !a.said && !a.meet; }).slice(0, 5));
+      return { t: Date.now(), n7: n7, n21: items.length, said: items.filter(function (a) { return a.said; }).length, meet: items.filter(function (a) { return a.meet; }).length, items: keep };
+    });
+  }
+
+  function pump() {
+    if (pumping || !queue.length) return;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+    pumping = true;
+    var job = queue.shift();
+    gate().then(function () { return topicFetch(job.q, job.must, job.sub); }).then(function (o) {
+      tload()[job.id] = o; tsave();
+      tListeners.forEach(function (f) { try { f(job.id, o); } catch (e) {} });
+    }).catch(function () {
+      var old = tload()[job.id] || {};
+      old.fail = Date.now(); topics[job.id] = old; /* keep what we had; try again later */
+    }).then(function () { pumping = false; pump(); });
+  }
+
+  L.topic = function (id) { var o = tload()[id]; return o && o.t ? o : null; };
+  L.onTopic = function (f) { tListeners.push(f); };
+  /* Ask for subjects; `first` puts them at the head of the queue. */
+  L.want = function (list, first) {
+    var add = list.filter(function (x) {
+      var o = tload()[x.id];
+      if (o && o.t && Date.now() - o.t < TOPIC_AGE) return false;
+      if (o && o.fail && Date.now() - o.fail < 10 * 60 * 1000) return false;
+      return true;
+    });
+    queue = queue.filter(function (x) { return !add.some(function (y) { return y.id === x.id; }); });
+    queue = first ? add.concat(queue) : queue.concat(add);
+    pump();
+  };
+  L.pending = function (id) { return queue.some(function (x) { return x.id === id; }); };
+  /* Is the subject climbing the world's agenda, holding, fading or absent? */
+  L.momentum = function (o) {
+    if (!o) return null;
+    var prev = (o.n21 - o.n7) / 2;
+    if (o.n21 < 3) return 'quiet';
+    if (o.n7 >= 3 && o.n7 >= 1.5 * Math.max(prev, 1)) return 'rising';
+    if (o.n21 >= 6 && o.n7 <= 0.5 * prev) return 'fading';
+    return 'steady';
+  };
+
   /* Convert raw feeds into small, capped, transparent adjustments of the model.
      Only numbers are kept here; the wording is produced by L.sigText when shown,
      so saved data reads in whatever language is current. */
@@ -201,9 +292,9 @@
         .then(function () { d.signals = signals(d); if (d.status[name].ok) d.t = Date.now(); L.data = d; save(); emit(); });
     }
     /* GDELT asks for at most one request every five seconds. */
-    function retry(f) { return f().catch(function () { return wait(6500).then(f); }); }
-    var gd = part('news', retry(news)).then(function () { return wait(6000); }).then(function () { return part('tone', retry(tone)); });
-    return Promise.all([gd, part('fx', lira()), part('wb', worldBank()), part('wiki', wiki(wikiTitles || []))]).then(function () {
+    function retry(f) { return gate().then(f).catch(function () { return gate().then(f); }); }
+    var gd = part('news', retry(news)).then(function () { return part('tone', retry(tone)); });
+    return Promise.all([gd, part('fx', lira()), part('wb', worldBank()), part('wiki', wiki(wikiTitles || [])), part('research', research())]).then(function () {
       var ok = Object.keys(d.status).some(function (k) { return d.status[k].ok && Date.now() - d.status[k].t < 60000; });
       if (ok) d.t = Date.now();
       L.data = d; L.busy = false; save(); emit();
@@ -213,6 +304,8 @@
 
   L.sources = function () {
     return [
+      { id: 'research', name: 'OpenAlex', what: T('Recent scholarly articles on the Cyprus question'), url: 'https://openalex.org/' },
+      { id: 'topics', name: T('GDELT Project'), what: T('Current coverage, statements and meetings on the subject of each move (last 21 days)'), url: 'https://www.gdeltproject.org/' },
       { id: 'news', name: T('GDELT Project'), what: T('Worldwide news index: headlines mentioning the Cyprus question (last 21 days)'), url: 'https://www.gdeltproject.org/' },
       { id: 'tone', name: T('GDELT Project'), what: T('Average tone of Cyprus–Türkiye coverage (four months)'), url: 'https://www.gdeltproject.org/' },
       { id: 'fx', name: T('Frankfurter (ECB reference rates)'), what: T('Euro–lira and euro–dollar exchange rates'), url: 'https://frankfurter.dev/' },

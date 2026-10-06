@@ -87,9 +87,52 @@
       if (s.dim && s.adj) m.dims.forEach(function (d) { if (d.id === s.dim) d.base = E.clamp(d.base + s.adj); });
       if (s.weight) m.players.forEach(function (p) { if (p.id === s.weight.player) s.weight.dims.forEach(function (k) { p.w[k] = (p.w[k] || 0) * s.weight.factor; }); });
     });
+    /* Live agenda: a move whose subject is climbing the world's news gets a
+       slightly better chance of working; one whose subject is fading, slightly
+       worse. */
+    if (A.live && !A.sigOff.momentum) m.moves.forEach(function (mv) {
+      var k = L.momentum(L.topic(mv.topic)), ps = mv.ps === undefined ? 0.8 : mv.ps;
+      if (k === 'rising') mv.ps = Math.min(0.95, ps + 0.05);
+      else if (k === 'fading') mv.ps = Math.max(0.05, ps - 0.03);
+    });
     C = E.compile(m);
     replay();
   }
+
+  /* ---------- live evidence on the subject of a move ---------- */
+  function wantTopics(first) {
+    var list = [], seen = {};
+    function add(t) { if (t && M.topics[t] && !seen[t]) { seen[t] = 1; list.push({ id: t, q: M.topics[t].q, must: M.topics[t].must, sub: M.topics[t].sub }); } }
+    if (first) add(first);
+    if (A.pid) M.moves.forEach(function (m) { if (m.p === A.pid) add(m.topic); });
+    M.moves.forEach(function (m) { add(m.topic); });
+    if (first) L.want(list.slice(0, 1), true);
+    L.want(list, false);
+  }
+  function momentumName(k) { return { rising: T('rising'), steady: T('steady'), fading: T('fading'), quiet: T('quiet') }[k] || ''; }
+  function momentumTag(k) { return '<span class="tag ' + (k === 'rising' ? 'good' : k === 'steady' ? 'info' : 'warn') + '">' + momentumName(k) + '</span>'; }
+  function evidence(m) {
+    if (m.hold || !m.src.topic) return '';
+    var tp = M.topics[m.src.topic], o = L.topic(m.src.topic), k = L.momentum(o), base = M0move(m.id);
+    var h = '<section class="card"><h3>' + T('Live evidence: {0}', esc(tp.name)) + '</h3><p class="help">' + T('What the world\'s news is carrying on the subject of this move right now, fetched by your device from the GDELT news index and refreshed every six hours.') + '</p>';
+    if (!o) return h + '<p class="help">' + (navigator.onLine === false ? T('You are offline and no evidence on this subject has been saved yet.') : T('Fetching current coverage… it appears here in a few seconds.')) + '</p></section>';
+    function items(f, n) { return o.items.filter(f).slice(0, n).map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.title) + '</a> <span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + '</span></li>'; }).join(''); }
+    var said = items(function (a) { return a.said; }, 3), meet = items(function (a) { return a.meet && !a.said; }, 3), rest = items(function (a) { return !a.said && !a.meet; }, 3);
+    h += '<div class="kv"><div><b>' + o.n21 + '</b><span>' + T('reports in 21 days') + '</span></div><div><b>' + o.n7 + '</b><span>' + T('in the last 7 days') + '</span></div><div><b style="font-size:1rem">' + momentumTag(k) + '</b><span>' + T('place on the agenda') + '</span></div></div>';
+    var eff = !A.live || A.sigOff.momentum ? T('Live adjustment is switched off, so the chance of success is unchanged.') :
+      k === 'rising' ? T('The subject is climbing the agenda, so decision-makers have attention and cover to act: chance of success raised from {0} to {1}.', pct(base), pct(m.ps)) :
+      k === 'steady' ? T('Coverage is steady: chance of success unchanged at {0}.', pct(m.ps)) :
+      k === 'quiet' ? T('There is little or no current coverage, which says nothing either way: chance of success unchanged at {0}.', pct(m.ps)) :
+      T('The subject is slipping off the agenda, so an initiative has less to carry it: chance of success lowered from {0} to {1}.', pct(base), pct(m.ps));
+    h += '<p style="margin-top:8px"><b>' + T('Effect on the result:') + '</b> ' + eff + '</p>';
+    if (said) h += '<h3>' + T('What is being said') + '</h3><ul class="news">' + said + '</ul>';
+    if (meet) h += '<h3>' + T('Meetings and conferences') + '</h3><ul class="news">' + meet + '</ul>';
+    if (rest) h += '<h3>' + T('Other current reports') + '</h3><ul class="news">' + rest + '</ul>';
+    if (!said && !meet && !rest) h += '<p class="help">' + T('No reports on this subject in the last 21 days.') + '</p>';
+    return h + '<p class="help">' + T('Fetched {0}. Headlines are in English, as published.', new Date(o.t).toLocaleString(locale())) + '</p></section>';
+  }
+  function M0move(id) { var r = M.moves.filter(function (x) { return x.id === id; })[0]; return r && r.ps !== undefined ? r.ps : 0.8; }
+  function locale() { return I18N.lang === 'en' ? 'en-GB' : I18N.lang; }
   function replay() {
     S = E.newState(C); stack = []; cache = {};
     var kept = [];
@@ -318,6 +361,7 @@
         var d = u1[q] - u0[q], w = Math.min(50, Math.abs(d) * 5);
         return '<span>' + (q === A.pid ? '<b>' + esc(P(q).name) + '</b>' : esc(P(q).name)) + '</span><span class="pb"><i style="' + (d >= 0 ? 'left:50%' : 'right:50%') + ';width:' + w + '%;background:var(--' + (d >= 0 ? 'good' : 'bad') + ')"></i></span><b class="num ' + cls(d) + '">' + sgn(d) + '</b>';
       }).join('') + '</div><p class="help" style="margin-top:8px">' + T('Change in each player\'s payoff (0–100 scale) once every reply is in.') + '</p></section>';
+    h += evidence(m);
     h += '<div class="sfoot"><button class="btn" data-a="analyse">' + T('Full analysis') + '</button><button class="btn accent" data-a="play">' + T('Play this move') + '</button></div>';
     sheet.innerHTML = h; sheet.className = 'sheet open'; document.body.classList.add('has-sheet');
   }
@@ -535,12 +579,13 @@
     h += '<section class="card"><h2>' + T('Head-to-head payoff matrix') + '</h2><p class="help">' + T('The classic game-theory table: your five strongest options against one opponent\'s five strongest. Choose the opponent below.') + '</p>' + matrix() + '</section>';
     h += '<div class="grid two"><section class="card"><h2>' + T('Stakeholder map') + '</h2><p class="help">' + T('Every other stakeholder placed by how much power it has (height) and whether it currently pulls with you or against you (left to right).') + '</p>' + map() + '</section><section class="card"><h2>' + T('How sure is the recommendation?') + '</h2><p class="help">' + T('A stress test. The model\'s assumptions are judgments, so this re-runs the advice many times with those judgments deliberately disturbed.') + '</p>' + sens() + '</section></div>';
     h += '<section class="card"><h2>' + T('Political, security, economic, energy, legal and social lens') + '</h2><p class="help">' + T('The same result sorted by field, so a specialist in any one area can see what changes for them after this round.') + '</p>' + lens(rec) + '</section>';
-    h += precedents(rec.m);
+    h += evidence(rec.m) + precedents(rec.m);
     return h;
   }
 
   /* ---------- live ---------- */
   function viewLive() {
+    var got0 = Object.keys(M.topics).filter(function (t) { return L.topic(t); });
     var d = L.get() || {}, st = d.status || {}, loc = I.lang === 'en' ? undefined : I.lang;
     var h = intro(T('Live intelligence'), T('Real, current data from public sources, so the board starts from today\'s situation rather than a fixed snapshot. Your device fetches it directly whenever the app is open and online, and keeps the last copy for offline use.'), [
       T('<b>Sources</b> shows where each kind of data comes from and whether the last fetch worked.'),
@@ -549,7 +594,7 @@
       '<section class="card"><div class="row between"><h2>' + T('Sources') + '</h2><button class="btn accent small" data-a="refresh"' + (L.busy ? ' disabled' : '') + '>' + (L.busy ? T('Updating…') : T('Refresh now')) + '</button></div>' +
       '<p class="help">' + T('Nothing passes through a private server: this device asks each source directly.') + '</p>' +
       '<div class="tblwrap"><table><thead><tr><th>' + T('Source') + '</th><th>' + T('Provides') + '</th><th>' + T('Status') + '</th></tr></thead><tbody>' + L.sources().map(function (s) {
-        var x = st[s.id];
+        var x = s.id === 'topics' ? (got0.length ? { ok: true, t: Math.max.apply(null, got0.map(function (t) { return L.topic(t).t; })) } : null) : st[s.id];
         return '<tr><td><a href="' + s.url + '" target="_blank" rel="noopener">' + esc(s.name) + '</a></td><td>' + esc(s.what) + '</td><td>' + (!x ? '<span class="tag">' + T('not yet fetched') + '</span>' : x.ok ? '<span class="tag good">' + T('ok') + '</span> ' + new Date(x.t).toLocaleString(loc) : '<span class="tag warn">' + T('unreachable') + '</span> ' + (x.kept ? T('showing last saved copy') : T('no data'))) + '</td></tr>';
       }).join('') + '</tbody></table></div></section>';
 
@@ -560,6 +605,15 @@
       return '<tr><td class="c"><input type="checkbox" data-c="sig" data-v="' + s.id + '"' + (A.sigOff[s.id] ? '' : ' checked') + (A.live ? '' : ' disabled') + ' aria-label="' + esc(T('Use this signal')) + '"></td><td>' + esc(tx.label) + '<br><span class="help">' + esc(tx.why) + '</span></td><td>' + esc(tx.value) + '</td><td>' + eff + '</td></tr>';
     }).join('') + '</tbody></table></div><p class="help">' + T('Adjustments are deliberately small and capped. They move the starting position of a new game; a game in progress is replayed from the adjusted start.') + '</p>' : '<p class="help">' + T('No signals yet. They appear after the first successful refresh.') + '</p>';
     h += '</section>';
+
+    var tids = Object.keys(M.topics), got = tids.filter(function (t) { return L.topic(t); });
+    h += '<section class="card"><div class="row between"><h2>' + T('Evidence by subject') + '</h2><label class="row help"><input type="checkbox" data-c="sig" data-v="momentum"' + (A.sigOff.momentum ? '' : ' checked') + (A.live ? '' : ' disabled') + '> ' + T('Let the agenda adjust each move') + '</label></div>' +
+      '<p class="help">' + T('Every move belongs to a subject. For each subject your device fetches the last 21 days of world coverage, one subject every few seconds, and renews it every six hours. A subject that is rising raises the chance of success of its moves by 5 points; one that is fading lowers it by 3; a steady or quiet one changes nothing. Only headlines plainly about the subject are counted. The same evidence, with the statements and meetings found, is shown beside every move on the board. {0} of {1} subjects fetched so far.', got.length, tids.length) + '</p>' +
+      '<div class="tblwrap"><table><thead><tr><th>' + T('Subject') + '</th><th>' + T('Reports, 21 days') + '</th><th>' + T('Last 7 days') + '</th><th>' + T('Statements') + '</th><th>' + T('Meetings') + '</th><th>' + T('Agenda') + '</th></tr></thead><tbody>' +
+      tids.map(function (t) {
+        var o = L.topic(t);
+        return '<tr><td>' + esc(M.topics[t].name) + '</td>' + (o ? '<td class="c">' + o.n21 + '</td><td class="c">' + o.n7 + '</td><td class="c">' + (o.said || 0) + '</td><td class="c">' + (o.meet || 0) + '</td><td class="c">' + momentumTag(L.momentum(o)) + '</td>' : '<td class="c mute" colspan="5">' + (L.pending(t) ? T('in the queue') : T('not yet fetched')) + '</td>') + '</tr>';
+      }).join('') + '</tbody></table></div></section>';
 
     h += '<div class="grid two">';
     if (d.fx) h += '<section class="card"><h2>' + T('Lira against the euro') + '</h2><div class="kv"><div><b>₺' + d.fx.try.toFixed(2) + '</b><span>' + T('per €1 on {0}', esc(d.fx.date)) + '</span></div><div><b class="' + (d.fx.change > 0 ? 'bad' : 'good') + '">' + sgn(d.fx.change) + '%</b><span>' + T('euro price in lira, 12 months') + '</span></div></div>' + spark(d.fx.series, 'var(--accent)') + '<p class="help">' + T('<b>Why this is here.</b> Türkiye is the player whose decision matters most, and its economy is where outside incentives and pressure bite. The lira is the one daily, public, hard number that shows how exposed that economy is. When it has fallen a lot over twelve months, Ankara needs foreign capital, trade access and investor confidence more, so offers such as a customs-union upgrade, and threats to them, weigh more in its calculation. The model therefore raises the weight Türkiye gives to its Western ties and to the economy, by at most 40%. The north of Cyprus also uses the lira, so the same slide erodes Turkish Cypriot living standards. Untick the lira signal above to switch this off.') + '</p></section>';
@@ -572,6 +626,9 @@
         return '<tr><td>' + esc(L.wbLabel(k)) + '</td><td class="c">' + f(r.CYP) + '</td><td class="c">' + f(r.TUR) + '</td><td class="c">' + f(r.GRC) + '</td><td class="c">' + esc(r.year || '') + '</td></tr>';
       }).join('') + '</tbody></table></div><p class="help">' + T('World Bank, latest available year. Cyprus figures cover the government-controlled area.') + '</p></section>';
     }
+
+    if (d.research && d.research.length) h += '<section class="card"><h2>' + T('Latest research') + '</h2><p class="help">' + T('The most recent scholarly articles on the Cyprus question, from the OpenAlex index of world research, newest first. For background reading; they do not change the model.') + '</p><ul class="news">' +
+      d.research.map(function (w) { return '<li><a href="' + esc(w.url) + '" target="_blank" rel="noopener">' + esc(w.title) + '</a><br><span class="help">' + esc(w.venue) + (w.venue ? ' · ' : '') + esc(w.date) + '</span></li>'; }).join('') + '</ul></section>';
 
     var themes = ['all'].concat(L.themes), news = (d.news || []).filter(function (a) { return A.newsTheme === 'all' || a.themes.indexOf(A.newsTheme) >= 0; });
     h += '<section class="card"><h2>' + T('Latest headlines') + '</h2><p class="help">' + T('News from the last three weeks that mentions the Cyprus question, newest first. Filter by theme; tap a headline to read it at its source. The mix of themes feeds the signals above.') + '</p><div class="filter">' + themes.map(function (t) { return '<button data-a="ntheme" data-v="' + t + '" aria-pressed="' + (A.newsTheme === t) + '">' + (t === 'all' ? T('All') : L.themeName(t)) + '</button>'; }).join('') + '</div>' +
@@ -736,9 +793,9 @@
     gopen: function (v) { var all = view.querySelectorAll('details.guide-sec'); for (var i = 0; i < all.length; i++) all[i].open = v === '1'; },
     back: function () { history.back(); },
     fwd: function () { history.forward(); },
-    pick: function (v) { A.pid = v; A.own = []; A.sel = null; A.tab = 'board'; A.cat = 'all'; replay(); navPush(); render(); window.scrollTo(0, 0); },
+    pick: function (v) { A.pid = v; A.own = []; A.sel = null; A.tab = 'board'; A.cat = 'all'; replay(); navPush(); render(); window.scrollTo(0, 0); wantTopics(null); },
     tab: function (v) { go(v); },
-    sel: function (v) { A.sel = A.sel === v ? null : v; A.manual = {}; render(); },
+    sel: function (v) { A.sel = A.sel === v ? null : v; A.manual = {}; if (A.sel && C.moves[A.sel]) wantTopics(C.moves[A.sel].src.topic); render(); },
     playmode: function (v) { A.play = v; A.manual = {}; save(); render(); },
     close: function () { A.sel = null; render(); },
     play: function () { play(A.sel); },
@@ -780,7 +837,7 @@
     if (c === 'horizon') { A.horizon = +t.value; cache.path = null; }
     else if (c === 'opp') A.opp = t.value;
     else if (c === 'man') { A.manual[v] = t.value; render(); return; }
-    else if (c === 'sel') A.sel = t.value;
+    else if (c === 'sel') { A.sel = t.value; if (C.moves[A.sel]) wantTopics(C.moves[A.sel].src.topic); }
     else if (c === 'live') { A.live = t.checked; build(); }
     else if (c === 'sig') { A.sigOff[v] = !t.checked; build(); }
     else if (c === 'assumep') A.ap = t.value;
@@ -815,7 +872,20 @@
   function refresh(manual) {
     if (navigator.onLine === false) { if (manual) toast(T('You are offline. Showing the last saved data.')); return; }
     L.refresh(M.precedents.map(function (p) { return p.wiki; }).filter(Boolean)).then(function () { if (manual) toast(T('Live data updated.')); });
+    wantTopics(A.sel && C.moves[A.sel] ? C.moves[A.sel].src.topic : null);
   }
+  /* Evidence arriving for a subject changes the odds of its moves: recalculate,
+     and redraw unless the user is in the middle of choosing something. */
+  var topicTimer = null;
+  L.onTopic(function () {
+    clearTimeout(topicTimer);
+    topicTimer = setTimeout(function () {
+      if (!C) return;
+      var el = document.activeElement, busyEl = el && (el.tagName === 'SELECT' || el.tagName === 'INPUT');
+      build();
+      if (!busyEl && (A.tab === 'board' || A.tab === 'analysis' || A.tab === 'live')) render();
+    }, 400);
+  });
   var lastSig = '';
   L.onChange(function (d, busy) {
     net();
@@ -826,7 +896,7 @@
   window.addEventListener('online', function () { net(); refresh(); });
   window.addEventListener('offline', net);
   document.addEventListener('visibilitychange', function () { if (!document.hidden && L.stale()) refresh(); });
-  setInterval(function () { net(); if (!document.hidden && L.stale()) refresh(); }, 10 * 60 * 1000);
+  setInterval(function () { net(); if (!document.hidden && L.stale()) refresh(); if (!document.hidden) wantTopics(null); }, 10 * 60 * 1000);
 
   window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; });
   window.addEventListener('appinstalled', function () { deferred = null; installUI(); toast(T('Installed. The board now works offline.')); });
@@ -840,6 +910,7 @@
   try { history.replaceState(navState(), '', location.href); } catch (e) {}
   render();
   if (L.stale()) setTimeout(refresh, 800);
+  setTimeout(function () { wantTopics(null); }, 2500);
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     var hadSW = !!navigator.serviceWorker.controller, reloaded = false;
     /* A new version has taken over: show it straight away. */

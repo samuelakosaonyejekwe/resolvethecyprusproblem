@@ -53,6 +53,27 @@ docs.insert(0, {'title': 'Reunification of Cyprus: A Vision for Peace and Prospe
   'thesis': 'Reunification can be made attractive to all sides by aligning Türkiye\'s and Turkish Cypriots\' economic and security interests with it: economic integration, federal autonomy, shared security, shared resources and a role for Cyprus in EU–Türkiye relations.',
   'strategies': [{'t': t, 'a': 'Republic of Cyprus, Turkish Cypriots, Türkiye, EU', 'c': c, 's': s, 'w': '', 'x': [], 'b': [], 'r': [], 'm': []} for t, c, s in vision], 'games': [], 'phases': []})
 
+bridging = [
+ ('Federal Cypriot Union with autonomous regions', 'legal', 'A Federal Republic of Cyprus in which the north and the south are semi-autonomous regions running their own local government, culture, education and social policy, while the federal government handles foreign policy, defence and economic coordination.',
+  ['Preserves the identity of both communities and prevents either dominating the other', 'Turkish Cypriots keep self-government and a guaranteed role in the unified state', 'Unity without division or foreign military presence']),
+ ('Bi-communal Economic Zone (BEZ)', 'economic', 'A shared economic zone between north and south, supported by the EU, offering tax incentives, financial stability and one legal environment to investors. Revenue is split evenly between the two regions to fund public services and infrastructure.',
+  ['Creates a mutual economic interest that rewards stability', 'Access to EU markets and jobs for Turkish Cypriots', 'More trade and investment for Greek Cypriots', 'Türkiye gains business opportunities in the zone']),
+ ('Internationally monitored peace accord under a multilateral treaty', 'security', 'A legally binding multilateral treaty guaranteeing the territorial integrity of Cyprus and ruling out future occupation or territorial claims, backed by the EU, UN, NATO and the United States, with compliance monitoring, agreed diplomatic and economic responses to violations, and international peacekeepers during a set transition.',
+  ['Binding on all parties under international law', 'Security guarantees for Turkish Cypriots during and after reunification', 'Improved EU relations for Türkiye']),
+ ('Joint natural resources exploration and revenue sharing', 'energy', 'A Cypriot–Turkish consortium manages offshore gas exploration in Cypriot waters, with profits shared among Türkiye, the Republic of Cyprus and the north.',
+  ['Turns a source of conflict into an incentive to cooperate', 'A direct revenue share for Turkish Cypriots', 'Energy access for Türkiye', 'Avoids future disputes over energy rights']),
+ ('Long-term military neutrality', 'security', 'Cyprus becomes a permanently neutral state with no foreign bases or troops, all foreign forces withdraw, and its security is guaranteed by the UN, EU and NATO.',
+  ['De-escalates military tension', 'Security for Turkish Cypriots without a Turkish military presence', 'Removes the fear of future confrontation']),
+ ('Cultural and educational exchange programmes', 'societal', 'EU-supported bicommunal programmes: shared cultural projects, language learning and joint school curricula, so that future generations grow up with a balanced view of a shared history.',
+  ['Reconciliation at the grassroots', 'Cultural identity of both communities respected']),
+ ('Institutionalised power-sharing in governance', 'legal', 'Formal power-sharing with guaranteed representation of Turkish Cypriots in government, the judiciary and public institutions, so that neither community dominates politically.',
+  ['Constitutional protection against political marginalisation', 'A stable and inclusive government']),
+ ('Non-aggression and mutual respect clause with an EU track for Türkiye', 'diplomatic', 'Cyprus and Türkiye sign a non-aggression pact renouncing territorial claims and committing to peaceful coexistence. In return the EU facilitates accelerated accession talks for Türkiye, contingent on successful reunification.',
+  ['A formal commitment to long-term peace', 'A powerful incentive for Türkiye to support reunification', 'A unified Cyprus within the EU, free of military tension'])]
+docs.insert(0, {'title': 'Bridging Divides: A Vision for a Unified Cyprus (October 2024)',
+  'thesis': 'A comprehensive settlement built on mutual dependency: a Federal Cypriot Union of two autonomous regions, a shared economic zone and shared gas revenue, a multilateral peace treaty with international guarantees, permanent neutrality, grassroots reconciliation, institutional power-sharing, and renewed EU accession talks for Türkiye as the incentive.',
+  'strategies': [{'t': t, 'a': 'Republic of Cyprus, Turkish Cypriots, Türkiye, EU, UN', 'c': c, 's': x, 'w': '', 'x': [], 'b': b, 'r': [], 'm': []} for t, c, x, b in bridging], 'games': [], 'phases': []})
+
 out = {'docs': docs}
 json.dump(out, open('data/knowledge.json', 'w'), ensure_ascii=False, separators=(',', ':'))
 print({d['title'][:40]: len(d['strategies']) for d in docs}, os.path.getsize('data/knowledge.json'))

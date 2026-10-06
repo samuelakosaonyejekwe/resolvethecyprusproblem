@@ -56,6 +56,7 @@
       fill(p, s, ['name', 'short', 'role']);
       ['interests', 'redlines', 'leverage', 'vuln'].forEach(function (k) { list(p, s, k); });
     });
+    Object.keys(m.topics || {}).forEach(function (k) { if (own(t.topics, k)) m.topics[k].name = t.topics[k]; });
     m.moves.forEach(function (v) {
       fill(v, (t.moves || {})[v.id], ['name', 'desc', 'mit', 'counter', 'commitNote']);
       if (v.src && t.srcs) v.src = String(v.src).split(' · ').map(function (x) { return own(t.srcs, x) ? t.srcs[x] : x; }).join(' · ');
