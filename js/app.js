@@ -115,7 +115,7 @@
     if (m.hold || !m.src.topic) return '';
     var tp = M.topics[m.src.topic], o = L.topic(m.src.topic), k = L.momentum(o), base = M0move(m.id);
     var h = '<section class="card"><h3>' + T('Live evidence: {0}', esc(tp.name)) + '</h3><p class="help">' + T('What the world\'s news is carrying on the subject of this move right now, fetched by your device from the GDELT news index and refreshed every six hours.') + '</p>';
-    if (!o) return h + '<p class="help">' + (navigator.onLine === false ? T('You are offline and no evidence on this subject has been saved yet.') : T('Fetching current coverage… it appears here in a few seconds.')) + '</p></section>';
+    if (!o) return h + '<p class="help">' + (navigator.onLine === false ? T('You are offline and no evidence on this subject has been saved yet.') : L.failed(m.src.topic) ? T('The news service did not answer just now. The app will try again in a few minutes; until then the result is unchanged.') : T('Fetching current coverage… it appears here in a few seconds.')) + '</p></section>';
     function items(f, n) { return o.items.filter(f).slice(0, n).map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.title) + '</a> <span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + '</span></li>'; }).join(''); }
     var said = items(function (a) { return a.said; }, 3), meet = items(function (a) { return a.meet && !a.said; }, 3), rest = items(function (a) { return !a.said && !a.meet; }, 3);
     h += '<div class="kv"><div><b>' + o.n21 + '</b><span>' + T('reports in 21 days') + '</span></div><div><b>' + o.n7 + '</b><span>' + T('in the last 7 days') + '</span></div><div><b style="font-size:1rem">' + momentumTag(k) + '</b><span>' + T('place on the agenda') + '</span></div></div>';
@@ -612,7 +612,7 @@
       '<div class="tblwrap"><table><thead><tr><th>' + T('Subject') + '</th><th>' + T('Reports, 21 days') + '</th><th>' + T('Last 7 days') + '</th><th>' + T('Statements') + '</th><th>' + T('Meetings') + '</th><th>' + T('Agenda') + '</th></tr></thead><tbody>' +
       tids.map(function (t) {
         var o = L.topic(t);
-        return '<tr><td>' + esc(M.topics[t].name) + '</td>' + (o ? '<td class="c">' + o.n21 + '</td><td class="c">' + o.n7 + '</td><td class="c">' + (o.said || 0) + '</td><td class="c">' + (o.meet || 0) + '</td><td class="c">' + momentumTag(L.momentum(o)) + '</td>' : '<td class="c mute" colspan="5">' + (L.pending(t) ? T('in the queue') : T('not yet fetched')) + '</td>') + '</tr>';
+        return '<tr><td>' + esc(M.topics[t].name) + '</td>' + (o ? '<td class="c">' + o.n21 + '</td><td class="c">' + o.n7 + '</td><td class="c">' + (o.said || 0) + '</td><td class="c">' + (o.meet || 0) + '</td><td class="c">' + momentumTag(L.momentum(o)) + '</td>' : '<td class="c mute" colspan="5">' + (L.pending(t) ? T('in the queue') : L.failed(t) ? T('no answer yet, will retry') : T('not yet fetched')) + '</td>') + '</tr>';
       }).join('') + '</tbody></table></div></section>';
 
     h += '<div class="grid two">';

@@ -196,6 +196,7 @@
     }).catch(function () {
       var old = tload()[job.id] || {};
       old.fail = Date.now(); topics[job.id] = old; /* keep what we had; try again later */
+      tListeners.forEach(function (f) { try { f(job.id, null); } catch (e) {} });
     }).then(function () { pumping = false; pump(); });
   }
 
@@ -213,6 +214,7 @@
     queue = first ? add.concat(queue) : queue.concat(add);
     pump();
   };
+  L.failed = function (id) { var o = tload()[id]; return !!(o && !o.t && o.fail); };
   L.pending = function (id) { return queue.some(function (x) { return x.id === id; }); };
   /* Is the subject climbing the world's agenda, holding, fading or absent? */
   L.momentum = function (o) {

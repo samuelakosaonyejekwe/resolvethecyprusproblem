@@ -1262,7 +1262,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     'steady': 'σταθερό',
     'Every move belongs to a subject. For each subject your device fetches the last 21 days of world coverage, one subject every few seconds, and renews it every six hours. A subject that is rising raises the chance of success of its moves by 5 points; one that is fading lowers it by 3; a steady or quiet one changes nothing. Only headlines plainly about the subject are counted. The same evidence, with the statements and meetings found, is shown beside every move on the board. {0} of {1} subjects fetched so far.': 'Κάθε κίνηση ανήκει σε ένα θέμα. Για κάθε θέμα η συσκευή σας αντλεί την παγκόσμια κάλυψη των τελευταίων 21 ημερών, ένα θέμα κάθε λίγα δευτερόλεπτα, και την ανανεώνει κάθε έξι ώρες. Ένα θέμα που είναι ανοδικό αυξάνει την πιθανότητα επιτυχίας των κινήσεών του κατά 5 μονάδες· ένα θέμα που είναι φθίνον τη μειώνει κατά 3· ένα σταθερό ή υποτονικό θέμα δεν αλλάζει τίποτα. Μετρούν μόνο οι τίτλοι που αφορούν σαφώς το θέμα. Τα ίδια τεκμήρια, με τις δηλώσεις και τις συναντήσεις που εντοπίστηκαν, εμφανίζονται δίπλα σε κάθε κίνηση στο ταμπλό. Έχουν αντληθεί έως τώρα {0} από {1} θέματα.',
     'The subject is slipping off the agenda, so an initiative has less to carry it: chance of success lowered from {0} to {1}.': 'Το θέμα υποχωρεί στην επικαιρότητα, άρα μια πρωτοβουλία έχει λιγότερα στηρίγματα: η πιθανότητα επιτυχίας μειώνεται από {0} σε {1}.',
-    'There is little or no current coverage, which says nothing either way: chance of success unchanged at {0}.': 'Η τρέχουσα κάλυψη είναι ελάχιστη ή ανύπαρκτη, κάτι που δεν δείχνει τίποτα προς καμία κατεύθυνση: η πιθανότητα επιτυχίας μένει αμετάβλητη στο {0}.'
+    'There is little or no current coverage, which says nothing either way: chance of success unchanged at {0}.': 'Η τρέχουσα κάλυψη είναι ελάχιστη ή ανύπαρκτη, κάτι που δεν δείχνει τίποτα προς καμία κατεύθυνση: η πιθανότητα επιτυχίας μένει αμετάβλητη στο {0}.',
+    'The news service did not answer just now. The app will try again in a few minutes; until then the result is unchanged.': 'Η υπηρεσία ειδήσεων δεν απάντησε αυτή τη στιγμή. Η εφαρμογή θα δοκιμάσει ξανά σε λίγα λεπτά· έως τότε το αποτέλεσμα μένει αμετάβλητο.',
+    'no answer yet, will retry': 'καμία απάντηση ακόμη, θα γίνει νέα προσπάθεια'
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -2649,7 +2651,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     'steady': 'sabit',
     'Every move belongs to a subject. For each subject your device fetches the last 21 days of world coverage, one subject every few seconds, and renews it every six hours. A subject that is rising raises the chance of success of its moves by 5 points; one that is fading lowers it by 3; a steady or quiet one changes nothing. Only headlines plainly about the subject are counted. The same evidence, with the statements and meetings found, is shown beside every move on the board. {0} of {1} subjects fetched so far.': 'Her hamle bir konuya aittir. Cihazınız her konu için dünya basınındaki son 21 günün haberlerini birkaç saniyede bir konu olacak şekilde çeker ve altı saatte bir yeniler. Yükselişteki bir konu, hamlelerinin başarı şansını 5 puan artırır; sönen bir konu 3 puan düşürür; sabit veya sessiz bir konu hiçbir şeyi değiştirmez. Yalnızca açıkça konuyla ilgili başlıklar sayılır. Aynı kanıt, bulunan açıklamalar ve toplantılarla birlikte, tahtadaki her hamlenin yanında gösterilir. Şimdiye kadar {1} konudan {0} tanesi çekildi.',
     'The subject is slipping off the agenda, so an initiative has less to carry it: chance of success lowered from {0} to {1}.': 'Konu gündemden düşüyor; dolayısıyla bir girişimi taşıyacak destek daha az: başarı şansı düşürüldü, {0} → {1}.',
-    'There is little or no current coverage, which says nothing either way: chance of success unchanged at {0}.': 'Güncel haber çok az veya hiç yok; bu da iki yönde de bir şey söylemez: başarı şansı değişmedi, {0}.'
+    'There is little or no current coverage, which says nothing either way: chance of success unchanged at {0}.': 'Güncel haber çok az veya hiç yok; bu da iki yönde de bir şey söylemez: başarı şansı değişmedi, {0}.',
+    'The news service did not answer just now. The app will try again in a few minutes; until then the result is unchanged.': 'Haber servisi şu anda yanıt vermedi. Uygulama birkaç dakika içinde yeniden deneyecek; o zamana kadar sonuç değişmez.',
+    'no answer yet, will retry': 'henüz yanıt yok, yeniden denenecek'
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -4112,6 +4116,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     }).catch(function () {
       var old = tload()[job.id] || {};
       old.fail = Date.now(); topics[job.id] = old; /* keep what we had; try again later */
+      tListeners.forEach(function (f) { try { f(job.id, null); } catch (e) {} });
     }).then(function () { pumping = false; pump(); });
   }
 
@@ -4129,6 +4134,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     queue = first ? add.concat(queue) : queue.concat(add);
     pump();
   };
+  L.failed = function (id) { var o = tload()[id]; return !!(o && !o.t && o.fail); };
   L.pending = function (id) { return queue.some(function (x) { return x.id === id; }); };
   /* Is the subject climbing the world's agenda, holding, fading or absent? */
   L.momentum = function (o) {
@@ -4559,7 +4565,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     if (m.hold || !m.src.topic) return '';
     var tp = M.topics[m.src.topic], o = L.topic(m.src.topic), k = L.momentum(o), base = M0move(m.id);
     var h = '<section class="card"><h3>' + T('Live evidence: {0}', esc(tp.name)) + '</h3><p class="help">' + T('What the world\'s news is carrying on the subject of this move right now, fetched by your device from the GDELT news index and refreshed every six hours.') + '</p>';
-    if (!o) return h + '<p class="help">' + (navigator.onLine === false ? T('You are offline and no evidence on this subject has been saved yet.') : T('Fetching current coverage… it appears here in a few seconds.')) + '</p></section>';
+    if (!o) return h + '<p class="help">' + (navigator.onLine === false ? T('You are offline and no evidence on this subject has been saved yet.') : L.failed(m.src.topic) ? T('The news service did not answer just now. The app will try again in a few minutes; until then the result is unchanged.') : T('Fetching current coverage… it appears here in a few seconds.')) + '</p></section>';
     function items(f, n) { return o.items.filter(f).slice(0, n).map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.title) + '</a> <span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + '</span></li>'; }).join(''); }
     var said = items(function (a) { return a.said; }, 3), meet = items(function (a) { return a.meet && !a.said; }, 3), rest = items(function (a) { return !a.said && !a.meet; }, 3);
     h += '<div class="kv"><div><b>' + o.n21 + '</b><span>' + T('reports in 21 days') + '</span></div><div><b>' + o.n7 + '</b><span>' + T('in the last 7 days') + '</span></div><div><b style="font-size:1rem">' + momentumTag(k) + '</b><span>' + T('place on the agenda') + '</span></div></div>';
@@ -5056,7 +5062,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       '<div class="tblwrap"><table><thead><tr><th>' + T('Subject') + '</th><th>' + T('Reports, 21 days') + '</th><th>' + T('Last 7 days') + '</th><th>' + T('Statements') + '</th><th>' + T('Meetings') + '</th><th>' + T('Agenda') + '</th></tr></thead><tbody>' +
       tids.map(function (t) {
         var o = L.topic(t);
-        return '<tr><td>' + esc(M.topics[t].name) + '</td>' + (o ? '<td class="c">' + o.n21 + '</td><td class="c">' + o.n7 + '</td><td class="c">' + (o.said || 0) + '</td><td class="c">' + (o.meet || 0) + '</td><td class="c">' + momentumTag(L.momentum(o)) + '</td>' : '<td class="c mute" colspan="5">' + (L.pending(t) ? T('in the queue') : T('not yet fetched')) + '</td>') + '</tr>';
+        return '<tr><td>' + esc(M.topics[t].name) + '</td>' + (o ? '<td class="c">' + o.n21 + '</td><td class="c">' + o.n7 + '</td><td class="c">' + (o.said || 0) + '</td><td class="c">' + (o.meet || 0) + '</td><td class="c">' + momentumTag(L.momentum(o)) + '</td>' : '<td class="c mute" colspan="5">' + (L.pending(t) ? T('in the queue') : L.failed(t) ? T('no answer yet, will retry') : T('not yet fetched')) + '</td>') + '</tr>';
       }).join('') + '</tbody></table></div></section>';
 
     h += '<div class="grid two">';
