@@ -243,7 +243,117 @@
   /* Every page opens with what it shows and how to use it. */
   function intro(title, lead, steps) {
     return '<section class="card intro"><h1>' + title + '</h1><p class="lead">' + lead + '</p>' +
-      (steps ? '<details class="explain"' + (seenPage(title) ? '' : ' open') + '><summary>' + T('How to use this page') + '</summary><ol class="list">' + steps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol></details>' : '') + '</section>';
+      (steps ? '<details class="explain"' + (seenPage(title) ? '' : ' open') + '><summary>' + T('How to use this page') + '</summary><ol class="list">' + steps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol></details>' : '') + nextStep() + '</section>';
+  }
+  /* One plain sentence on every page saying what to do next, with the buttons that do it. */
+  function tabBtn(id) { var t = TABS().filter(function (x) { return x[0] === id; })[0]; return '<button class="btn small" data-a="tab" data-v="' + id + '">' + t[1] + ' ' + t[2] + '</button>'; }
+  function findBtn() { return '<button class="btn small" data-a="find">' + T('Find anything') + '</button>'; }
+  function nextStep() {
+    var t, b = '';
+    if (!A.pid && A.tab !== 'guide') { t = T('<b>Next step:</b> choose the stakeholder you want to play. You can change seat at any time.'); b = findBtn(); }
+    else if (A.tab === 'guide') { t = T('<b>Next step:</b> open the section you need, or press <b>Find anything</b> to search the whole app.'); b = findBtn() + (A.pid ? tabBtn('board') : ''); }
+    else if (A.tab === 'path') { t = T('<b>Next step:</b> play the first step of this path, or open <b>Analysis</b> to test how well it stands up.'); b = tabBtn('analysis') + tabBtn('board'); }
+    else if (A.tab === 'analysis') { t = T('<b>Next step:</b> if the move stands up, go back to the board and play it. To check the evidence behind it, open <b>Live intel</b>.'); b = tabBtn('board') + tabBtn('live'); }
+    else if (A.tab === 'live') { t = T('<b>Next step:</b> correct any headline that was read wrongly, then return to the board. The predictions there already include everything shown here.'); b = tabBtn('board'); }
+    else if (A.tab === 'library') { t = T('<b>Next step:</b> use the buttons below to move between stakeholders, blueprints, precedents, assumptions and method. Changing an assumption updates every prediction at once.'); b = tabBtn('board') + findBtn(); }
+    else if (A.sel) { t = T('<b>Next step:</b> read the preview of this move, then press <b>Play this move</b>, or tap another move to compare.'); }
+    else if (stack.length) return '';
+    else { t = T('<b>Next step:</b> tap a move under <b>Your move</b> to see what it does and how the others answer. The engine\'s choice is marked.'); b = '<button class="btn small accent" data-a="selbest">' + T('Show the engine\'s choice') + '</button>' + tabBtn('path'); }
+    return '<div class="next"><span>' + t + '</span>' + (b ? '<span class="row">' + b + '</span>' : '') + '</div>';
+  }
+  /* After a round: what you played, what each of the others answered, what changed, and what to do now.
+     It stays on the board until the next round, so nothing depends on catching a passing message. */
+  function justPlayed() {
+    if (!stack.length) return '';
+    var top = stack[stack.length - 1], r = top.r, x0 = top.S.x, u0 = E.utilities(C, x0)[A.pid], u1 = E.utilities(C, S.x)[A.pid], o0 = outcomeOf(x0), o1 = outcomeOf(S.x);
+    var acts = r.replies.filter(function (y) { return !y.chosen.m.hold; }), held = r.replies.filter(function (y) { return y.chosen.m.hold; });
+    var moved = M.dims.map(function (d, i) { return { d: d, a: x0[i], b: S.x[i], i: i }; }).filter(function (c) { return Math.abs(c.b - c.a) >= 1; }).sort(function (a, b) { return Math.abs(b.b - b.a) - Math.abs(a.b - a.a); });
+    var best = recs()[0], ideal = C.players[A.pid].ideal;
+    var h = '<section class="card played" id="played"><div class="row between"><h2>' + T('What just happened') + '</h2><span class="tag">' + T('Round {0}', S.round) + (r.manual ? ' · ' + T('manual') : '') + '</span></div>' +
+      '<p><b>' + T('You played:') + '</b> ' + esc(r.move.src.name) + '</p>' +
+      '<h3>' + (acts.length ? T('How the others answered') : T('Every other player held position')) + '</h3>';
+    if (acts.length) h += '<ul class="answers">' + acts.map(function (y) {
+      var g = E.utilities(C, y.after)[A.pid] - E.utilities(C, y.before)[A.pid];
+      return '<li><i style="background:' + P(y.pid).color + '">' + esc(P(y.pid).short) + '</i><span><b>' + esc(P(y.pid).name) + ':</b> ' + esc(y.chosen.m.src.name) +
+        (y.forced || r.manual ? '' : ' <span class="mute">' + T('{0} likely', pct(y.chosen.p)) + '</span>') +
+        (Math.abs(g) >= 0.05 ? ' <span class="tag ' + (g > 0 ? 'good' : 'bad') + '">' + (g > 0 ? T('helps you {0}', sgn(g, 1)) : T('hurts you {0}', sgn(g, 1))) + '</span>' : '') + '</span></li>';
+    }).join('') + '</ul>' + (held.length ? '<p class="help">' + T('Held position: {0}.', held.map(function (y) { return esc(P(y.pid).name); }).join(', ')) + '</p>' : '');
+    h += '<h3>' + T('What changed') + '</h3>' + (moved.length ? '<div class="fx">' + moved.map(function (c) {
+      var toward = Math.abs(c.b - ideal[c.i]) < Math.abs(c.a - ideal[c.i]);
+      return '<span class="' + (toward ? 'up' : 'down') + '">' + esc(c.d.short || c.d.name) + ' ' + Math.round(c.a) + ' → ' + Math.round(c.b) + '</span>';
+    }).join('') + '</div><p class="help">' + T('Green moved toward your ideal, red away from it. The bars under <b>The position</b> show the new scores.') + '</p>' : '<p class="help">' + T('No measure moved by a full point this round.') + '</p>') +
+      '<p>' + T('Your payoff went from <b>{0}</b> to <b class="{2}">{1}</b> out of 100.', u0.toFixed(0), u1.toFixed(0), cls(u1 - u0, 0.3)) + ' ' +
+      (o0 === o1 ? T('The situation is still: <b>{0}</b>.', esc(o1.name)) : T('The situation changed from <b>{0}</b> to <b>{1}</b>.', esc(o0.name), esc(o1.name))) + '</p>' +
+      '<div class="next"><span>' + (best ? T('<b>Next step:</b> choose your move for round {0}. The engine now suggests <b>{1}</b>.', S.round + 1, esc(best.m.src.name)) : '') + '</span><span class="row">' +
+      '<button class="btn small accent" data-a="selbest">' + T('Show the engine\'s choice') + '</button><button class="btn small" data-a="jump" data-v="' + esc('board||' + plain(T('Your move'))) + '">' + T('See all my moves') + '</button>' + tabBtn('path') +
+      '<button class="btn small" data-a="jump" data-v="' + esc('board||' + plain(T('Game record'))) + '">' + T('Game record') + '</button><button class="btn small" data-a="undo">' + T('Undo round') + '</button></span></div></section>';
+    return h;
+  }
+  function plain(html) { return String(html).replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim(); }
+
+  /* ---------- find anything ---------- */
+  /* Go to a page, open the section whose heading has this text, and show it. */
+  function jumpTo(tab, lib, text) {
+    $('#modal').hidden = true;
+    var changed = A.tab !== tab || (lib && A.lib !== lib);
+    A.tab = tab; if (lib) A.lib = lib;
+    A.sel = null;
+    if (changed) navPush();
+    render();
+    setTimeout(function () {
+      var hs = view.querySelectorAll('h2, summary'), hit = null, i;
+      for (i = 0; i < hs.length && !hit; i++) if (hs[i].offsetParent !== null && hs[i].textContent.trim() === text) hit = hs[i];
+      for (i = 0; i < hs.length && !hit; i++) if (hs[i].offsetParent !== null && hs[i].textContent.trim().indexOf(text) >= 0) hit = hs[i];
+      if (!hit) { window.scrollTo(0, 0); return; }
+      if (hit.tagName === 'SUMMARY') hit.parentNode.open = true;
+      var box = hit.closest('section, details') || hit;
+      hit.scrollIntoView({ block: 'start' });
+      box.classList.add('flash'); setTimeout(function () { box.classList.remove('flash'); }, 1800);
+    }, 40);
+  }
+  function findItems() {
+    var out = [], tn = {}, pid = A.pid;
+    TABS().forEach(function (t) { tn[t[0]] = t[2]; });
+    function sec(tab, lib, title, label) { out.push({ l: label || plain(title), w: tn[tab] + (lib ? ' › ' + LIBS().filter(function (x) { return x[0] === lib; })[0][1] : ''), a: 'jump', v: tab + '|' + (lib || '') + '|' + plain(title) }); }
+    if (pid) {
+      /* the questions people ask most, in their own words */
+      sec('board', '', stack.length ? T('What just happened') : T('Game record'), T('What the other players answered after my move'));
+      sec('board', '', T('The position'), T('What the colours of the bars mean'));
+      sec('board', '', T('Who plays the other stakeholders?'), T('Switch between the computer playing the others and choosing their moves myself'));
+      sec('board', '', T('Game record'), T('Undo a round, start a new game or share this game'));
+      sec('library', 'assume', T('Assumptions'), T('Change the assumptions behind the scores'));
+      sec('library', 'about', T('Install and use offline'), T('Install the app and use it without a connection'));
+      [T('The position'), T('Who plays the other stakeholders?'), T('Your move'), T('Game record')].forEach(function (x) { sec('board', '', x); });
+      [T('Settings and headline result'), T('Critical path, step by step'), T('Where the position ends up'), T('Odds, allowing for surprises')].forEach(function (x) { sec('path', '', x); });
+      [T('Move under analysis'), T('SWOT for {0}', esc(P(pid).name)), T('Risk register'), T('Head-to-head payoff matrix'), T('Stakeholder map'), T('Political, security, economic, energy, legal and social lens')].forEach(function (x) { sec('analysis', '', x); });
+      [T('Sources'), T('Signals feeding the model'), T('Evidence by subject'), T('What each government says and does'), T('On the official record'), T('Lira against the euro'), T('Balance of resources'), T('Latest research'), T('From the newspapers'), T('Latest headlines')].forEach(function (x) { sec('live', '', x); });
+      sec('library', 'blueprints', T('Blueprint strategies')); sec('library', 'history', T('Precedents: what worked, what failed')); sec('library', 'assume', T('Assumptions'));
+      sec('library', 'assume', T('What a player wants, and how much it cares')); sec('library', 'about', T('Method')); sec('library', 'about', T('Languages'));
+      C.order.forEach(function (q) { out.push({ l: P(q).name, w: tn.library + ' › ' + T('Stakeholders'), a: 'player', v: q }); });
+      recs().forEach(function (r) { if (!r.m.hold) out.push({ l: r.m.src.name, w: tn.board + ' › ' + plain(T('Your move')), a: 'findmove', v: r.m.id }); });
+    }
+    var g = window.GUIDE(T, M, esc), re = /<summary>([\s\S]*?)<\/summary>/g, mm;
+    while ((mm = re.exec(g))) out.push({ l: plain(mm[1]), w: T('Guide'), a: 'jump', v: 'guide||' + plain(mm[1]) });
+    return out;
+  }
+  function findOpen() {
+    var items = findItems();
+    modal('<div class="row between"><h2>' + T('Find anything') + '</h2><button class="btn small" data-a="closemodal" aria-label="' + esc(T('Close')) + '">✕</button></div>' +
+      '<p class="help">' + T('Type a word, or pick from the list. Each line takes you straight to that place and highlights it.') + '</p>' +
+      '<input type="search" class="findq" data-c="find" autocomplete="off" placeholder="' + esc(T('For example: answered, colours, veto, gas, undo, install')) + '" aria-label="' + esc(T('Find anything')) + '">' +
+      '<div id="findres" class="findres">' + items.map(function (it) {
+        return '<button data-a="' + it.a + '" data-v="' + esc(it.v) + '"><b>' + esc(it.l) + '</b><small>' + esc(it.w) + '</small></button>';
+      }).join('') + '</div><p class="help" id="findnone" hidden>' + T('Nothing matches. Try a shorter word, or open the Guide.') + '</p>' +
+      (A.pid ? '' : '<p class="help">' + T('Choose a stakeholder first to search the board, the moves and the analysis as well.') + '</p>'));
+    var q = $('.findq'); if (q) q.focus();
+  }
+  function findFilter(v) {
+    var words = v.toLowerCase().split(/\s+/).filter(Boolean), bs = document.querySelectorAll('#findres button'), n = 0, i;
+    for (i = 0; i < bs.length; i++) {
+      var txt = bs[i].textContent.toLowerCase(), ok = words.every(function (w) { return txt.indexOf(w) >= 0; });
+      bs[i].hidden = !ok; if (ok) n += 1;
+    }
+    $('#findnone').hidden = n > 0;
   }
 
   /* ---------- small renderers ---------- */
@@ -316,6 +426,7 @@
       return '<button data-a="tab" data-v="' + t[0] + '"' + (A.tab === t[0] ? ' aria-current="page"' : '') + '><i>' + t[1] + '</i>' + t[2] + '</button>';
     }).join('') : '';
     $('#tabs').style.display = A.pid ? '' : 'none';
+    var fb = $('#findBtn'); fb.title = T('Find anything'); fb.setAttribute('aria-label', T('Find anything'));
     net(); navButtons();
   }
   function net() {
@@ -331,8 +442,8 @@
     return '<section class="card"><h1>' + T('Who are you deciding for?') + '</h1>' +
       '<p class="lead">' + T('Every stakeholder in the Cyprus question is a player on the same board. Pick your seat. The board then shows your options, predicts how each other player is likely to answer, and points to the strongest sustainable path.') + '</p>' +
       '<p class="langrow"><label class="help">' + T('Language') + ' <select data-c="lang">' + langOptions(true) + '</select></label></p>' +
-      '<p class="row"><button class="btn" data-a="guide">' + T('Read the complete guide') + '</button>' + (standalone() ? '' : '<button class="btn accent" data-a="install">' + T('Install app') + '</button>') + '</p>' +
-      '<div class="grid pick">' + M.players.map(function (p) {
+      '<p class="row"><button class="btn" data-a="guide">' + T('Read the complete guide') + '</button>' + (standalone() ? '' : '<button class="btn accent" data-a="install">' + T('Install app') + '</button>') + '</p>' + nextStep() +
+      '<div class="grid pick" style="margin-top:12px">' + M.players.map(function (p) {
         return '<button class="pcard" style="--c:' + p.color + '" data-a="pick" data-v="' + p.id + '"><b>' + esc(p.name) + '</b><span>' + esc(p.role) + '</span></button>';
       }).join('') + '</div></section>' +
       '<section class="card"><h2>' + T('How it works') + '</h2><ol class="list">' +
@@ -368,7 +479,8 @@
       T('Read <b>Current position</b> and <b>The position</b>: ten bars describe the situation today; the ▼ on each bar is where you would like it to be.'),
       T('Choose under <b>Who plays the other stakeholders?</b> whether the computer answers for them or you pick their moves yourself.'),
       T('Under <b>Your move</b>, tap any move to preview it: what it does, how the others answer, and who gains or loses.'),
-      T('Press <b>Play this move</b> to commit. The board advances one round and the <b>Game record</b> keeps the history. <b>Undo</b> takes a round back.')]) +
+      T('Press <b>Play this move</b> to commit. The board advances one round and the <b>Game record</b> keeps the history. <b>Undo</b> takes a round back.'),
+      T('After each round, <b>What just happened</b> at the top of the page lists every answer, what changed and what to do next.')]) + justPlayed() +
       '<div class="status"><div class="stcol"><section class="card"><div class="outcome"><div class="badge" style="color:' + o.color + '">' + o.icon + '</div><div>' +
       '<span class="tag">' + T('Round {0} · current position', S.round + 1) + '</span><h2 style="margin:.15em 0">' + esc(o.name) + '</h2><span class="help">' + esc(o.desc) + '</span></div></div>' +
       '<div style="margin-top:12px"><div class="row between help"><span>' + T('Coalition weight with you <b class="num">{0}</b>', pct(bal)) + '</span><span>' + T('Your payoff <b class="num">{0}</b>/100', u[A.pid].toFixed(0)) + '</span></div>' +
@@ -897,8 +1009,8 @@
     stack.push({ S: S, r: r }); S = r.state; A.sel = null; A.manual = {}; cache = {};
     A.own.push(forced ? id + Object.keys(forced).map(function (k) { return '~' + k + '=' + forced[k]; }).join('') : id);
     save(); render(); window.scrollTo(0, 0);
-    var acts = r.replies.filter(function (y) { return !y.chosen.m.hold; }).length;
-    toast(acts > 1 ? T('Round {0} played. {1} players answered.', S.round, acts) : acts ? T('Round {0} played. {1} player answered.', S.round, acts) : T('Round {0} played. Everyone else held.', S.round));
+    var card = $('#played'); if (card) card.scrollIntoView({ block: 'start' });
+    toast(T('Round {0} played. Every answer is listed under "What just happened".', S.round));
   }
 
   /* ---------- install ---------- */
@@ -930,6 +1042,10 @@
     sel: function (v) { A.sel = A.sel === v ? null : v; A.manual = {}; if (A.sel && C.moves[A.sel]) wantTopics(C.moves[A.sel].src.topic); render(); },
     playmode: function (v) { A.play = v; A.manual = {}; save(); render(); },
     close: function () { A.sel = null; render(); },
+    find: findOpen,
+    jump: function (v) { var a = v.split('|'); jumpTo(a[0], a[1], a.slice(2).join('|')); },
+    selbest: function () { var b = recs()[0]; if (!b) return; A.sel = b.m.id; A.manual = {}; wantTopics(b.m.src.topic); render(); var el = view.querySelector('.mv.sel'); if (el && !document.body.classList.contains('has-sheet')) el.scrollIntoView({ block: 'center' }); },
+    findmove: function (v) { $('#modal').hidden = true; if (A.tab !== 'board') { A.tab = 'board'; navPush(); } A.cat = 'all'; A.sel = v; A.manual = {}; if (C.moves[v]) wantTopics(C.moves[v].src.topic); render(); },
     play: function () { play(A.sel); },
     playfirst: function () { var st = cache.path.p.steps[0]; A.tab = 'board'; navPush(); play(st.move.id); },
     analyse: function () { go('analysis'); },
@@ -943,7 +1059,7 @@
       else if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { toast(T('Link to this game copied.')); });
       else modal('<h2>' + T('Link to this game') + '</h2><p style="word-break:break-all">' + esc(url) + '</p><button class="btn accent" data-a="closemodal">' + T('Done') + '</button>');
     },
-    player: function (v) { A.tab = 'library'; A.lib = 'players'; A.sel = null; navPush(); render(); var el = $('#pl-' + v); if (el) el.scrollIntoView(); },
+    player: function (v) { $('#modal').hidden = true; A.tab = 'library'; A.lib = 'players'; A.sel = null; navPush(); render(); var el = $('#pl-' + v); if (el) el.scrollIntoView(); },
     lib: function (v) { if (A.lib === v) return; A.lib = v; navPush(); render(); },
     ntheme: function (v) { A.newsTheme = v; render(); },
     refresh: function () { refresh(true); },
@@ -987,12 +1103,13 @@
     save(); render();
   });
   document.addEventListener('input', function (e) {
+    if (e.target.getAttribute && e.target.getAttribute('data-c') === 'find') return findFilter(e.target.value);
     if (e.target.getAttribute && e.target.getAttribute('data-c') === 'q') {
       A.q = e.target.value;
       var el = $('#kbres'); if (el && KB) el.innerHTML = kbResults(A.q.toLowerCase().trim());
     }
   });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if (!$('#modal').hidden) $('#modal').hidden = true; else if (A.sel) acts.close(); } });
+  document.addEventListener('keydown', function (e) { if (e.key === '/' && !/INPUT|SELECT|TEXTAREA/.test((e.target || {}).tagName || '')) { e.preventDefault(); return findOpen(); } if (e.key === 'Escape') { if (!$('#modal').hidden) $('#modal').hidden = true; else if (A.sel) acts.close(); } });
 
   /* ---------- language: re-translate the model and redraw; the game itself is untouched ---------- */
   I.onChange(function () {

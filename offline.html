@@ -316,6 +316,23 @@ button.tonebtn:hover{filter:brightness(1.15)}
   .cols2>.lib-item{display:inline-block;width:100%}
   #kbres .lib-item p,#kbres .lib-item .list{max-width:110ch}
 }
+
+/* next-step prompt, round summary, finder */
+.next{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px;margin-top:10px;padding:9px 12px;border-radius:10px;background:color-mix(in srgb,var(--accent) 11%,transparent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);font-size:.92rem}
+.next>span:first-child{flex:1 1 260px}.next .row{flex-wrap:wrap;gap:6px}
+.card.played{border-left:5px solid var(--good)}.card.played h3{margin:.7em 0 .3em;font-size:.95rem}
+.answers{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.answers li{display:flex;gap:9px;align-items:flex-start}.answers li>i{flex:0 0 auto;min-width:34px;text-align:center;font-style:normal;font-weight:700;font-size:.72rem;color:#fff;border-radius:6px;padding:3px 5px;margin-top:1px}
+@media (min-width:1100px){.answers{grid-template-columns:1fr 1fr;gap:6px 22px}}
+section.card,details.guide-sec{scroll-margin-top:118px}h2,summary{scroll-margin-top:124px}
+.flash{animation:flash 1.8s ease-out}@keyframes flash{0%,35%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 3px transparent}}
+.findq{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;margin:4px 0 10px}
+.findres{display:grid;gap:4px;max-height:52vh;overflow:auto}
+.findres button{display:flex;justify-content:space-between;align-items:baseline;gap:10px;text-align:left;padding:8px 10px;border-radius:8px;border:1px solid transparent;background:none;color:var(--ink);font:inherit;cursor:pointer}
+.findres button:hover,.findres button:focus-visible{background:color-mix(in srgb,var(--accent) 12%,transparent);border-color:color-mix(in srgb,var(--accent) 35%,transparent)}
+.findres button[hidden]{display:none}.findres b{font-weight:600}.findres small{color:var(--mute);white-space:nowrap;font-size:.76rem}
+@media (max-width:560px){.findres button{flex-direction:column;gap:1px}.top #findBtn{width:34px}}
+@media print{.next{display:none!important}}
 </style>
 </head>
 <body>
@@ -331,6 +348,7 @@ button.tonebtn:hover{filter:brightness(1.15)}
   <span id="net" class="pill" title="Connection and data freshness"></span>
   <div class="top-actions">
     <select id="lang" class="lang" data-c="lang" aria-label="Language" title="Language"><option value="en">EN</option><option value="el">ΕΛ</option><option value="tr">TR</option></select>
+    <button id="findBtn" class="btn icon" data-a="find" aria-label="Find anything" title="Find anything"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg></button>
     <button id="installBtn" class="btn accent" data-a="install">Install app</button>
     <button class="btn icon" data-a="theme" aria-label="Switch light or dark theme" title="Light / dark">◐</button>
   </div>
@@ -1414,7 +1432,44 @@ button.tonebtn:hover{filter:brightness(1.15)}
     "green: the change moves it toward your ideal": "πράσινο: η μεταβολή τον φέρνει πιο κοντά στο ιδεώδες σας",
     "red: the change moves it away from your ideal": "κόκκινο: η μεταβολή τον απομακρύνει από το ιδεώδες σας",
     "your ideal for that measure": "το ιδεώδες σας για τον δείκτη αυτόν",
-    "<b>How reliable is this reading?</b> It is measured against headlines read by hand. On {0} fresh headlines the rules had never been corrected against, they read {1}% correctly, but they caught only {2} of the {3} statements a careful reader would have counted, and {4} of the {5} they did count were right. The rules were then corrected against those too. On all {6} checked headlines they now read {7}% correctly, catch {8}% of what a reader would count, and are right in {9}% of what they count; subjects are assigned correctly in {10}% of {11} cases. Expect new headlines to fall between the two: the tool misses more than it invents, so an empty or thin tally means \"little found\", not \"nothing said\". Where the wording pulls both ways the item is marked \"unsure\" and left out until you decide.": "<b>Πόσο αξιόπιστη είναι αυτή η ανάγνωση;</b> Μετριέται με βάση τίτλους που διαβάστηκαν με το χέρι. Σε {0} νέους τίτλους, με βάση τους οποίους οι κανόνες δεν είχαν ποτέ διορθωθεί, διάβασαν σωστά το {1}%, αλλά εντόπισαν μόνο {2} από τις {3} δηλώσεις που ένας προσεκτικός αναγνώστης θα είχε μετρήσει, και {4} από τις {5} που μέτρησαν ήταν σωστές. Στη συνέχεια οι κανόνες διορθώθηκαν και με βάση αυτούς. Στο σύνολο των {6} ελεγμένων τίτλων διαβάζουν πλέον σωστά το {7}%, εντοπίζουν το {8}% όσων θα μετρούσε ένας αναγνώστης και είναι σωστοί στο {9}% όσων μετρούν· τα θέματα αντιστοιχίζονται σωστά στο {10}% από {11} περιπτώσεις. Σε νέους τίτλους αναμένεται αποτέλεσμα ανάμεσα στα δύο: το εργαλείο παραλείπει περισσότερα απ’ όσα επινοεί, επομένως μια κενή ή ισχνή καταμέτρηση σημαίνει «βρέθηκαν λίγα» και όχι «δεν ειπώθηκε τίποτα». Όπου η διατύπωση τραβά προς δύο κατευθύνσεις, το στοιχείο σημειώνεται ως «αβέβαιο» και μένει εκτός μέχρι να αποφασίσετε εσείς."
+    "<b>How reliable is this reading?</b> It is measured against headlines read by hand. On {0} fresh headlines the rules had never been corrected against, they read {1}% correctly, but they caught only {2} of the {3} statements a careful reader would have counted, and {4} of the {5} they did count were right. The rules were then corrected against those too. On all {6} checked headlines they now read {7}% correctly, catch {8}% of what a reader would count, and are right in {9}% of what they count; subjects are assigned correctly in {10}% of {11} cases. Expect new headlines to fall between the two: the tool misses more than it invents, so an empty or thin tally means \"little found\", not \"nothing said\". Where the wording pulls both ways the item is marked \"unsure\" and left out until you decide.": "<b>Πόσο αξιόπιστη είναι αυτή η ανάγνωση;</b> Μετριέται με βάση τίτλους που διαβάστηκαν με το χέρι. Σε {0} νέους τίτλους, με βάση τους οποίους οι κανόνες δεν είχαν ποτέ διορθωθεί, διάβασαν σωστά το {1}%, αλλά εντόπισαν μόνο {2} από τις {3} δηλώσεις που ένας προσεκτικός αναγνώστης θα είχε μετρήσει, και {4} από τις {5} που μέτρησαν ήταν σωστές. Στη συνέχεια οι κανόνες διορθώθηκαν και με βάση αυτούς. Στο σύνολο των {6} ελεγμένων τίτλων διαβάζουν πλέον σωστά το {7}%, εντοπίζουν το {8}% όσων θα μετρούσε ένας αναγνώστης και είναι σωστοί στο {9}% όσων μετρούν· τα θέματα αντιστοιχίζονται σωστά στο {10}% από {11} περιπτώσεις. Σε νέους τίτλους αναμένεται αποτέλεσμα ανάμεσα στα δύο: το εργαλείο παραλείπει περισσότερα απ’ όσα επινοεί, επομένως μια κενή ή ισχνή καταμέτρηση σημαίνει «βρέθηκαν λίγα» και όχι «δεν ειπώθηκε τίποτα». Όπου η διατύπωση τραβά προς δύο κατευθύνσεις, το στοιχείο σημειώνεται ως «αβέβαιο» και μένει εκτός μέχρι να αποφασίσετε εσείς.",
+    "<b>Next step:</b> choose the stakeholder you want to play. You can change seat at any time.": "<b>Επόμενο βήμα:</b> επιλέξτε το ενδιαφερόμενο μέρος με το οποίο θέλετε να παίξετε. Μπορείτε να αλλάξετε θέση οποιαδήποτε στιγμή.",
+    "<b>Next step:</b> choose your move for round {0}. The engine now suggests <b>{1}</b>.": "<b>Επόμενο βήμα:</b> επιλέξτε την κίνησή σας για τον γύρο {0}. Η μηχανή προτείνει τώρα: <b>{1}</b>.",
+    "<b>Next step:</b> correct any headline that was read wrongly, then return to the board. The predictions there already include everything shown here.": "<b>Επόμενο βήμα:</b> διορθώστε όποιον τίτλο διαβάστηκε λάθος και επιστρέψτε στο ταμπλό. Οι προβλέψεις εκεί περιλαμβάνουν ήδη όλα όσα εμφανίζονται εδώ.",
+    "<b>Next step:</b> if the move stands up, go back to the board and play it. To check the evidence behind it, open <b>Live intel</b>.": "<b>Επόμενο βήμα:</b> αν η κίνηση αντέχει στον έλεγχο, επιστρέψτε στο ταμπλό και παίξτε την. Για να ελέγξετε τα στοιχεία πίσω της, ανοίξτε τα <b>Ζωντανά δεδομένα</b>.",
+    "<b>Next step:</b> open the section you need, or press <b>Find anything</b> to search the whole app.": "<b>Επόμενο βήμα:</b> ανοίξτε την ενότητα που χρειάζεστε ή πατήστε <b>Βρείτε οτιδήποτε</b> για αναζήτηση σε όλη την εφαρμογή.",
+    "<b>Next step:</b> play the first step of this path, or open <b>Analysis</b> to test how well it stands up.": "<b>Επόμενο βήμα:</b> παίξτε το πρώτο βήμα αυτής της πορείας ή ανοίξτε την <b>Ανάλυση</b> για να ελέγξετε πόσο αντέχει.",
+    "<b>Next step:</b> read the preview of this move, then press <b>Play this move</b>, or tap another move to compare.": "<b>Επόμενο βήμα:</b> διαβάστε την προεπισκόπηση της κίνησης και πατήστε <b>Παίξε την κίνηση</b>, ή πατήστε άλλη κίνηση για σύγκριση.",
+    "<b>Next step:</b> tap a move under <b>Your move</b> to see what it does and how the others answer. The engine's choice is marked.": "<b>Επόμενο βήμα:</b> πατήστε μια κίνηση κάτω από το <b>Η κίνησή σας</b> για να δείτε τι κάνει και πώς απαντούν οι άλλοι. Η επιλογή της μηχανής είναι σημειωμένη.",
+    "<b>Next step:</b> use the buttons below to move between stakeholders, blueprints, precedents, assumptions and method. Changing an assumption updates every prediction at once.": "<b>Επόμενο βήμα:</b> με τα κουμπιά παρακάτω μετακινείστε ανάμεσα σε ενδιαφερόμενα μέρη, σχέδια δράσης, προηγούμενα, παραδοχές και μέθοδο. Η αλλαγή μιας παραδοχής ενημερώνει αμέσως κάθε πρόβλεψη.",
+    "After each round, <b>What just happened</b> at the top of the page lists every answer, what changed and what to do next.": "Μετά από κάθε γύρο, το <b>Τι μόλις συνέβη</b> στην κορυφή της σελίδας δείχνει κάθε απάντηση, τι άλλαξε και τι να κάνετε στη συνέχεια.",
+    "Change the assumptions behind the scores": "Αλλαγή των παραδοχών πίσω από τις βαθμολογίες",
+    "Choose a stakeholder first to search the board, the moves and the analysis as well.": "Επιλέξτε πρώτα ενδιαφερόμενο μέρος για να αναζητήσετε και στο ταμπλό, στις κινήσεις και στην ανάλυση.",
+    "Every other player held position": "Όλοι οι άλλοι παίκτες διατήρησαν τη θέση τους",
+    "Find anything": "Βρείτε οτιδήποτε",
+    "For example: answered, colours, veto, gas, undo, install": "Για παράδειγμα: απάντησαν, χρώματα, βέτο, αέριο, αναίρεση, εγκατάσταση",
+    "Green moved toward your ideal, red away from it. The bars under <b>The position</b> show the new scores.": "Το πράσινο κινήθηκε προς το ιδεώδες σας, το κόκκινο μακριά του. Οι μπάρες κάτω από το <b>Η θέση</b> δείχνουν τις νέες βαθμολογίες.",
+    "Held position: {0}.": "Διατήρησαν τη θέση τους: {0}.",
+    "How the others answered": "Πώς απάντησαν οι άλλοι",
+    "Install the app and use it without a connection": "Εγκατάσταση της εφαρμογής και χρήση χωρίς σύνδεση",
+    "No measure moved by a full point this round.": "Κανένα μέτρο δεν μετακινήθηκε κατά ολόκληρη μονάδα σε αυτόν τον γύρο.",
+    "Nothing matches. Try a shorter word, or open the Guide.": "Δεν βρέθηκε τίποτα. Δοκιμάστε μια συντομότερη λέξη ή ανοίξτε τον Οδηγό.",
+    "Round {0}": "Γύρος {0}",
+    "Round {0} played. Every answer is listed under \"What just happened\".": "Ο γύρος {0} παίχτηκε. Όλες οι απαντήσεις βρίσκονται στο «Τι μόλις συνέβη».",
+    "See all my moves": "Όλες οι κινήσεις μου",
+    "Show the engine's choice": "Δείξε την επιλογή της μηχανής",
+    "Switch between the computer playing the others and choosing their moves myself": "Εναλλαγή ανάμεσα στον υπολογιστή που παίζει τους άλλους και στη δική μου επιλογή των κινήσεών τους",
+    "The situation changed from <b>{0}</b> to <b>{1}</b>.": "Η κατάσταση άλλαξε από <b>{0}</b> σε <b>{1}</b>.",
+    "The situation is still: <b>{0}</b>.": "Η κατάσταση παραμένει: <b>{0}</b>.",
+    "Type a word, or pick from the list. Each line takes you straight to that place and highlights it.": "Πληκτρολογήστε μια λέξη ή επιλέξτε από τη λίστα. Κάθε γραμμή σάς πηγαίνει κατευθείαν στο σημείο και το επισημαίνει.",
+    "Undo a round, start a new game or share this game": "Αναίρεση γύρου, νέα παρτίδα ή κοινοποίηση της παρτίδας",
+    "What changed": "Τι άλλαξε",
+    "What just happened": "Τι μόλις συνέβη",
+    "What the colours of the bars mean": "Τι σημαίνουν τα χρώματα στις μπάρες",
+    "What the other players answered after my move": "Τι απάντησαν οι άλλοι παίκτες μετά την κίνησή μου",
+    "You played:": "Παίξατε:",
+    "Your payoff went from <b>{0}</b> to <b class=\"{2}\">{1}</b> out of 100.": "Η απολαβή σας πήγε από <b>{0}</b> σε <b class=\"{2}\">{1}</b> στα 100.",
+    "{0} likely": "πιθανότητα {0}"
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -1623,7 +1678,8 @@ button.tonebtn:hover{filter:brightness(1.15)}
     "Three rules keep the reading honest. A tilt is applied only when the balance is clear; a near-even split is shown as \"mixed\" and changes nothing. Powers that speak about Cyprus only now and then are followed over ninety days, not three weeks, with older items counting for half and then a quarter. And on a device that has not yet completed a live fetch, any source it has not reached is filled from a dated snapshot shipped with the version, so no table is ever empty; live data replaces the snapshot source by source.": "Τρεις κανόνες κρατούν την ανάγνωση έντιμη. Κλίση εφαρμόζεται μόνο όταν το ισοζύγιο είναι σαφές· μια σχεδόν ισόπαλη κατανομή εμφανίζεται ως «μικτό» και δεν αλλάζει τίποτα. Οι δυνάμεις που μιλούν για την Κύπρο μόνο περιστασιακά παρακολουθούνται σε διάστημα ενενήντα ημερών και όχι τριών εβδομάδων, με τα παλαιότερα στοιχεία να μετρούν κατά το ήμισυ και έπειτα κατά το ένα τέταρτο. Και σε συσκευή που δεν έχει ακόμη ολοκληρώσει ζωντανή άντληση, κάθε πηγή στην οποία δεν έχει φτάσει συμπληρώνεται από χρονολογημένο στιγμιότυπο που συνοδεύει την έκδοση, ώστε κανένας πίνακας να μη μένει κενός· τα ζωντανά δεδομένα αντικαθιστούν το στιγμιότυπο πηγή προς πηγή.",
     "Sorting and reading by keyword can never be perfect, so the tool does four things about it. It is measured: before each release its reading of several hundred real headlines is checked by hand, the rules are corrected against the errors found, and the resulting accuracy figures are shown on the Live intel page. It abstains: when the wording pulls both ways, or a friendly word hangs on a condition, the item is marked \"unsure\" and left out of every count until you decide. It is correctable: every reading can be changed with one press. And it is conservative: a tilt needs a clear balance of several weighted items, so a single misread headline cannot move a prediction.": "Η ταξινόμηση και η ανάγνωση με λέξεις-κλειδιά δεν μπορεί ποτέ να είναι τέλεια, γι’ αυτό το εργαλείο κάνει τέσσερα πράγματα. Μετριέται: πριν από κάθε έκδοση η ανάγνωσή του σε αρκετές εκατοντάδες πραγματικούς τίτλους ελέγχεται με το χέρι, οι κανόνες διορθώνονται με βάση τα σφάλματα που βρίσκονται, και τα ποσοστά ακρίβειας που προκύπτουν εμφανίζονται στη σελίδα Ζωντανά δεδομένα. Απέχει: όταν η διατύπωση τραβά προς δύο κατευθύνσεις, ή μια φιλική λέξη εξαρτάται από όρο, το στοιχείο σημειώνεται ως «αβέβαιο» και μένει εκτός κάθε καταμέτρησης μέχρι να αποφασίσετε εσείς. Διορθώνεται: κάθε ανάγνωση αλλάζει με ένα πάτημα. Και είναι συντηρητικό: για να υπάρξει κλίση χρειάζεται σαφές ισοζύγιο από περισσότερα σταθμισμένα στοιχεία, ώστε ένας μόνο τίτλος που διαβάστηκε λάθος να μην μπορεί να μετακινήσει μια πρόβλεψη.",
     "A stakeholder that has said or done nothing about Cyprus in the last three months is not left blank. The table then shows its standing position, taken from the current reference article on its relations with Cyprus and labelled as such. A standing position is background; it does not tilt predictions. Russian statements are looked for in the Kremlin's and the TASS agency's own feeds and in the Russian-language Cyprus press.": "Ένα ενδιαφερόμενο μέρος που δεν έχει πει ή κάνει τίποτα για την Κύπρο τους τελευταίους τρεις μήνες δεν μένει κενό. Ο πίνακας δείχνει τότε την πάγια θέση του, από το τρέχον άρθρο αναφοράς για τις σχέσεις του με την Κύπρο, με σαφή σήμανση. Η πάγια θέση είναι υπόβαθρο· δεν δίνει κλίση στις προβλέψεις. Ρωσικές δηλώσεις αναζητούνται στις ροές του Κρεμλίνου και του πρακτορείου TASS και στον ρωσόφωνο Τύπο της Κύπρου.",
-    "Sorting and reading by keyword can never be perfect, so the tool does four things about it. It is measured: its reading of real headlines is checked by hand, first on headlines the rules have never been corrected against, so that the figure is honest, and only then are the rules corrected. Both figures are shown on the Live intel page. They show that the tool misses more than it invents: a thin tally means little was found, not that little was said. It abstains: when the wording pulls both ways, or a friendly word hangs on a condition, the item is marked \"unsure\" and left out of every count until you decide. It is correctable: every reading can be changed with one press. And it is conservative: a tilt needs a clear balance of several weighted items, so a single misread headline cannot move a prediction.": "Η ταξινόμηση και η ανάγνωση με λέξεις-κλειδιά δεν μπορεί ποτέ να είναι τέλεια, γι’ αυτό το εργαλείο κάνει τέσσερα πράγματα. Μετριέται: η ανάγνωσή του σε πραγματικούς τίτλους ελέγχεται με το χέρι, πρώτα σε τίτλους με βάση τους οποίους οι κανόνες δεν έχουν ποτέ διορθωθεί, ώστε το ποσοστό να είναι έντιμο, και μόνο έπειτα διορθώνονται οι κανόνες. Και τα δύο ποσοστά εμφανίζονται στη σελίδα Ζωντανά δεδομένα. Δείχνουν ότι το εργαλείο παραλείπει περισσότερα απ’ όσα επινοεί: μια ισχνή καταμέτρηση σημαίνει ότι βρέθηκαν λίγα, όχι ότι ειπώθηκαν λίγα. Απέχει: όταν η διατύπωση τραβά προς δύο κατευθύνσεις, ή μια φιλική λέξη εξαρτάται από όρο, το στοιχείο σημειώνεται ως «αβέβαιο» και μένει εκτός κάθε καταμέτρησης μέχρι να αποφασίσετε εσείς. Διορθώνεται: κάθε ανάγνωση αλλάζει με ένα πάτημα. Και είναι συντηρητικό: για να υπάρξει κλίση χρειάζεται σαφές ισοζύγιο από περισσότερα σταθμισμένα στοιχεία, ώστε ένας μόνο τίτλος που διαβάστηκε λάθος να μην μπορεί να μετακινήσει μια πρόβλεψη."
+    "Sorting and reading by keyword can never be perfect, so the tool does four things about it. It is measured: its reading of real headlines is checked by hand, first on headlines the rules have never been corrected against, so that the figure is honest, and only then are the rules corrected. Both figures are shown on the Live intel page. They show that the tool misses more than it invents: a thin tally means little was found, not that little was said. It abstains: when the wording pulls both ways, or a friendly word hangs on a condition, the item is marked \"unsure\" and left out of every count until you decide. It is correctable: every reading can be changed with one press. And it is conservative: a tilt needs a clear balance of several weighted items, so a single misread headline cannot move a prediction.": "Η ταξινόμηση και η ανάγνωση με λέξεις-κλειδιά δεν μπορεί ποτέ να είναι τέλεια, γι’ αυτό το εργαλείο κάνει τέσσερα πράγματα. Μετριέται: η ανάγνωσή του σε πραγματικούς τίτλους ελέγχεται με το χέρι, πρώτα σε τίτλους με βάση τους οποίους οι κανόνες δεν έχουν ποτέ διορθωθεί, ώστε το ποσοστό να είναι έντιμο, και μόνο έπειτα διορθώνονται οι κανόνες. Και τα δύο ποσοστά εμφανίζονται στη σελίδα Ζωντανά δεδομένα. Δείχνουν ότι το εργαλείο παραλείπει περισσότερα απ’ όσα επινοεί: μια ισχνή καταμέτρηση σημαίνει ότι βρέθηκαν λίγα, όχι ότι ειπώθηκαν λίγα. Απέχει: όταν η διατύπωση τραβά προς δύο κατευθύνσεις, ή μια φιλική λέξη εξαρτάται από όρο, το στοιχείο σημειώνεται ως «αβέβαιο» και μένει εκτός κάθε καταμέτρησης μέχρι να αποφασίσετε εσείς. Διορθώνεται: κάθε ανάγνωση αλλάζει με ένα πάτημα. Και είναι συντηρητικό: για να υπάρξει κλίση χρειάζεται σαφές ισοζύγιο από περισσότερα σταθμισμένα στοιχεία, ώστε ένας μόνο τίτλος που διαβάστηκε λάθος να μην μπορεί να μετακινήσει μια πρόβλεψη.",
+    "<b>Finding your way.</b> Every page carries a <b>Next step</b> line that says what to do now and gives the buttons to do it. After each round the board shows <b>What just happened</b>: your move, what every other stakeholder answered, which measures changed and by how much, and your next step. The magnifying glass at the top opens <b>Find anything</b>: type a word and it takes you straight to the page, section, move, stakeholder or guide topic you are looking for.": "<b>Πώς να προσανατολιστείτε.</b> Κάθε σελίδα έχει μια γραμμή <b>Επόμενο βήμα</b> που λέει τι να κάνετε τώρα και δίνει τα κουμπιά για να το κάνετε. Μετά από κάθε γύρο το ταμπλό δείχνει το <b>Τι μόλις συνέβη</b>: την κίνησή σας, τι απάντησε κάθε άλλο ενδιαφερόμενο μέρος, ποια μέτρα άλλαξαν και πόσο, και το επόμενο βήμα σας. Ο μεγεθυντικός φακός στην κορυφή ανοίγει το <b>Βρείτε οτιδήποτε</b>: πληκτρολογήστε μια λέξη και σας πηγαίνει κατευθείαν στη σελίδα, την ενότητα, την κίνηση, το ενδιαφερόμενο μέρος ή το θέμα του οδηγού που αναζητάτε."
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -2939,7 +2995,44 @@ button.tonebtn:hover{filter:brightness(1.15)}
     "green: the change moves it toward your ideal": "yeşil: değişim onu idealinize yaklaştırıyor",
     "red: the change moves it away from your ideal": "kırmızı: değişim onu idealinizden uzaklaştırıyor",
     "your ideal for that measure": "bu ölçüt için idealiniz",
-    "<b>How reliable is this reading?</b> It is measured against headlines read by hand. On {0} fresh headlines the rules had never been corrected against, they read {1}% correctly, but they caught only {2} of the {3} statements a careful reader would have counted, and {4} of the {5} they did count were right. The rules were then corrected against those too. On all {6} checked headlines they now read {7}% correctly, catch {8}% of what a reader would count, and are right in {9}% of what they count; subjects are assigned correctly in {10}% of {11} cases. Expect new headlines to fall between the two: the tool misses more than it invents, so an empty or thin tally means \"little found\", not \"nothing said\". Where the wording pulls both ways the item is marked \"unsure\" and left out until you decide.": "<b>Bu okuma ne kadar güvenilir?</b> Elle okunan başlıklara göre ölçülür. Kuralların daha önce hiç düzeltilmediği {0} yeni başlıkta doğru okuma oranı %{1} oldu; ancak dikkatli bir okurun sayacağı {3} açıklamadan yalnızca {2} tanesi yakalandı ve sayılan {5} ögeden {4} tanesi doğruydu. Kurallar daha sonra bunlara göre de düzeltildi. Denetlenen {6} başlığın tamamında şu an doğru okuma oranı %{7}, bir okurun sayacaklarını yakalama oranı %{8}, sayılanlarda doğruluk oranı %{9}; konular {11} durumda %{10} oranında doğru eşleştiriliyor. Yeni başlıklarda sonucun bu ikisinin arasında olması beklenir: araç, uydurduğundan fazlasını kaçırır; bu nedenle boş ya da zayıf bir sayım \"hiçbir şey söylenmedi\" değil, \"az şey bulundu\" anlamına gelir. İfadenin iki yöne de çekildiği durumlarda öge \"emin değil\" olarak işaretlenir ve siz karar verene kadar dışarıda bırakılır."
+    "<b>How reliable is this reading?</b> It is measured against headlines read by hand. On {0} fresh headlines the rules had never been corrected against, they read {1}% correctly, but they caught only {2} of the {3} statements a careful reader would have counted, and {4} of the {5} they did count were right. The rules were then corrected against those too. On all {6} checked headlines they now read {7}% correctly, catch {8}% of what a reader would count, and are right in {9}% of what they count; subjects are assigned correctly in {10}% of {11} cases. Expect new headlines to fall between the two: the tool misses more than it invents, so an empty or thin tally means \"little found\", not \"nothing said\". Where the wording pulls both ways the item is marked \"unsure\" and left out until you decide.": "<b>Bu okuma ne kadar güvenilir?</b> Elle okunan başlıklara göre ölçülür. Kuralların daha önce hiç düzeltilmediği {0} yeni başlıkta doğru okuma oranı %{1} oldu; ancak dikkatli bir okurun sayacağı {3} açıklamadan yalnızca {2} tanesi yakalandı ve sayılan {5} ögeden {4} tanesi doğruydu. Kurallar daha sonra bunlara göre de düzeltildi. Denetlenen {6} başlığın tamamında şu an doğru okuma oranı %{7}, bir okurun sayacaklarını yakalama oranı %{8}, sayılanlarda doğruluk oranı %{9}; konular {11} durumda %{10} oranında doğru eşleştiriliyor. Yeni başlıklarda sonucun bu ikisinin arasında olması beklenir: araç, uydurduğundan fazlasını kaçırır; bu nedenle boş ya da zayıf bir sayım \"hiçbir şey söylenmedi\" değil, \"az şey bulundu\" anlamına gelir. İfadenin iki yöne de çekildiği durumlarda öge \"emin değil\" olarak işaretlenir ve siz karar verene kadar dışarıda bırakılır.",
+    "<b>Next step:</b> choose the stakeholder you want to play. You can change seat at any time.": "<b>Sonraki adım:</b> oynamak istediğiniz paydaşı seçin. Yerinizi istediğiniz zaman değiştirebilirsiniz.",
+    "<b>Next step:</b> choose your move for round {0}. The engine now suggests <b>{1}</b>.": "<b>Sonraki adım:</b> {0}. tur için hamlenizi seçin. Motorun şimdiki önerisi: <b>{1}</b>.",
+    "<b>Next step:</b> correct any headline that was read wrongly, then return to the board. The predictions there already include everything shown here.": "<b>Sonraki adım:</b> yanlış okunan başlık varsa düzeltin, sonra tahtaya dönün. Oradaki tahminler burada gösterilen her şeyi zaten içerir.",
+    "<b>Next step:</b> if the move stands up, go back to the board and play it. To check the evidence behind it, open <b>Live intel</b>.": "<b>Sonraki adım:</b> hamle sınamadan sağlam çıkıyorsa tahtaya dönüp oynayın. Arkasındaki kanıtları görmek için <b>Canlı bilgi</b> sayfasını açın.",
+    "<b>Next step:</b> open the section you need, or press <b>Find anything</b> to search the whole app.": "<b>Sonraki adım:</b> gereken bölümü açın ya da uygulamanın tamamında aramak için <b>Her şeyi bul</b> düğmesine basın.",
+    "<b>Next step:</b> play the first step of this path, or open <b>Analysis</b> to test how well it stands up.": "<b>Sonraki adım:</b> bu yolun ilk adımını oynayın ya da ne kadar sağlam olduğunu sınamak için <b>Analiz</b> sayfasını açın.",
+    "<b>Next step:</b> read the preview of this move, then press <b>Play this move</b>, or tap another move to compare.": "<b>Sonraki adım:</b> hamlenin önizlemesini okuyun, sonra <b>Bu hamleyi oyna</b> düğmesine basın ya da karşılaştırmak için başka bir hamleye dokunun.",
+    "<b>Next step:</b> tap a move under <b>Your move</b> to see what it does and how the others answer. The engine's choice is marked.": "<b>Sonraki adım:</b> ne yaptığını ve diğerlerinin nasıl yanıt verdiğini görmek için <b>Hamleniz</b> altındaki bir hamleye dokunun. Motorun tercihi işaretlidir.",
+    "<b>Next step:</b> use the buttons below to move between stakeholders, blueprints, precedents, assumptions and method. Changing an assumption updates every prediction at once.": "<b>Sonraki adım:</b> aşağıdaki düğmelerle paydaşlar, planlar, emsaller, varsayımlar ve yöntem arasında geçiş yapın. Bir varsayımı değiştirmek tüm tahminleri anında günceller.",
+    "After each round, <b>What just happened</b> at the top of the page lists every answer, what changed and what to do next.": "Her turdan sonra sayfanın başındaki <b>Az önce ne oldu</b> bölümü her yanıtı, nelerin değiştiğini ve bundan sonra ne yapılacağını gösterir.",
+    "Change the assumptions behind the scores": "Puanların ardındaki varsayımları değiştir",
+    "Choose a stakeholder first to search the board, the moves and the analysis as well.": "Tahtada, hamlelerde ve analizde de arama yapmak için önce bir paydaş seçin.",
+    "Every other player held position": "Diğer bütün oyuncular konumunu korudu",
+    "Find anything": "Her şeyi bul",
+    "For example: answered, colours, veto, gas, undo, install": "Örneğin: yanıt, renkler, veto, gaz, geri al, kurulum",
+    "Green moved toward your ideal, red away from it. The bars under <b>The position</b> show the new scores.": "Yeşil idealinize yaklaştı, kırmızı uzaklaştı. <b>Konum</b> altındaki çubuklar yeni puanları gösterir.",
+    "Held position: {0}.": "Konumunu koruyanlar: {0}.",
+    "How the others answered": "Diğerleri nasıl yanıt verdi",
+    "Install the app and use it without a connection": "Uygulamayı kur ve bağlantı olmadan kullan",
+    "No measure moved by a full point this round.": "Bu turda hiçbir ölçü tam bir puan değişmedi.",
+    "Nothing matches. Try a shorter word, or open the Guide.": "Eşleşen bir şey yok. Daha kısa bir sözcük deneyin ya da Kılavuzu açın.",
+    "Round {0}": "{0}. tur",
+    "Round {0} played. Every answer is listed under \"What just happened\".": "{0}. tur oynandı. Bütün yanıtlar \"Az önce ne oldu\" bölümünde.",
+    "See all my moves": "Bütün hamlelerim",
+    "Show the engine's choice": "Motorun tercihini göster",
+    "Switch between the computer playing the others and choosing their moves myself": "Diğerlerini bilgisayarın oynaması ile hamlelerini kendim seçmem arasında geçiş",
+    "The situation changed from <b>{0}</b> to <b>{1}</b>.": "Durum <b>{0}</b> iken <b>{1}</b> oldu.",
+    "The situation is still: <b>{0}</b>.": "Durum değişmedi: <b>{0}</b>.",
+    "Type a word, or pick from the list. Each line takes you straight to that place and highlights it.": "Bir sözcük yazın ya da listeden seçin. Her satır sizi doğrudan o yere götürür ve orayı vurgular.",
+    "Undo a round, start a new game or share this game": "Turu geri al, yeni oyun başlat ya da bu oyunu paylaş",
+    "What changed": "Ne değişti",
+    "What just happened": "Az önce ne oldu",
+    "What the colours of the bars mean": "Çubukların renkleri ne anlama geliyor",
+    "What the other players answered after my move": "Hamlemden sonra diğer oyuncular ne yanıt verdi",
+    "You played:": "Oynadığınız hamle:",
+    "Your payoff went from <b>{0}</b> to <b class=\"{2}\">{1}</b> out of 100.": "Kazancınız 100 üzerinden <b>{0}</b> iken <b class=\"{2}\">{1}</b> oldu.",
+    "{0} likely": "{0} olasılık"
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -3148,7 +3241,8 @@ button.tonebtn:hover{filter:brightness(1.15)}
     "Three rules keep the reading honest. A tilt is applied only when the balance is clear; a near-even split is shown as \"mixed\" and changes nothing. Powers that speak about Cyprus only now and then are followed over ninety days, not three weeks, with older items counting for half and then a quarter. And on a device that has not yet completed a live fetch, any source it has not reached is filled from a dated snapshot shipped with the version, so no table is ever empty; live data replaces the snapshot source by source.": "Okumayı dürüst tutan üç kural vardır. Eğilim yalnızca denge açık olduğunda uygulanır; neredeyse eşit bir dağılım \"karışık\" olarak gösterilir ve hiçbir şeyi değiştirmez. Kıbrıs hakkında yalnızca ara sıra konuşan güçler üç hafta değil doksan gün boyunca izlenir; daha eski ögeler önce yarı, sonra çeyrek ağırlıkla sayılır. Ayrıca henüz canlı veri alımını tamamlamamış bir cihazda, ulaşılamayan her kaynak sürümle birlikte gelen tarihli bir anlık görüntüden doldurulur; böylece hiçbir tablo boş kalmaz ve canlı veriler anlık görüntünün yerini kaynak kaynak alır.",
     "Sorting and reading by keyword can never be perfect, so the tool does four things about it. It is measured: before each release its reading of several hundred real headlines is checked by hand, the rules are corrected against the errors found, and the resulting accuracy figures are shown on the Live intel page. It abstains: when the wording pulls both ways, or a friendly word hangs on a condition, the item is marked \"unsure\" and left out of every count until you decide. It is correctable: every reading can be changed with one press. And it is conservative: a tilt needs a clear balance of several weighted items, so a single misread headline cannot move a prediction.": "Anahtar sözcükle sınıflandırma ve okuma asla kusursuz olamaz; bu yüzden araç dört şey yapar. Ölçülür: her sürümden önce birkaç yüz gerçek başlığa ilişkin okuması elle denetlenir, kurallar bulunan hatalara göre düzeltilir ve ortaya çıkan doğruluk oranları Canlı bilgi sayfasında gösterilir. Çekimser kalır: ifade iki yöne de çekildiğinde ya da olumlu bir sözcük bir koşula bağlandığında öge \"emin değil\" olarak işaretlenir ve siz karar verene kadar tüm sayımların dışında bırakılır. Düzeltilebilir: her okuma tek dokunuşla değiştirilebilir. Ve temkinlidir: bir eğilim için birkaç ağırlıklı ögeden oluşan açık bir denge gerekir; böylece yanlış okunan tek bir başlık bir tahmini değiştiremez.",
     "A stakeholder that has said or done nothing about Cyprus in the last three months is not left blank. The table then shows its standing position, taken from the current reference article on its relations with Cyprus and labelled as such. A standing position is background; it does not tilt predictions. Russian statements are looked for in the Kremlin's and the TASS agency's own feeds and in the Russian-language Cyprus press.": "Son üç ayda Kıbrıs hakkında hiçbir şey söylememiş ya da yapmamış bir paydaş boş bırakılmaz. Tablo bu durumda, paydaşın Kıbrıs’la ilişkilerine dair güncel başvuru maddesinden alınan ve bu şekilde etiketlenen yerleşik tutumunu gösterir. Yerleşik tutum arka plan bilgisidir; tahminlere eğilim vermez. Rus açıklamaları Kremlin’in ve TASS ajansının kendi akışlarında ve Kıbrıs’taki Rusça basında aranır.",
-    "Sorting and reading by keyword can never be perfect, so the tool does four things about it. It is measured: its reading of real headlines is checked by hand, first on headlines the rules have never been corrected against, so that the figure is honest, and only then are the rules corrected. Both figures are shown on the Live intel page. They show that the tool misses more than it invents: a thin tally means little was found, not that little was said. It abstains: when the wording pulls both ways, or a friendly word hangs on a condition, the item is marked \"unsure\" and left out of every count until you decide. It is correctable: every reading can be changed with one press. And it is conservative: a tilt needs a clear balance of several weighted items, so a single misread headline cannot move a prediction.": "Anahtar sözcükle sınıflandırma ve okuma asla kusursuz olamaz; bu yüzden araç dört şey yapar. Ölçülür: gerçek başlıklara ilişkin okuması elle denetlenir; rakamın dürüst olması için önce kuralların hiç düzeltilmediği başlıklar üzerinde, kurallar ise ancak bundan sonra düzeltilir. Her iki oran da Canlı bilgi sayfasında gösterilir. Bunlar aracın uydurduğundan fazlasını kaçırdığını gösterir: zayıf bir sayım az şey söylendiği değil, az şey bulunduğu anlamına gelir. Çekimser kalır: ifade iki yöne de çekildiğinde ya da olumlu bir sözcük bir koşula bağlandığında öge \"emin değil\" olarak işaretlenir ve siz karar verene kadar tüm sayımların dışında bırakılır. Düzeltilebilir: her okuma tek dokunuşla değiştirilebilir. Ve temkinlidir: bir eğilim için birkaç ağırlıklı ögeden oluşan açık bir denge gerekir; böylece yanlış okunan tek bir başlık bir tahmini değiştiremez."
+    "Sorting and reading by keyword can never be perfect, so the tool does four things about it. It is measured: its reading of real headlines is checked by hand, first on headlines the rules have never been corrected against, so that the figure is honest, and only then are the rules corrected. Both figures are shown on the Live intel page. They show that the tool misses more than it invents: a thin tally means little was found, not that little was said. It abstains: when the wording pulls both ways, or a friendly word hangs on a condition, the item is marked \"unsure\" and left out of every count until you decide. It is correctable: every reading can be changed with one press. And it is conservative: a tilt needs a clear balance of several weighted items, so a single misread headline cannot move a prediction.": "Anahtar sözcükle sınıflandırma ve okuma asla kusursuz olamaz; bu yüzden araç dört şey yapar. Ölçülür: gerçek başlıklara ilişkin okuması elle denetlenir; rakamın dürüst olması için önce kuralların hiç düzeltilmediği başlıklar üzerinde, kurallar ise ancak bundan sonra düzeltilir. Her iki oran da Canlı bilgi sayfasında gösterilir. Bunlar aracın uydurduğundan fazlasını kaçırdığını gösterir: zayıf bir sayım az şey söylendiği değil, az şey bulunduğu anlamına gelir. Çekimser kalır: ifade iki yöne de çekildiğinde ya da olumlu bir sözcük bir koşula bağlandığında öge \"emin değil\" olarak işaretlenir ve siz karar verene kadar tüm sayımların dışında bırakılır. Düzeltilebilir: her okuma tek dokunuşla değiştirilebilir. Ve temkinlidir: bir eğilim için birkaç ağırlıklı ögeden oluşan açık bir denge gerekir; böylece yanlış okunan tek bir başlık bir tahmini değiştiremez.",
+    "<b>Finding your way.</b> Every page carries a <b>Next step</b> line that says what to do now and gives the buttons to do it. After each round the board shows <b>What just happened</b>: your move, what every other stakeholder answered, which measures changed and by how much, and your next step. The magnifying glass at the top opens <b>Find anything</b>: type a word and it takes you straight to the page, section, move, stakeholder or guide topic you are looking for.": "<b>Yolunuzu bulmak.</b> Her sayfada şimdi ne yapılacağını söyleyen ve bunu yapacak düğmeleri veren bir <b>Sonraki adım</b> satırı bulunur. Her turdan sonra tahta <b>Az önce ne oldu</b> bölümünü gösterir: hamleniz, diğer her paydaşın yanıtı, hangi ölçülerin ne kadar değiştiği ve sonraki adımınız. Üstteki büyüteç <b>Her şeyi bul</b> penceresini açar: bir sözcük yazın, sizi aradığınız sayfaya, bölüme, hamleye, paydaşa ya da kılavuz konusuna doğrudan götürsün."
   };
 })(typeof self !== 'undefined' ? self : this);
 </script>
@@ -5272,7 +5366,8 @@ button.tonebtn:hover{filter:brightness(1.15)}
       T('<b>Decide who plays the others.</b> "Computer plays them" lets the tool answer for the other nine. "I choose their moves" lets you set every reply yourself.'),
       T('<b>Tap a move</b> in the list. A panel opens with what the move does, the replies, the resulting situation and each stakeholder\'s gain or loss. Nothing is committed yet.'),
       T('<b>Press "Play this move"</b> to commit. The board advances one round, which stands for about six months. Use "Undo round" to step back.'),
-      T('<b>Open "Best path" and "Analysis"</b> for the recommended sequence several rounds ahead and for the full assessment of any single move.')]));
+      T('<b>Open "Best path" and "Analysis"</b> for the recommended sequence several rounds ahead and for the full assessment of any single move.')]) +
+      p(T('<b>Finding your way.</b> Every page carries a <b>Next step</b> line that says what to do now and gives the buttons to do it. After each round the board shows <b>What just happened</b>: your move, what every other stakeholder answered, which measures changed and by how much, and your next step. The magnifying glass at the top opens <b>Find anything</b>: type a word and it takes you straight to the page, section, move, stakeholder or guide topic you are looking for.')));
 
     out += sec(T('The ten stakeholders'), p(T('Each stakeholder is modelled by three things: an <b>ideal point</b> on every measure (where it would like that measure to be), a <b>weight</b> on every measure (how much it cares), and a list of <b>moves</b> it can make. It also has a <b>power</b> score from 0 to 100 used for the stakeholder map and the collective objective, and a degree of <b>inertia</b>: how much a move must be worth before it bothers to act at all.')) +
       ul(M.players.map(function (q) { return '<b>' + esc(q.name) + '.</b> ' + esc(q.role); })) +
@@ -5714,7 +5809,117 @@ button.tonebtn:hover{filter:brightness(1.15)}
   /* Every page opens with what it shows and how to use it. */
   function intro(title, lead, steps) {
     return '<section class="card intro"><h1>' + title + '</h1><p class="lead">' + lead + '</p>' +
-      (steps ? '<details class="explain"' + (seenPage(title) ? '' : ' open') + '><summary>' + T('How to use this page') + '</summary><ol class="list">' + steps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol></details>' : '') + '</section>';
+      (steps ? '<details class="explain"' + (seenPage(title) ? '' : ' open') + '><summary>' + T('How to use this page') + '</summary><ol class="list">' + steps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol></details>' : '') + nextStep() + '</section>';
+  }
+  /* One plain sentence on every page saying what to do next, with the buttons that do it. */
+  function tabBtn(id) { var t = TABS().filter(function (x) { return x[0] === id; })[0]; return '<button class="btn small" data-a="tab" data-v="' + id + '">' + t[1] + ' ' + t[2] + '</button>'; }
+  function findBtn() { return '<button class="btn small" data-a="find">' + T('Find anything') + '</button>'; }
+  function nextStep() {
+    var t, b = '';
+    if (!A.pid && A.tab !== 'guide') { t = T('<b>Next step:</b> choose the stakeholder you want to play. You can change seat at any time.'); b = findBtn(); }
+    else if (A.tab === 'guide') { t = T('<b>Next step:</b> open the section you need, or press <b>Find anything</b> to search the whole app.'); b = findBtn() + (A.pid ? tabBtn('board') : ''); }
+    else if (A.tab === 'path') { t = T('<b>Next step:</b> play the first step of this path, or open <b>Analysis</b> to test how well it stands up.'); b = tabBtn('analysis') + tabBtn('board'); }
+    else if (A.tab === 'analysis') { t = T('<b>Next step:</b> if the move stands up, go back to the board and play it. To check the evidence behind it, open <b>Live intel</b>.'); b = tabBtn('board') + tabBtn('live'); }
+    else if (A.tab === 'live') { t = T('<b>Next step:</b> correct any headline that was read wrongly, then return to the board. The predictions there already include everything shown here.'); b = tabBtn('board'); }
+    else if (A.tab === 'library') { t = T('<b>Next step:</b> use the buttons below to move between stakeholders, blueprints, precedents, assumptions and method. Changing an assumption updates every prediction at once.'); b = tabBtn('board') + findBtn(); }
+    else if (A.sel) { t = T('<b>Next step:</b> read the preview of this move, then press <b>Play this move</b>, or tap another move to compare.'); }
+    else if (stack.length) return '';
+    else { t = T('<b>Next step:</b> tap a move under <b>Your move</b> to see what it does and how the others answer. The engine\'s choice is marked.'); b = '<button class="btn small accent" data-a="selbest">' + T('Show the engine\'s choice') + '</button>' + tabBtn('path'); }
+    return '<div class="next"><span>' + t + '</span>' + (b ? '<span class="row">' + b + '</span>' : '') + '</div>';
+  }
+  /* After a round: what you played, what each of the others answered, what changed, and what to do now.
+     It stays on the board until the next round, so nothing depends on catching a passing message. */
+  function justPlayed() {
+    if (!stack.length) return '';
+    var top = stack[stack.length - 1], r = top.r, x0 = top.S.x, u0 = E.utilities(C, x0)[A.pid], u1 = E.utilities(C, S.x)[A.pid], o0 = outcomeOf(x0), o1 = outcomeOf(S.x);
+    var acts = r.replies.filter(function (y) { return !y.chosen.m.hold; }), held = r.replies.filter(function (y) { return y.chosen.m.hold; });
+    var moved = M.dims.map(function (d, i) { return { d: d, a: x0[i], b: S.x[i], i: i }; }).filter(function (c) { return Math.abs(c.b - c.a) >= 1; }).sort(function (a, b) { return Math.abs(b.b - b.a) - Math.abs(a.b - a.a); });
+    var best = recs()[0], ideal = C.players[A.pid].ideal;
+    var h = '<section class="card played" id="played"><div class="row between"><h2>' + T('What just happened') + '</h2><span class="tag">' + T('Round {0}', S.round) + (r.manual ? ' · ' + T('manual') : '') + '</span></div>' +
+      '<p><b>' + T('You played:') + '</b> ' + esc(r.move.src.name) + '</p>' +
+      '<h3>' + (acts.length ? T('How the others answered') : T('Every other player held position')) + '</h3>';
+    if (acts.length) h += '<ul class="answers">' + acts.map(function (y) {
+      var g = E.utilities(C, y.after)[A.pid] - E.utilities(C, y.before)[A.pid];
+      return '<li><i style="background:' + P(y.pid).color + '">' + esc(P(y.pid).short) + '</i><span><b>' + esc(P(y.pid).name) + ':</b> ' + esc(y.chosen.m.src.name) +
+        (y.forced || r.manual ? '' : ' <span class="mute">' + T('{0} likely', pct(y.chosen.p)) + '</span>') +
+        (Math.abs(g) >= 0.05 ? ' <span class="tag ' + (g > 0 ? 'good' : 'bad') + '">' + (g > 0 ? T('helps you {0}', sgn(g, 1)) : T('hurts you {0}', sgn(g, 1))) + '</span>' : '') + '</span></li>';
+    }).join('') + '</ul>' + (held.length ? '<p class="help">' + T('Held position: {0}.', held.map(function (y) { return esc(P(y.pid).name); }).join(', ')) + '</p>' : '');
+    h += '<h3>' + T('What changed') + '</h3>' + (moved.length ? '<div class="fx">' + moved.map(function (c) {
+      var toward = Math.abs(c.b - ideal[c.i]) < Math.abs(c.a - ideal[c.i]);
+      return '<span class="' + (toward ? 'up' : 'down') + '">' + esc(c.d.short || c.d.name) + ' ' + Math.round(c.a) + ' → ' + Math.round(c.b) + '</span>';
+    }).join('') + '</div><p class="help">' + T('Green moved toward your ideal, red away from it. The bars under <b>The position</b> show the new scores.') + '</p>' : '<p class="help">' + T('No measure moved by a full point this round.') + '</p>') +
+      '<p>' + T('Your payoff went from <b>{0}</b> to <b class="{2}">{1}</b> out of 100.', u0.toFixed(0), u1.toFixed(0), cls(u1 - u0, 0.3)) + ' ' +
+      (o0 === o1 ? T('The situation is still: <b>{0}</b>.', esc(o1.name)) : T('The situation changed from <b>{0}</b> to <b>{1}</b>.', esc(o0.name), esc(o1.name))) + '</p>' +
+      '<div class="next"><span>' + (best ? T('<b>Next step:</b> choose your move for round {0}. The engine now suggests <b>{1}</b>.', S.round + 1, esc(best.m.src.name)) : '') + '</span><span class="row">' +
+      '<button class="btn small accent" data-a="selbest">' + T('Show the engine\'s choice') + '</button><button class="btn small" data-a="jump" data-v="' + esc('board||' + plain(T('Your move'))) + '">' + T('See all my moves') + '</button>' + tabBtn('path') +
+      '<button class="btn small" data-a="jump" data-v="' + esc('board||' + plain(T('Game record'))) + '">' + T('Game record') + '</button><button class="btn small" data-a="undo">' + T('Undo round') + '</button></span></div></section>';
+    return h;
+  }
+  function plain(html) { return String(html).replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim(); }
+
+  /* ---------- find anything ---------- */
+  /* Go to a page, open the section whose heading has this text, and show it. */
+  function jumpTo(tab, lib, text) {
+    $('#modal').hidden = true;
+    var changed = A.tab !== tab || (lib && A.lib !== lib);
+    A.tab = tab; if (lib) A.lib = lib;
+    A.sel = null;
+    if (changed) navPush();
+    render();
+    setTimeout(function () {
+      var hs = view.querySelectorAll('h2, summary'), hit = null, i;
+      for (i = 0; i < hs.length && !hit; i++) if (hs[i].offsetParent !== null && hs[i].textContent.trim() === text) hit = hs[i];
+      for (i = 0; i < hs.length && !hit; i++) if (hs[i].offsetParent !== null && hs[i].textContent.trim().indexOf(text) >= 0) hit = hs[i];
+      if (!hit) { window.scrollTo(0, 0); return; }
+      if (hit.tagName === 'SUMMARY') hit.parentNode.open = true;
+      var box = hit.closest('section, details') || hit;
+      hit.scrollIntoView({ block: 'start' });
+      box.classList.add('flash'); setTimeout(function () { box.classList.remove('flash'); }, 1800);
+    }, 40);
+  }
+  function findItems() {
+    var out = [], tn = {}, pid = A.pid;
+    TABS().forEach(function (t) { tn[t[0]] = t[2]; });
+    function sec(tab, lib, title, label) { out.push({ l: label || plain(title), w: tn[tab] + (lib ? ' › ' + LIBS().filter(function (x) { return x[0] === lib; })[0][1] : ''), a: 'jump', v: tab + '|' + (lib || '') + '|' + plain(title) }); }
+    if (pid) {
+      /* the questions people ask most, in their own words */
+      sec('board', '', stack.length ? T('What just happened') : T('Game record'), T('What the other players answered after my move'));
+      sec('board', '', T('The position'), T('What the colours of the bars mean'));
+      sec('board', '', T('Who plays the other stakeholders?'), T('Switch between the computer playing the others and choosing their moves myself'));
+      sec('board', '', T('Game record'), T('Undo a round, start a new game or share this game'));
+      sec('library', 'assume', T('Assumptions'), T('Change the assumptions behind the scores'));
+      sec('library', 'about', T('Install and use offline'), T('Install the app and use it without a connection'));
+      [T('The position'), T('Who plays the other stakeholders?'), T('Your move'), T('Game record')].forEach(function (x) { sec('board', '', x); });
+      [T('Settings and headline result'), T('Critical path, step by step'), T('Where the position ends up'), T('Odds, allowing for surprises')].forEach(function (x) { sec('path', '', x); });
+      [T('Move under analysis'), T('SWOT for {0}', esc(P(pid).name)), T('Risk register'), T('Head-to-head payoff matrix'), T('Stakeholder map'), T('Political, security, economic, energy, legal and social lens')].forEach(function (x) { sec('analysis', '', x); });
+      [T('Sources'), T('Signals feeding the model'), T('Evidence by subject'), T('What each government says and does'), T('On the official record'), T('Lira against the euro'), T('Balance of resources'), T('Latest research'), T('From the newspapers'), T('Latest headlines')].forEach(function (x) { sec('live', '', x); });
+      sec('library', 'blueprints', T('Blueprint strategies')); sec('library', 'history', T('Precedents: what worked, what failed')); sec('library', 'assume', T('Assumptions'));
+      sec('library', 'assume', T('What a player wants, and how much it cares')); sec('library', 'about', T('Method')); sec('library', 'about', T('Languages'));
+      C.order.forEach(function (q) { out.push({ l: P(q).name, w: tn.library + ' › ' + T('Stakeholders'), a: 'player', v: q }); });
+      recs().forEach(function (r) { if (!r.m.hold) out.push({ l: r.m.src.name, w: tn.board + ' › ' + plain(T('Your move')), a: 'findmove', v: r.m.id }); });
+    }
+    var g = window.GUIDE(T, M, esc), re = /<summary>([\s\S]*?)<\/summary>/g, mm;
+    while ((mm = re.exec(g))) out.push({ l: plain(mm[1]), w: T('Guide'), a: 'jump', v: 'guide||' + plain(mm[1]) });
+    return out;
+  }
+  function findOpen() {
+    var items = findItems();
+    modal('<div class="row between"><h2>' + T('Find anything') + '</h2><button class="btn small" data-a="closemodal" aria-label="' + esc(T('Close')) + '">✕</button></div>' +
+      '<p class="help">' + T('Type a word, or pick from the list. Each line takes you straight to that place and highlights it.') + '</p>' +
+      '<input type="search" class="findq" data-c="find" autocomplete="off" placeholder="' + esc(T('For example: answered, colours, veto, gas, undo, install')) + '" aria-label="' + esc(T('Find anything')) + '">' +
+      '<div id="findres" class="findres">' + items.map(function (it) {
+        return '<button data-a="' + it.a + '" data-v="' + esc(it.v) + '"><b>' + esc(it.l) + '</b><small>' + esc(it.w) + '</small></button>';
+      }).join('') + '</div><p class="help" id="findnone" hidden>' + T('Nothing matches. Try a shorter word, or open the Guide.') + '</p>' +
+      (A.pid ? '' : '<p class="help">' + T('Choose a stakeholder first to search the board, the moves and the analysis as well.') + '</p>'));
+    var q = $('.findq'); if (q) q.focus();
+  }
+  function findFilter(v) {
+    var words = v.toLowerCase().split(/\s+/).filter(Boolean), bs = document.querySelectorAll('#findres button'), n = 0, i;
+    for (i = 0; i < bs.length; i++) {
+      var txt = bs[i].textContent.toLowerCase(), ok = words.every(function (w) { return txt.indexOf(w) >= 0; });
+      bs[i].hidden = !ok; if (ok) n += 1;
+    }
+    $('#findnone').hidden = n > 0;
   }
 
   /* ---------- small renderers ---------- */
@@ -5787,6 +5992,7 @@ button.tonebtn:hover{filter:brightness(1.15)}
       return '<button data-a="tab" data-v="' + t[0] + '"' + (A.tab === t[0] ? ' aria-current="page"' : '') + '><i>' + t[1] + '</i>' + t[2] + '</button>';
     }).join('') : '';
     $('#tabs').style.display = A.pid ? '' : 'none';
+    var fb = $('#findBtn'); fb.title = T('Find anything'); fb.setAttribute('aria-label', T('Find anything'));
     net(); navButtons();
   }
   function net() {
@@ -5802,8 +6008,8 @@ button.tonebtn:hover{filter:brightness(1.15)}
     return '<section class="card"><h1>' + T('Who are you deciding for?') + '</h1>' +
       '<p class="lead">' + T('Every stakeholder in the Cyprus question is a player on the same board. Pick your seat. The board then shows your options, predicts how each other player is likely to answer, and points to the strongest sustainable path.') + '</p>' +
       '<p class="langrow"><label class="help">' + T('Language') + ' <select data-c="lang">' + langOptions(true) + '</select></label></p>' +
-      '<p class="row"><button class="btn" data-a="guide">' + T('Read the complete guide') + '</button>' + (standalone() ? '' : '<button class="btn accent" data-a="install">' + T('Install app') + '</button>') + '</p>' +
-      '<div class="grid pick">' + M.players.map(function (p) {
+      '<p class="row"><button class="btn" data-a="guide">' + T('Read the complete guide') + '</button>' + (standalone() ? '' : '<button class="btn accent" data-a="install">' + T('Install app') + '</button>') + '</p>' + nextStep() +
+      '<div class="grid pick" style="margin-top:12px">' + M.players.map(function (p) {
         return '<button class="pcard" style="--c:' + p.color + '" data-a="pick" data-v="' + p.id + '"><b>' + esc(p.name) + '</b><span>' + esc(p.role) + '</span></button>';
       }).join('') + '</div></section>' +
       '<section class="card"><h2>' + T('How it works') + '</h2><ol class="list">' +
@@ -5839,7 +6045,8 @@ button.tonebtn:hover{filter:brightness(1.15)}
       T('Read <b>Current position</b> and <b>The position</b>: ten bars describe the situation today; the ▼ on each bar is where you would like it to be.'),
       T('Choose under <b>Who plays the other stakeholders?</b> whether the computer answers for them or you pick their moves yourself.'),
       T('Under <b>Your move</b>, tap any move to preview it: what it does, how the others answer, and who gains or loses.'),
-      T('Press <b>Play this move</b> to commit. The board advances one round and the <b>Game record</b> keeps the history. <b>Undo</b> takes a round back.')]) +
+      T('Press <b>Play this move</b> to commit. The board advances one round and the <b>Game record</b> keeps the history. <b>Undo</b> takes a round back.'),
+      T('After each round, <b>What just happened</b> at the top of the page lists every answer, what changed and what to do next.')]) + justPlayed() +
       '<div class="status"><div class="stcol"><section class="card"><div class="outcome"><div class="badge" style="color:' + o.color + '">' + o.icon + '</div><div>' +
       '<span class="tag">' + T('Round {0} · current position', S.round + 1) + '</span><h2 style="margin:.15em 0">' + esc(o.name) + '</h2><span class="help">' + esc(o.desc) + '</span></div></div>' +
       '<div style="margin-top:12px"><div class="row between help"><span>' + T('Coalition weight with you <b class="num">{0}</b>', pct(bal)) + '</span><span>' + T('Your payoff <b class="num">{0}</b>/100', u[A.pid].toFixed(0)) + '</span></div>' +
@@ -6368,8 +6575,8 @@ button.tonebtn:hover{filter:brightness(1.15)}
     stack.push({ S: S, r: r }); S = r.state; A.sel = null; A.manual = {}; cache = {};
     A.own.push(forced ? id + Object.keys(forced).map(function (k) { return '~' + k + '=' + forced[k]; }).join('') : id);
     save(); render(); window.scrollTo(0, 0);
-    var acts = r.replies.filter(function (y) { return !y.chosen.m.hold; }).length;
-    toast(acts > 1 ? T('Round {0} played. {1} players answered.', S.round, acts) : acts ? T('Round {0} played. {1} player answered.', S.round, acts) : T('Round {0} played. Everyone else held.', S.round));
+    var card = $('#played'); if (card) card.scrollIntoView({ block: 'start' });
+    toast(T('Round {0} played. Every answer is listed under "What just happened".', S.round));
   }
 
   /* ---------- install ---------- */
@@ -6401,6 +6608,10 @@ button.tonebtn:hover{filter:brightness(1.15)}
     sel: function (v) { A.sel = A.sel === v ? null : v; A.manual = {}; if (A.sel && C.moves[A.sel]) wantTopics(C.moves[A.sel].src.topic); render(); },
     playmode: function (v) { A.play = v; A.manual = {}; save(); render(); },
     close: function () { A.sel = null; render(); },
+    find: findOpen,
+    jump: function (v) { var a = v.split('|'); jumpTo(a[0], a[1], a.slice(2).join('|')); },
+    selbest: function () { var b = recs()[0]; if (!b) return; A.sel = b.m.id; A.manual = {}; wantTopics(b.m.src.topic); render(); var el = view.querySelector('.mv.sel'); if (el && !document.body.classList.contains('has-sheet')) el.scrollIntoView({ block: 'center' }); },
+    findmove: function (v) { $('#modal').hidden = true; if (A.tab !== 'board') { A.tab = 'board'; navPush(); } A.cat = 'all'; A.sel = v; A.manual = {}; if (C.moves[v]) wantTopics(C.moves[v].src.topic); render(); },
     play: function () { play(A.sel); },
     playfirst: function () { var st = cache.path.p.steps[0]; A.tab = 'board'; navPush(); play(st.move.id); },
     analyse: function () { go('analysis'); },
@@ -6414,7 +6625,7 @@ button.tonebtn:hover{filter:brightness(1.15)}
       else if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { toast(T('Link to this game copied.')); });
       else modal('<h2>' + T('Link to this game') + '</h2><p style="word-break:break-all">' + esc(url) + '</p><button class="btn accent" data-a="closemodal">' + T('Done') + '</button>');
     },
-    player: function (v) { A.tab = 'library'; A.lib = 'players'; A.sel = null; navPush(); render(); var el = $('#pl-' + v); if (el) el.scrollIntoView(); },
+    player: function (v) { $('#modal').hidden = true; A.tab = 'library'; A.lib = 'players'; A.sel = null; navPush(); render(); var el = $('#pl-' + v); if (el) el.scrollIntoView(); },
     lib: function (v) { if (A.lib === v) return; A.lib = v; navPush(); render(); },
     ntheme: function (v) { A.newsTheme = v; render(); },
     refresh: function () { refresh(true); },
@@ -6458,12 +6669,13 @@ button.tonebtn:hover{filter:brightness(1.15)}
     save(); render();
   });
   document.addEventListener('input', function (e) {
+    if (e.target.getAttribute && e.target.getAttribute('data-c') === 'find') return findFilter(e.target.value);
     if (e.target.getAttribute && e.target.getAttribute('data-c') === 'q') {
       A.q = e.target.value;
       var el = $('#kbres'); if (el && KB) el.innerHTML = kbResults(A.q.toLowerCase().trim());
     }
   });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if (!$('#modal').hidden) $('#modal').hidden = true; else if (A.sel) acts.close(); } });
+  document.addEventListener('keydown', function (e) { if (e.key === '/' && !/INPUT|SELECT|TEXTAREA/.test((e.target || {}).tagName || '')) { e.preventDefault(); return findOpen(); } if (e.key === 'Escape') { if (!$('#modal').hidden) $('#modal').hidden = true; else if (A.sel) acts.close(); } });
 
   /* ---------- language: re-translate the model and redraw; the game itself is untouched ---------- */
   I.onChange(function () {

@@ -26,7 +26,8 @@
       T('<b>Decide who plays the others.</b> "Computer plays them" lets the tool answer for the other nine. "I choose their moves" lets you set every reply yourself.'),
       T('<b>Tap a move</b> in the list. A panel opens with what the move does, the replies, the resulting situation and each stakeholder\'s gain or loss. Nothing is committed yet.'),
       T('<b>Press "Play this move"</b> to commit. The board advances one round, which stands for about six months. Use "Undo round" to step back.'),
-      T('<b>Open "Best path" and "Analysis"</b> for the recommended sequence several rounds ahead and for the full assessment of any single move.')]));
+      T('<b>Open "Best path" and "Analysis"</b> for the recommended sequence several rounds ahead and for the full assessment of any single move.')]) +
+      p(T('<b>Finding your way.</b> Every page carries a <b>Next step</b> line that says what to do now and gives the buttons to do it. After each round the board shows <b>What just happened</b>: your move, what every other stakeholder answered, which measures changed and by how much, and your next step. The magnifying glass at the top opens <b>Find anything</b>: type a word and it takes you straight to the page, section, move, stakeholder or guide topic you are looking for.')));
 
     out += sec(T('The ten stakeholders'), p(T('Each stakeholder is modelled by three things: an <b>ideal point</b> on every measure (where it would like that measure to be), a <b>weight</b> on every measure (how much it cares), and a list of <b>moves</b> it can make. It also has a <b>power</b> score from 0 to 100 used for the stakeholder map and the collective objective, and a degree of <b>inertia</b>: how much a move must be worth before it bothers to act at all.')) +
       ul(M.players.map(function (q) { return '<b>' + esc(q.name) + '.</b> ' + esc(q.role); })) +
