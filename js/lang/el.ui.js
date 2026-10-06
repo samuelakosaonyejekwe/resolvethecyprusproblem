@@ -549,6 +549,18 @@
     'official': 'επίσημο',
     'words and deeds differ': 'λόγια και έργα αποκλίνουν',
     '{0} headlines are hidden.': '{0} τίτλοι είναι κρυμμένοι.',
-    '{0} this week, {1} a week before': '{0} αυτή την εβδομάδα, {1} την προηγούμενη'
+    '{0} this week, {1} a week before': '{0} αυτή την εβδομάδα, {1} την προηγούμενη',
+    "In each pair the first number is conciliatory, the second hard-line. The same story in several papers is counted once. A stakeholder needs a weighted total of at least three before any tilt is applied. If a headline is attributed or read wrongly, press × beside it: it and other papers' versions of it are left out of every count. <b>Your own assessment</b> is for what you know and the public record does not: it shifts that stakeholder's tilt on your device only, and is never shared, not even in a shared link.": "Σε κάθε ζεύγος ο πρώτος αριθμός είναι οι διαλλακτικές τοποθετήσεις και ο δεύτερος οι σκληρές. Η ίδια είδηση σε περισσότερες εφημερίδες μετριέται μία φορά. Για να εφαρμοστεί κλίση, ένα ενδιαφερόμενο μέρος χρειάζεται σταθμισμένο σύνολο τουλάχιστον τρία. Αν ένας τίτλος έχει αποδοθεί ή διαβαστεί λανθασμένα, πατήστε το × δίπλα του: ο τίτλος αυτός και οι εκδοχές του σε άλλες εφημερίδες εξαιρούνται από κάθε καταμέτρηση. <b>Η δική σας εκτίμηση</b> αφορά όσα γνωρίζετε εσείς και δεν φαίνονται στα δημόσια στοιχεία: μετατοπίζει την κλίση του συγκεκριμένου μέρους μόνο στη συσκευή σας και δεν κοινοποιείται ποτέ, ούτε μέσω κοινόχρηστου συνδέσμου.",
+    "What governments and administrations themselves have published, fetched from their own sites: {0}. Statements here also feed the table above; bills, rules and formal decisions count as deeds. Each source is kept from its last successful fetch, so a source that is slow today still shows what it gave before.": "Όσα έχουν δημοσιεύσει οι ίδιες οι κυβερνήσεις και διοικήσεις, από τους δικούς τους ιστοτόπους: {0}. Οι δηλώσεις εδώ τροφοδοτούν και τον παραπάνω πίνακα· τα νομοσχέδια, οι κανονισμοί και οι επίσημες αποφάσεις μετρούν ως έργα. Κάθε πηγή διατηρείται από την τελευταία επιτυχή λήψη της, ώστε μια πηγή που αργεί σήμερα να εξακολουθεί να δείχνει όσα έδωσε προηγουμένως.",
+    "Your own assessment": "Η δική σας εκτίμηση",
+    "and {0} more": "και {0} ακόμη",
+    "as the record shows": "όπως τα στοιχεία",
+    "harder": "σκληρότερη",
+    "harder than on {0}": "σκληρότερη σε σχέση με {0}",
+    "more conciliatory than on {0}": "πιο διαλλακτική σε σχέση με {0}",
+    "more open": "πιο ανοιχτή",
+    "much harder": "πολύ σκληρότερη",
+    "much more open": "πολύ πιο ανοιχτή",
+    "{0} stories on this subject in the last 21 days, from newspapers and the news index. The same story in several papers is counted once. Headlines are shown as published, those in your language first.": "{0} ειδήσεις για το θέμα αυτό τις τελευταίες 21 ημέρες, από εφημερίδες και από το ευρετήριο ειδήσεων. Η ίδια είδηση σε περισσότερες εφημερίδες μετριέται μία φορά. Οι τίτλοι εμφανίζονται όπως δημοσιεύθηκαν, πρώτα όσοι είναι στη γλώσσα σας."
   };
 })(typeof self !== 'undefined' ? self : this);

@@ -9,7 +9,7 @@
   E.T = T;
 
   var A = { pid: null, tab: 'board', sel: null, mode: 'sustainable', horizon: 6, live: true, sigOff: {}, own: [],
-    cat: 'all', play: 'auto', manual: {}, lib: 'players', q: '', opp: null, theme: null, custom: { base: {}, w: {}, ideal: {} }, newsTheme: 'all' };
+    cat: 'all', play: 'auto', manual: {}, priv: {}, lib: 'players', q: '', opp: null, theme: null, custom: { base: {}, w: {}, ideal: {} }, newsTheme: 'all' };
   var C = null, S = null, stack = [], cache = {}, KB = null, deferred = null;
 
   /* Tables of labels are functions so that they follow the current language. */
@@ -33,7 +33,7 @@
   /* ---------- persistence ---------- */
   function save() {
     try {
-      localStorage.setItem(LS, JSON.stringify({ pid: A.pid, tab: A.tab, mode: A.mode, horizon: A.horizon, live: A.live, sigOff: A.sigOff, own: A.own, play: A.play, custom: A.custom, theme: A.theme, opp: A.opp }));
+      localStorage.setItem(LS, JSON.stringify({ pid: A.pid, tab: A.tab, mode: A.mode, horizon: A.horizon, live: A.live, sigOff: A.sigOff, own: A.own, play: A.play, priv: A.priv, custom: A.custom, theme: A.theme, opp: A.opp }));
     } catch (e) {}
     var h = A.pid ? '#p=' + A.pid + (A.own.length ? '&m=' + A.own.join(',') : '') : '';
     try { history.replaceState(history.state, '', location.pathname + location.search + h); } catch (e) {}
@@ -96,7 +96,14 @@
       else if (k === 'fading') mv.ps = Math.max(0.05, ps - 0.03);
     });
     /* What each government has been saying lately tilts its choices a little. */
-    if (A.live && !A.sigOff.voices) { var vs = L.voices(); m.players.forEach(function (pl) { pl.lean = vs[pl.id] ? vs[pl.id].lean : 0; }); }
+    /* ...and the user's own private assessment is added on top: the user may know more than the public record shows. */
+    var vs0 = A.live && !A.sigOff.voices ? L.voices() : null;
+    if (vs0) L.remember(vs0);
+    A.priv = A.priv || {};
+    m.players.forEach(function (pl) {
+      var v = (vs0 && vs0[pl.id] ? vs0[pl.id].lean : 0) + 0.3 * (+A.priv[pl.id] || 0);
+      pl.lean = v > 1 ? 1 : v < -1 ? -1 : v;
+    });
     C = E.compile(m);
     replay();
   }
@@ -124,14 +131,14 @@
         T('Attention is steady: chance of success unchanged at {0}.', pct(m.ps));
       h += '<p style="margin-top:8px"><b>' + T('Effect on the result:') + '</b> ' + eff + '</p>';
     } else h += '<p class="help">' + T('Readership figures for this subject are not available yet; the chance of success is unchanged.') + '</p>';
-    function items(f, n) { return rp.filter(f).slice(0, n).map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener" lang="' + a.lang + '">' + esc(a.title) + '</a> <span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + '</span> ' + hideBtn(a.title) + '</li>'; }).join(''); }
+    function items(f, n) { return rp.filter(f).slice(0, n).map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener" lang="' + a.lang + '">' + esc(a.title) + '</a> <span class="help">' + esc(a.domain) + ((a.outlets || []).length > 1 ? ' ' + T('and {0} more', a.outlets.length - 1) : '') + ' · ' + esc(a.date) + '</span> ' + hideBtn(a.title) + '</li>'; }).join(''); }
     rp = rp.slice().sort(function (x, y) { return (y.lang === I18N.lang) - (x.lang === I18N.lang) || (x.date < y.date ? 1 : x.date > y.date ? -1 : 0); });
     var said = items(function (a) { return a.said; }, 3), meet = items(function (a) { return a.meet && !a.said; }, 3), rest = items(function (a) { return !a.said && !a.meet; }, 3);
     if (said) h += '<h3>' + T('What is being said') + '</h3><ul class="news">' + said + '</ul>';
     if (meet) h += '<h3>' + T('Meetings and conferences') + '</h3><ul class="news">' + meet + '</ul>';
     if (rest) h += '<h3>' + T('Other current reports') + '</h3><ul class="news">' + rest + '</ul>';
     if (!rp.length) h += '<p class="help">' + (tp.own && L.pending(id) ? T('Looking for current headlines on this subject…') : T('No headlines plainly on this subject in the last 21 days.')) + '</p>';
-    else h += '<p class="help">' + T('{0} headlines on this subject in the last 21 days, from newspapers and the news index. Headlines are shown as published, those in your language first.', rp.length) + '</p>';
+    else h += '<p class="help">' + T('{0} stories on this subject in the last 21 days, from newspapers and the news index. The same story in several papers is counted once. Headlines are shown as published, those in your language first.', rp.length) + '</p>';
     return h + '</section>';
   }
   /* Lets the reader take a wrongly sorted headline out of every count. */
@@ -630,20 +637,22 @@
       }).join('') + '</tbody></table></div></section>';
 
     var vs = L.voices(), any = M.players.some(function (pl) { return vs[pl.id] && vs[pl.id].n; });
+    var hh = L.history(), hk = Object.keys(hh).sort(), hist0 = hk.length > 1 ? hh[hk[0]] : null, hist0d = hk.length > 1 ? hk[0].slice(0, 7) : '';
     h += '<section class="card"><div class="row between"><h2>' + T('What each government says and does') + '</h2><label class="row help"><input type="checkbox" data-c="sig" data-v="voices"' + (A.sigOff.voices ? '' : ' checked') + (A.live ? '' : ' disabled') + '> ' + T('Let this tilt predictions') + '</label></div>' +
       '<p class="help">' + T('Readership shows attention, not intent. To get as close to intent as public evidence allows, the tool separates <b>words</b> from <b>deeds</b>. Words are statements: those published by governments themselves, and newspaper headlines reporting a named leader or office speaking about the Cyprus question. Deeds are headlines reporting an act, such as signing, opening, withdrawing, deploying or blocking. Each is read as conciliatory or hard-line. Deeds and governments\' own statements count double. The balance tilts that stakeholder\'s predicted choices slightly the same way, and the table warns when words and deeds point in opposite directions.') + '</p>' +
-      (any ? '<div class="tblwrap"><table><thead><tr><th>' + T('Stakeholder') + '</th><th>' + T('Says') + '</th><th>' + T('Does') + '</th><th>' + T('Tilt') + '</th><th>' + T('Latest') + '</th></tr></thead><tbody>' + M.players.map(function (pl) {
-        var v = vs[pl.id] || { says: { soft: 0, hard: 0 }, does: { soft: 0, hard: 0 }, n: 0, lean: 0, items: [] }, it = v.items[0];
+      (any ? '<div class="tblwrap"><table><thead><tr><th>' + T('Stakeholder') + '</th><th>' + T('Says') + '</th><th>' + T('Does') + '</th><th>' + T('Tilt') + '</th><th>' + T('Your own assessment') + '</th><th>' + T('Latest') + '</th></tr></thead><tbody>' + M.players.map(function (pl) {
+        var v = vs[pl.id] || { says: { soft: 0, hard: 0 }, does: { soft: 0, hard: 0 }, n: 0, lean: 0, items: [] }, it = v.items[0], pv = +A.priv[pl.id] || 0, was = hist0 && hist0[pl.id] !== undefined ? hist0[pl.id] : null;
         function pair(o) { return o.soft + o.hard ? '<span class="good">' + o.soft + '</span> / <span class="bad">' + o.hard + '</span>' : '<span class="mute">–</span>'; }
-        return '<tr><td>' + esc(pl.name) + '</td><td class="c">' + pair(v.says) + '</td><td class="c">' + pair(v.does) + '</td><td class="c">' + (v.lean > 0.05 ? '<span class="tag good">' + T('conciliatory') + '</span>' : v.lean < -0.05 ? '<span class="tag bad">' + T('hard-line') + '</span>' : '<span class="tag">' + T('no tilt') + '</span>') + (v.gap ? '<br><span class="tag warn">' + T('words and deeds differ') + '</span>' : '') + '</td><td>' +
-          (it ? (it.official ? '<span class="tag info">' + T('official') + '</span> ' : it.deed ? '<span class="tag">' + T('deed') + '</span> ' : '') + '<a href="' + esc(it.url) + '" target="_blank" rel="noopener" lang="' + (it.lang || '') + '">' + esc(it.title) + '</a> <span class="help">' + esc(it.domain) + ' · ' + esc(it.date) + '</span> ' + hideBtn(it.title) : '<span class="mute">' + T('none found') + '</span>') + '</td></tr>';
-      }).join('') + '</tbody></table></div><p class="help">' + T('In each pair the first number is conciliatory, the second hard-line. A stakeholder needs a weighted total of at least three before any tilt is applied. If a headline is attributed or read wrongly, press × beside it and it is left out of every count.') + (L.hiddenCount() ? ' ' + T('{0} headlines are hidden.', L.hiddenCount()) + ' <button class="btn small" data-a="unhide">' + T('Restore them') + '</button>' : '') + '</p>' : '<p class="help">' + T('No statements found yet. They appear after the newspaper feeds have been read.') + '</p>') + '</section>';
+        return '<tr><td>' + esc(pl.name) + '</td><td class="c">' + pair(v.says) + '</td><td class="c">' + pair(v.does) + '</td><td class="c">' + (v.lean > 0.05 ? '<span class="tag good">' + T('conciliatory') + '</span>' : v.lean < -0.05 ? '<span class="tag bad">' + T('hard-line') + '</span>' : '<span class="tag">' + T('no tilt') + '</span>') + (v.gap ? '<br><span class="tag warn">' + T('words and deeds differ') + '</span>' : '') + (was !== null && Math.abs(v.lean - was) >= 0.15 ? '<br><span class="help">' + (v.lean > was ? T('more conciliatory than on {0}', esc(hist0d)) : T('harder than on {0}', esc(hist0d))) + '</span>' : '') + '</td><td class="c"><select data-c="priv" data-v="' + pl.id + '" aria-label="' + esc(T('Your own assessment')) + '">' +
+          [[-2, T('much harder')], [-1, T('harder')], [0, T('as the record shows')], [1, T('more open')], [2, T('much more open')]].map(function (o) { return '<option value="' + o[0] + '"' + (pv === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></td><td>' +
+          (it ? (it.official ? '<span class="tag info">' + T('official') + '</span> ' : it.deed ? '<span class="tag">' + T('deed') + '</span> ' : '') + '<a href="' + esc(it.url) + '" target="_blank" rel="noopener" lang="' + (it.lang || '') + '">' + esc(it.title) + '</a> <span class="help">' + esc(it.domain) + (it.outlets > 1 ? ' ' + T('and {0} more', it.outlets - 1) : '') + ' · ' + esc(it.date) + '</span> ' + hideBtn(it.title) : '<span class="mute">' + T('none found') + '</span>') + '</td></tr>';
+      }).join('') + '</tbody></table></div><p class="help">' + T('In each pair the first number is conciliatory, the second hard-line. The same story in several papers is counted once. A stakeholder needs a weighted total of at least three before any tilt is applied. If a headline is attributed or read wrongly, press × beside it: it and other papers\' versions of it are left out of every count. <b>Your own assessment</b> is for what you know and the public record does not: it shifts that stakeholder\'s tilt on your device only, and is never shared, not even in a shared link.') + (L.hiddenCount() ? ' ' + T('{0} headlines are hidden.', L.hiddenCount()) + ' <button class="btn small" data-a="unhide">' + T('Restore them') + '</button>' : '') + '</p>' : '<p class="help">' + T('No statements found yet. They appear after the newspaper feeds have been read.') + '</p>') + '</section>';
 
     var off = L.officialItems();
     if (off.length) {
       var byActor = {};
       off.forEach(function (x) { (byActor[x.actor] = byActor[x.actor] || []).push(x); });
-      h += '<section class="card"><h2>' + T('On the official record') + '</h2><p class="help">' + T('What governments themselves have published, fetched from their own sites: {0}. Statements here also feed the table above. Each source is kept from its last successful fetch, so a source that is slow today still shows what it gave before.', esc(L.officialBodies.join('; '))) + '</p>' +
+      h += '<section class="card"><h2>' + T('On the official record') + '</h2><p class="help">' + T('What governments and administrations themselves have published, fetched from their own sites: {0}. Statements here also feed the table above; bills, rules and formal decisions count as deeds. Each source is kept from its last successful fetch, so a source that is slow today still shows what it gave before.', esc(L.officialBodies.join('; '))) + '</p>' +
         M.players.filter(function (pl) { return byActor[pl.id]; }).map(function (pl) {
           return '<details class="lib-item"' + (pl.id === A.pid ? ' open' : '') + '><summary>' + esc(pl.name) + ' <span class="meta">(' + byActor[pl.id].length + ')</span></summary><ul class="news">' + byActor[pl.id].slice(0, 10).map(function (x) {
             return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.title) + '</a><br><span class="help">' + esc(x.body) + ' · ' + esc(x.date) + '</span>' + (x.detail ? '<br><span class="help">' + esc(x.detail) + '</span>' : '') + '</li>';
@@ -878,6 +887,7 @@
     if (c === 'lang') { I.set(t.value); return; }
     if (c === 'horizon') { A.horizon = +t.value; cache.path = null; }
     else if (c === 'opp') A.opp = t.value;
+    else if (c === 'priv') { A.priv[v] = +t.value; build(); }
     else if (c === 'man') { A.manual[v] = t.value; render(); return; }
     else if (c === 'sel') { A.sel = t.value; if (C.moves[A.sel]) wantTopics(C.moves[A.sel].src.topic); }
     else if (c === 'live') { A.live = t.checked; build(); }

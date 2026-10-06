@@ -150,10 +150,28 @@
       PRESS.forEach(function (x) { if (x.ok) okSources += 1; });
       if (!out.length) throw new Error('no newspaper feed answered');
       out.sort(function (a, b) { return a.date < b.date ? 1 : -1; });
-      return { n: okSources, items: out.slice(0, 900) };
+      /* keep only what the tool uses: headlines that belong to a subject or to a
+         stakeholder, and the newest few in each language for the reading list */
+      var per = {}, total = out.length;
+      var kept = out.filter(function (a) {
+        a.title = a.title.slice(0, 170);
+        per[a.lang] = (per[a.lang] || 0) + 1;
+        return per[a.lang] <= 25 || useful(a);
+      });
+      return { n: okSources, total: total, items: kept.slice(0, 500) };
     });
   }
   L.pressNames = PRESS.map(function (x) { return x.name; });
+  var USE = null;
+  function useful(a) {
+    if (!USE) {
+      var parts = [];
+      Object.keys(SUB_EL).forEach(function (t) { parts.push(SUB_EL[t], SUB_TR[t]); if (TOP && TOP[t] && TOP[t].sub) parts.push(TOP[t].sub); });
+      Object.keys(VOICE).forEach(function (p) { parts.push(VOICE[p]); });
+      try { USE = new RegExp(parts.join('|'), 'i'); } catch (e) { USE = /./; }
+    }
+    return USE.test(a.title);
+  }
 
   /* ---------- official records ----------
      What governments themselves have published: statements on their own
@@ -193,6 +211,15 @@
       return get('https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=Cyprus&per_page=40&order=newest', 20000).then(function (j) {
         return (j.results || []).filter(function (r) { return /cyprus|turkey|türkiye|arms regulations/i.test(r.title || ''); }).map(function (r) { return { title: r.title, date: r.publication_date, url: r.html_url, body: ((r.agencies || [])[0] || {}).name || '', detail: r.type || '' }; });
       }); } },
+    tcpio: { actor: 'TC', body: 'Turkish Cypriot administration, Public Information Office', kind: 'statement', run: function () {
+      return Promise.all([wpPosts('pio.mfa.gov.ct.tr', 'Kıbrıs sorunu'), wpPosts('pio.mfa.gov.ct.tr', 'Cumhurbaşkanı'), wpPosts('pio.mfa.gov.ct.tr', 'Dışişleri')]).then(function (r) {
+        return r[0].concat(r[1], r[2]).filter(function (x) { return /kıbrıs sorunu|müzakere|çözüm|rum |federasyon|egemen|iki devlet|\bbm\b|holguin|guterres|garant|tanın|ambargo|izolasyon/i.test(x.title); }).map(function (x) {
+          /* statements by Ankara carried here are Ankara's */
+          if (/^(cumhurbaşkanı |tc cumhurbaşkanı |bakan )?(erdoğan|fidan|cevdet yılmaz|tc dışişleri|türkiye dışişleri|türkiye cumhurbaşkan|msb)/i.test(x.title)) x.actor = 'TR';
+          x.lang = 'tr';
+          return x;
+        });
+      }); } },
     ec: { actor: 'EU', body: 'European Commission', kind: 'statement', run: function () {
       return get('https://ec.europa.eu/commission/presscorner/api/search?language=en&text=Cyprus&pagesize=50', 20000).then(function (j) {
         return (j.docuLanguageListResources || []).filter(function (r) { return /cyprus (problem|issue|settlement|talks|reunification)|representative for cyprus|cyprus.{0,40}(türkiye|turkey)|türkiye|turkey|eastern mediterranean/i.test(r.title || ''); }).map(function (r) {
@@ -209,8 +236,8 @@
       return attempt().catch(function () { return wait(2500).then(attempt); }).then(function (items) {
         var seen = {};
         items = (items || []).filter(function (x) { var q = (x.title || '').toLowerCase().slice(0, 70); if (!x.title || seen[q]) return false; seen[q] = 1; return true; })
-          .sort(function (a, b) { return String(a.date) < String(b.date) ? 1 : -1; }).slice(0, 8)
-          .map(function (x) { return { title: x.title, date: x.date || '', url: x.url || '', body: x.body || src.body, detail: x.detail || '', actor: src.actor, kind: src.kind, src: k }; });
+          .sort(function (a, b) { return String(a.date) < String(b.date) ? 1 : -1; }).slice(0, 10)
+          .map(function (x) { return { title: x.title, date: x.date || '', url: x.url || '', body: x.body || src.body, detail: x.detail || '', actor: x.actor || src.actor, kind: src.kind, src: k, lang: x.lang || 'en' }; });
         if (!items.length && prev[k] && prev[k].items && prev[k].items.length) { out[k] = prev[k]; return; }
         out[k] = { t: Date.now(), items: items }; fresh += 1;
       }).catch(function () { if (prev[k]) out[k] = prev[k]; });
@@ -415,6 +442,40 @@
   L.hiddenCount = function () { return Object.keys(hid()).length; };
   L.unhideAll = function () { hidden = {}; try { localStorage.removeItem(HKEY); } catch (e) {} emit(); };
 
+  /* The same story carried by several papers is one story. Two headlines are
+     taken as the same story when most of their words coincide. */
+  var SPLIT;
+  try { SPLIT = new RegExp('[^\\p{L}\\p{N}]+', 'u'); } catch (e) { SPLIT = /[\s.,;:!?"'«»“”‘’()\[\]\-–—\/|]+/; }
+  function words(t) { var o = {}, n = 0; String(t || '').toLowerCase().split(SPLIT).forEach(function (w) { if (w.length > 3 && !o[w]) { o[w] = 1; n += 1; } }); o._n = n; return o; }
+  function same(a, b) {
+    if (!a._n || !b._n) return false;
+    var k, c = 0;
+    for (k in a) if (k !== '_n' && b[k]) c += 1;
+    return c / (a._n + b._n - c) >= 0.55;
+  }
+  function stories(list) {
+    var out = [];
+    list.forEach(function (a) {
+      var w = words(a.title), i;
+      for (i = 0; i < out.length; i++) if (out[i].lang === a.lang && same(out[i]._w, w)) {
+        if (out[i].outlets.indexOf(a.domain) < 0) out[i].outlets.push(a.domain);
+        return;
+      }
+      var c = {}; Object.keys(a).forEach(function (k) { c[k] = a[k]; });
+      c._w = w; c.outlets = [a.domain]; out.push(c);
+    });
+    return out;
+  }
+  /* A headline the reader has left out also removes other papers' versions of it. */
+  function leftOut(title) {
+    var h = hid();
+    if (h[hkey(title)]) return true;
+    if (!leftOut.w || leftOut.n !== Object.keys(h).length) { leftOut.w = Object.keys(h).map(words); leftOut.n = Object.keys(h).length; }
+    if (!leftOut.w.length) return false;
+    var w = words(title);
+    return leftOut.w.some(function (x) { return same(x, w); });
+  }
+
   /* Subject words for the Greek- and Turkish-language press. */
   var SUB_EL = {
     talks: 'το κυπριακό(?! (ποδόσφαιρο|μπάσκετ|πρωτάθλημα|κράτος|διαβατήριο|χαλλούμι))|του κυπριακού(?! (ποδοσφαίρου|κράτους|λαού))|στο κυπριακό(?! (ποδόσφαιρο|πρωτάθλημα))|συνομιλ|διαπραγματ|επανένωσ|ομοσπονδ|χόλγκιν|ολγκίν|άτυπη διάσκεψη|διευρυμέν|επίλυση|κοινή συνάντηση', security: 'εγγυήσ|εγγυησ|ειρηνευτικ|ουνφικυπ|ουδετερότ|αποχώρηση στρατ',
@@ -448,13 +509,14 @@
     var d = load() || {}, own = tload()[id], seen = {};
     var re = { must: def.must ? new RegExp(def.must, 'i') : null, en: def.sub ? new RegExp(def.sub, 'i') : null, el: SUB_EL[id] ? new RegExp(SUB_EL[id], 'i') : null, tr: SUB_TR[id] ? new RegExp(SUB_TR[id], 'i') : null };
     var all = (d.news || []).concat(d.feed || [], own && own.items ? own.items : [], (d.press || {}).items || []);
-    return all.filter(function (a) {
+    all = all.filter(function (a) {
       var k = (a.title || '').toLowerCase().replace(/\s+/g, ' ').slice(0, 60), on = re[a.lang || 'en'];
-      if (!a.title || seen[k] || hid()[hkey(a.title)] || !on || !on.test(a.title)) return false;
+      if (!a.title || seen[k] || leftOut(a.title) || !on || !on.test(a.title)) return false;
       if ((!a.cy || def.own) && re.must && !re.must.test(a.title)) return false;
       seen[k] = 1; return true;
     }).map(function (a) { return { title: a.title, url: a.url, domain: a.domain, date: a.date, lang: a.lang || 'en', said: SAID_ANY.test(a.title), meet: MEET_ANY.test(a.title) }; })
       .sort(function (x, y) { return x.date < y.date ? 1 : x.date > y.date ? -1 : 0; });
+    return stories(all).map(function (a) { delete a._w; return a; });
   };
 
   /* ---------- what governments are saying ----------
@@ -472,48 +534,105 @@
     RU: '\\bputin\\b|πούτιν|lavrov|λαβρόφ|zakharova|ζαχάροβα|kremlin|κρεμλίν|russian (foreign ministry|ambassador)',
     REG: 'netanyahu|νετανιάχου|\\bsisi\\b|σίσι|herzog|bin zayed|israeli (prime minister|foreign minister)|egyptian (president|foreign minister)|\\bmodi\\b'
   };
-  var SOFT = /\b(talks?|dialogue|ready|open to|agree|cooperat|welcom|supports?|window|solution|peace|resum|bridge|trust|progress|constructive|commit|meets?|meeting)\b|διάλογ|συνομιλ|έτοιμ|λύση|συνεργασ|καλωσόρι|στήριξ|πρόοδο|ειρήν|επανέναρξ|εποικοδομ|συνάντησ|diyalog|görüşme|hazır|çözüm|iş ?birliği|destek|barış|ilerleme|yapıcı|uzlaş/i;
+  var SOFT = /\b(talks?|dialogue|ready|open to|agree\w*|cooperat\w*|welcom\w*|support\w*|window|solution|settlement|peace|resum\w*|bridge|trust|progress|constructive|commit\w*|meets?|meeting)\b|διάλογ|συνομιλ|έτοιμ|λύση|συνεργασ|καλωσόρι|στήριξ|πρόοδο|ειρήν|επανέναρξ|εποικοδομ|συνάντησ|diyalog|görüşme|hazır|çözüm|iş ?birliği|destek|barış|ilerleme|yapıcı|uzlaş/i;
   var HARD = /\b(rejects?|warns?|threat|condemn|illegal|never|two-state|sovereign equality|accus|slams?|violat|provoc|occup|red line|not accept|refus|blames?|sanction)|απορρίπτ|απέρριψ|προειδοπ|απειλ|καταδικ|παράνομ|ποτέ|δύο κράτ|κυριαρχική ισότητα|κατηγορ|παραβίασ|πρόκλησ|προκλητικ|κατοχ|κόκκινη γραμμή|δεν δεχ|tanınması|tanınmalı|recognition of the|αναγνώριση του ψευδοκράτους|reddet|uyardı|tehdit|kınadı|kınıyor|yasa dışı|asla|iki devlet|egemen eşit|suçla|ihlal|provokasyon|işgal|kırmızı çizgi|kabul etme/i;
   /* Only statements about the Cyprus question itself are counted. */
   var CORE = /cyprus (problem|issue|talks|settlement|solution)|negotiat|two-state|federa|sovereign|recogni|reunif|guarant|troops|occup|turkish cypriot|greek cypriot|northern cyprus|το κυπριακό|του κυπριακού|στο κυπριακό|συνομιλ|διαπραγματ|δύο κράτ|ομοσπονδ|κατοχ|εγγυήσ|επανένωσ|τουρκοκύπρι|κοινή συνάντηση|kıbrıs sorunu|müzakere|iki devlet|federasyon|egemen eşit|tanınma|garanti|kıbrıs türk|rum lider|çözüm/i;
   /* Deeds: a headline that reports an act, not a remark. Deeds count double. */
-  var ACT = /\b(signs?|signed|deploys?|deployed|opens?|opened|closes?|closed|sends?|sent|withdraws?|withdrew|votes?|voted|approves?|approved|blocks?|blocked|imposes?|imposed|lifts?|lifted|launch(es|ed)?|drills?|exercise|seizes?|seized|arrests?|arrested|inaugurat\w*|allocat\w*|adopts?|adopted|ratif\w*|extends?|suspends?|cancels?|violat\w*|builds?|expands?)\b|υπέγραψ|υπογράφ|ανέπτυξ|άνοιξ|ανοίγει|έκλεισ|απέστειλ|αποσύρ|ψήφισ|ενέκριν|μπλόκαρ|επέβαλ|ήρε |ξεκίνησ|άσκηση|συνέλαβ|εγκαινί|παραβίασ|imzala|konuşlandır|açtı|açıldı|açılıyor|kapattı|gönderdi|çekti|oyladı|onayladı|engelledi|uyguladı|kaldırdı|başlattı|tatbikat|tutukla|ihlal etti/i;
-  var ACT_SOFT = /\b(signs?|signed|opens?|opened|withdraws?|withdrew|lifts?|lifted|approves?|approved|inaugurat\w*|ratif\w*|allocat\w*)\b|υπέγραψ|υπογράφ|άνοιξ|ανοίγει|αποσύρ|ήρε |ενέκριν|εγκαινί|imzala|açtı|açıldı|açılıyor|çekti|kaldırdı|onayladı/i;
-  var ACT_HARD = /\b(deploys?|deployed|drills?|exercise|blocks?|blocked|violat\w*|imposes?|imposed|seizes?|seized|arrests?|arrested|suspends?|cancels?|closes?|closed)\b|ανέπτυξ|άσκηση|παραβίασ|μπλόκαρ|επέβαλ|συνέλαβ|έκλεισ|konuşlandır|tatbikat|engelledi|ihlal etti|tutukla|kapattı/i;
+  var ACT = /\b(signs?|signed|deploys?|deployed|opens?|opened|closes?|closed|sends?|sent|withdraws?|withdrew|votes?|voted|approves?|approved|blocks?|blocked|imposes?|imposed|lifts?|lifted|launch(es|ed)?|drills?|exercise|seizes?|seized|arrests?|arrested|inaugurat\w*|allocat\w*|adopts?|adopted|ratif\w*|extends?|suspends?|cancels?|violat\w*|builds?|expands?|issues?|issued|obstruct\w*|halts?|halted|designat\w*|appoints?|appointed|delivers?|delivered|buys?|bought|purchas\w*|sells?|sold|advances?|harass\w*|shadow\w*|dispatch\w*)\b|navtex|υπέγραψ|υπογράφ|ανέπτυξ|άνοιξ|ανοίγει|έκλεισ|απέστειλ|αποσύρ|ψήφισ|ενέκριν|μπλόκαρ|μπλοκάρ|επέβαλ|ήρε |ξεκίνησ|άσκηση|συνέλαβ|εγκαινί|παραβίασ|παρεμπόδισ|εξέδωσε|βγάζει|διόρισ|αγόρασ|παρέλαβ|imzala|konuşlandır|açtı|açıldı|açılıyor|kapattı|gönderdi|çekti|oyladı|onayladı|engelledi|uyguladı|kaldırdı|başlattı|tatbikat|tutukla|ihlal etti|ilan etti|atadı|satın al|teslim/i;
+  var ACT_SOFT = /\b(signs?|signed|opens?|opened|withdraws?|withdrew|lifts?|lifted|approves?|approved|inaugurat\w*|ratif\w*|allocat\w*|designat\w*|appoints?|appointed)\b|υπέγραψ|υπογράφ|άνοιξ|ανοίγει|αποσύρ|ήρε |ενέκριν|εγκαινί|διόρισ|imzala|açtı|açıldı|açılıyor|çekti|kaldırdı|onayladı|atadı/i;
+  var ACT_HARD = /\b(deploys?|deployed|drills?|exercise|blocks?|blocked|violat\w*|imposes?|imposed|seizes?|seized|arrests?|arrested|suspends?|cancels?|closes?|closed|obstruct\w*|halts?|halted|harass\w*|shadow\w*|dispatch\w*)\b|navtex|ανέπτυξ|άσκηση|παραβίασ|μπλόκαρ|μπλοκάρ|επέβαλ|συνέλαβ|έκλεισ|παρεμπόδισ|βγάζει|konuşlandır|tatbikat|engelledi|ihlal etti|tutukla|kapattı/i;
+  /* A state can act without a leader being named. */
+  var STATE = {
+    ROC: 'nicosia|cyprus government|republic of cyprus|λευκωσία|κυπριακή δημοκρατία|κυπριακής δημοκρατίας|εθνική φρουρά|rum yönetimi|güney kıbrıs',
+    TC: 'turkish cypriot (authorities|side|police|leadership)|ψευδοκράτος|κατοχικ(ό καθεστώς|ές αρχές)|\\bkktc\\b',
+    TR: 'turkey|türkiye|turkish (navy|warships?|army|forces|soldiers|military|government)|ankara|τουρκία|τούρκοι στρατιώτες|τουρκικ(ά πολεμικά|ό ναυτικό|ή navtex)|άγκυρα|oruc reis|türk (donanma|asker)',
+    GR: 'greece|athens|ελλάδα|αθήνα|yunanistan',
+    EU: 'european commission|commission (designat|decid|propos)|brussels|κομισιόν|βρυξέλλες|ab komisyon',
+    US: 'washington|pentagon|u\\.s\\. (congress|senate|house)|congress|ουάσιγκτον|ηπα|\\babd\\b',
+    UK: 'britain|british (government|forces|bases)|βρετανία|ingiltere',
+    UN: 'unficyp|united nations|un security council|ουνφικυπ|οηε|birleşmiş milletler',
+    RU: 'russia|moscow|ρωσία|μόσχα|rusya',
+    REG: 'israel|egypt|ισραήλ|αίγυπτος|israil|mısır'
+  };
+  var QUOTE = /^[^:]{0,70}:\s|[«“"]/;
   L.voices = function () {
-    var d = load() || {}, out = {}, res = {}, seen = {};
+    var d = load() || {}, out = {}, res = {}, st = {}, seen = {};
     var all = (d.news || []).concat(d.feed || [], (d.press || {}).items || []);
     Object.keys(tload()).forEach(function (t) { all = all.concat((topics[t] || {}).items || []); });
-    Object.keys(VOICE).forEach(function (pid) { res[pid] = new RegExp(VOICE[pid], 'i'); out[pid] = { says: { soft: 0, hard: 0 }, does: { soft: 0, hard: 0 }, n: 0, w: 0, score: 0, items: [] }; });
+    all = stories(all.filter(function (a) { return a.title && !leftOut(a.title); }));
+    var off = L.officialItems(), hasOfficial = {};
+    off.forEach(function (a) { if (a.kind !== 'record') hasOfficial[a.actor] = 1; });
+    Object.keys(VOICE).forEach(function (pid) {
+      res[pid] = new RegExp(VOICE[pid], 'i'); st[pid] = new RegExp(STATE[pid], 'i');
+      out[pid] = { says: { soft: 0, hard: 0 }, does: { soft: 0, hard: 0 }, n: 0, w: 0, score: 0, items: [], official: !!hasOfficial[pid] };
+    });
+    var both = {};
+    Object.keys(VOICE).forEach(function (pid) { both[pid] = new RegExp(VOICE[pid] + '|' + STATE[pid], 'ig'); });
+    /* who acted: the one named nearest before the verb, else the first named after it */
+    function doer(t) {
+      var m = ACT.exec(t), at = m ? m.index : 0, before = null, bi = -1, after = null, ai = 1e9;
+      Object.keys(both).forEach(function (q) {
+        var re = both[q], x; re.lastIndex = 0;
+        while ((x = re.exec(t))) { if (x.index <= at && x.index > bi) { bi = x.index; before = q; } if (x.index > at && x.index < ai) { ai = x.index; after = q; } if (!x[0]) re.lastIndex += 1; }
+      });
+      return before || after;
+    }
+    if (!L._subj) {
+      var parts = [];
+      Object.keys(SUB_EL).forEach(function (t) { parts.push(SUB_EL[t], SUB_TR[t]); if (TOP && TOP[t] && TOP[t].sub) parts.push(TOP[t].sub); });
+      try { L._subj = new RegExp(parts.join('|'), 'i'); } catch (e) { L._subj = /./; }
+    }
     /* a headline belongs to whoever is named first in it */
-    function speaker(t) { var best = null, at = 1e9; Object.keys(res).forEach(function (q) { var m = res[q].exec(t); if (m && m.index < at) { at = m.index; best = q; } }); return best; }
-    function add(pid, a, weight, official) {
+    function first(set, t) { var best = null, at = 1e9; Object.keys(set).forEach(function (q) { var m = set[q].exec(t); if (m && m.index < at) { at = m.index; best = q; } }); return best; }
+    function add(pid, a, kind) {
       var k = pid + hkey(a.title), o = out[pid];
-      if (!o || seen[k] || hid()[hkey(a.title)]) return;
-      var text = a.title + ' ' + (a.detail || ''), deed = !official && ACT.test(a.title);
+      if (!o || seen[k]) return;
+      var text = a.title + ' ' + (a.detail || ''), deed = kind === 'deed' || kind === 'record';
       var hard = deed ? ACT_HARD.test(a.title) || HARD.test(text) : HARD.test(text), soft = deed ? ACT_SOFT.test(a.title) || SOFT.test(text) : SOFT.test(text);
-      if (!hard && !soft && !deed && !official && !SAID_ANY.test(a.title)) return;
+      if (!hard && !soft && kind === 'word' && !SAID_ANY.test(a.title)) return;
       seen[k] = 1;
-      var tone = hard ? 'hard' : soft ? 'soft' : 'plain', w = deed ? 2 : weight;
+      var tone = hard ? 'hard' : soft ? 'soft' : 'plain';
+      /* weight: deeds 2; a government's own statement 2; a leader quoted directly counts the same where the government publishes nothing we can read; anything else 1; +0.5 when several papers carry it */
+      var w = deed || kind === 'official' ? 2 : (!o.official && QUOTE.test(a.title) ? 2 : 1);
+      if ((a.outlets || []).length > 1) w += 0.5;
       if (tone !== 'plain') { (deed ? o.does : o.says)[tone] += 1; o.w += w; o.score += tone === 'soft' ? w : -w; }
       o.n += 1;
-      o.items.push({ title: a.title, url: a.url, domain: a.domain || a.body, date: a.date, lang: a.lang || 'en', tone: tone, deed: deed, official: !!official });
+      o.items.push({ title: a.title, url: a.url, domain: a.domain || a.body, date: a.date, lang: a.lang || 'en', tone: tone, deed: deed, official: kind === 'official' || kind === 'record', outlets: (a.outlets || []).length });
     }
-    var CYMARK = /cypr|kıbrıs|κυπρ|κύπρ|kktc|trnc|τ\/κ|ε\/κ|turkish cypriot|rum (lider|yönetim)|τουρκοκύπρι|ψευδοκράτ/i;
+    var CYMARK = /cypr|kıbrıs|κυπρ|κύπρ|kktc|trnc|τ\/κ|ε\/κ|turkish cypriot|rum (lider|yönetim)|τουρκοκύπρι|ψευδοκράτ|κατεχόμεν|νεκρή ζών|buffer zone|ara bölge/i;
     all.forEach(function (a) {
-      if (!a.title || !CORE.test(a.title)) return;
-      var sp = speaker(a.title);
-      if (sp && (sp === 'ROC' || sp === 'TC' || CYMARK.test(a.title))) add(sp, a, 1, false);
+      var act = ACT.test(a.title), about = CYMARK.test(a.title);
+      if (act && about && !/visitors.? book|βιβλίο επισκεπτών|wreath|στεφάν|çelenk|anniversary|επέτειο|yıl ?dönümü|condolenc|συλλυπητήρι|taziye/i.test(a.title) && (CORE.test(a.title) || L._subj.test(a.title))) { var who = doer(a.title); if (who) { add(who, a, 'deed'); return; } }
+      if (!CORE.test(a.title)) return;
+      var sp = first(res, a.title);
+      if (sp && (sp === 'ROC' || sp === 'TC' || about)) add(sp, a, 'word');
     });
-    L.officialItems().forEach(function (a) { if (a.kind !== 'record' && CYQ.test(a.title + ' ' + a.detail)) add(a.actor, a, 2, true); });
+    off.forEach(function (a) {
+      if (a.kind === 'record') { if (/cyprus|turk|türk|mediterranean/i.test(a.title)) add(a.actor, a, 'record'); }
+      else if (a.actor === 'TC' || a.actor === 'TR' || CYQ.test(a.title + ' ' + a.detail)) add(a.actor, a, 'official');
+    });
     Object.keys(out).forEach(function (pid) {
       var o = out[pid];
-      o.items.sort(function (x, y) { return (y.official - x.official) || (x.date < y.date ? 1 : -1); });
+      o.items.sort(function (x, y) { return (y.deed - x.deed) || (y.official - x.official) || (x.date < y.date ? 1 : -1); });
       o.lean = o.w >= 3 ? o.score / (o.w + 3) : 0;
       var s = o.says.soft - o.says.hard, dd = o.does.soft - o.does.hard;
       o.gap = o.says.soft + o.says.hard >= 2 && o.does.soft + o.does.hard >= 2 && s * dd < 0;
     });
     return out;
+  };
+
+  /* A weekly note of each stakeholder's tilt, kept on the device, so that the
+     direction of travel can be shown over time. */
+  var HISTKEY = 'cy.hist.v1';
+  L.history = function () { try { return JSON.parse(localStorage.getItem(HISTKEY) || '{}') || {}; } catch (e) { return {}; } };
+  L.remember = function (v) {
+    var h = L.history(), wk = iso(new Date()).slice(0, 8) + (new Date().getDate() <= 7 ? '1' : new Date().getDate() <= 14 ? '2' : new Date().getDate() <= 21 ? '3' : '4');
+    var any = Object.keys(v).some(function (p) { return v[p].w >= 3; });
+    if (!any) return;
+    h[wk] = {}; Object.keys(v).forEach(function (p) { h[wk][p] = +v[p].lean.toFixed(2); });
+    var keys = Object.keys(h).sort(); while (keys.length > 26) delete h[keys.shift()];
+    try { localStorage.setItem(HISTKEY, JSON.stringify(h)); } catch (e) {}
   };
 
   /* Convert raw feeds into small, capped, transparent adjustments of the model.

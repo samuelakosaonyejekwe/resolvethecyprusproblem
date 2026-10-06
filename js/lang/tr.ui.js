@@ -549,6 +549,18 @@
     'official': 'resmî',
     'words and deeds differ': 'sözler ve eylemler ayrışıyor',
     '{0} headlines are hidden.': '{0} başlık gizli.',
-    '{0} this week, {1} a week before': '{0} bu hafta, {1} bir hafta önce'
+    '{0} this week, {1} a week before': '{0} bu hafta, {1} bir hafta önce',
+    "In each pair the first number is conciliatory, the second hard-line. The same story in several papers is counted once. A stakeholder needs a weighted total of at least three before any tilt is applied. If a headline is attributed or read wrongly, press × beside it: it and other papers' versions of it are left out of every count. <b>Your own assessment</b> is for what you know and the public record does not: it shifts that stakeholder's tilt on your device only, and is never shared, not even in a shared link.": "Her çiftte ilk sayı uzlaşmacı, ikincisi sert açıklamaları gösterir. Birden fazla gazetede yer alan aynı haber bir kez sayılır. Herhangi bir eğilim uygulanması için bir paydaşın ağırlıklı toplamının en az üç olması gerekir. Bir başlık yanlış tarafa atfedilmiş ya da yanlış okunmuşsa yanındaki × işaretine basın: o başlık ve diğer gazetelerdeki sürümleri tüm sayımların dışında bırakılır. <b>Kendi değerlendirmeniz</b>, sizin bildiğiniz ama kamuya açık kayıtlarda görünmeyenler içindir: ilgili paydaşın eğilimini yalnızca sizin cihazınızda değiştirir ve paylaşılan bağlantılar dahil hiçbir şekilde paylaşılmaz.",
+    "What governments and administrations themselves have published, fetched from their own sites: {0}. Statements here also feed the table above; bills, rules and formal decisions count as deeds. Each source is kept from its last successful fetch, so a source that is slow today still shows what it gave before.": "Hükûmetlerin ve yönetimlerin kendi sitelerinden alınan, bizzat yayımladıkları içerikler: {0}. Buradaki açıklamalar yukarıdaki tabloyu da besler; yasa tasarıları, düzenlemeler ve resmî kararlar eylem sayılır. Her kaynak son başarılı alımındaki hâliyle saklanır; böylece bugün yavaş kalan bir kaynak daha önce verdiklerini göstermeye devam eder.",
+    "Your own assessment": "Kendi değerlendirmeniz",
+    "and {0} more": "ve {0} kaynak daha",
+    "as the record shows": "kayıtlardaki gibi",
+    "harder": "daha sert",
+    "harder than on {0}": "{0} tarihine göre daha sert",
+    "more conciliatory than on {0}": "{0} tarihine göre daha uzlaşmacı",
+    "more open": "daha açık",
+    "much harder": "çok daha sert",
+    "much more open": "çok daha açık",
+    "{0} stories on this subject in the last 21 days, from newspapers and the news index. The same story in several papers is counted once. Headlines are shown as published, those in your language first.": "Son 21 günde bu konuda, gazetelerden ve haber dizininden {0} haber. Birden fazla gazetede yer alan aynı haber bir kez sayılır. Başlıklar yayımlandığı hâliyle, önce sizin dilinizde olanlar gösterilir."
   };
 })(typeof self !== 'undefined' ? self : this);
