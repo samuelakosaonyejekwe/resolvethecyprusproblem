@@ -91,7 +91,7 @@
        slightly better chance of working; one whose subject is fading, slightly
        worse. */
     if (A.live && !A.sigOff.momentum) m.moves.forEach(function (mv) {
-      var k = L.momentum(L.topic(mv.topic)), ps = mv.ps === undefined ? 0.8 : mv.ps;
+      var ag = L.agenda(mv.topic), k = ag ? ag.k : null, ps = mv.ps === undefined ? 0.8 : mv.ps;
       if (k === 'rising') mv.ps = Math.min(0.95, ps + 0.05);
       else if (k === 'fading') mv.ps = Math.max(0.05, ps - 0.03);
     });
@@ -101,35 +101,35 @@
 
   /* ---------- live evidence on the subject of a move ---------- */
   function wantTopics(first) {
-    var list = [], seen = {};
-    function add(t) { if (t && M.topics[t] && !seen[t]) { seen[t] = 1; list.push({ id: t, q: M.topics[t].q, must: M.topics[t].must, sub: M.topics[t].sub }); } }
-    if (first) add(first);
-    if (A.pid) M.moves.forEach(function (m) { if (m.p === A.pid) add(m.topic); });
-    M.moves.forEach(function (m) { add(m.topic); });
-    if (first) L.want(list.slice(0, 1), true);
+    var list = [];
+    function add(t) { if (t && M.topics[t]) list.push({ id: t, q: M.topics[t].q, must: M.topics[t].must, sub: M.topics[t].sub }); }
+    if (first && M.topics[first] && M.topics[first].own) { add(first); L.want(list, true); list = []; }
+    Object.keys(M.topics).forEach(function (t) { if (M.topics[t].own) add(t); });
     L.want(list, false);
   }
-  function momentumName(k) { return { rising: T('rising'), steady: T('steady'), fading: T('fading'), quiet: T('quiet') }[k] || ''; }
+  function momentumName(k) { return { rising: T('rising'), steady: T('steady'), fading: T('fading') }[k] || ''; }
   function momentumTag(k) { return '<span class="tag ' + (k === 'rising' ? 'good' : k === 'steady' ? 'info' : 'warn') + '">' + momentumName(k) + '</span>'; }
   function evidence(m) {
     if (m.hold || !m.src.topic) return '';
-    var tp = M.topics[m.src.topic], o = L.topic(m.src.topic), k = L.momentum(o), base = M0move(m.id);
-    var h = '<section class="card"><h3>' + T('Live evidence: {0}', esc(tp.name)) + '</h3><p class="help">' + T('What the world\'s news is carrying on the subject of this move right now, fetched by your device from the GDELT news index and refreshed every six hours.') + '</p>';
-    if (!o) return h + '<p class="help">' + (navigator.onLine === false ? T('You are offline and no evidence on this subject has been saved yet.') : L.failed(m.src.topic) ? T('The news service did not answer just now. The app will try again in a few minutes; until then the result is unchanged.') : T('Fetching current coverage… it appears here in a few seconds.')) + '</p></section>';
-    function items(f, n) { return o.items.filter(f).slice(0, n).map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.title) + '</a> <span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + '</span></li>'; }).join(''); }
+    var id = m.src.topic, tp = M.topics[id], ag = L.agenda(id), rp = L.reports(id, tp), base = M0move(m.id), d = L.get() || {};
+    var h = '<section class="card"><h3>' + T('Live evidence: {0}', esc(tp.name)) + '</h3><p class="help">' + T('What the world is paying attention to on the subject of this move right now: how many people a day are reading the reference articles on it (Wikimedia), and the current headlines on it (GDELT news index). Fetched by your device and renewed every few hours.') + '</p>';
+    if (!ag && !rp.length && !d.attn && !d.news) return h + '<p class="help">' + (navigator.onLine === false ? T('You are offline and no evidence on this subject has been saved yet.') : T('Fetching current evidence… it appears here in a few seconds.')) + '</p></section>';
+    if (ag) {
+      h += '<div class="kv"><div><b>' + ag.r7.toLocaleString(locale()) + '</b><span>' + T('readers a day, last 7 days') + '</span></div><div><b>' + ag.r28.toLocaleString(locale()) + '</b><span>' + T('readers a day, 4 weeks before') + '</span></div><div><b class="' + cls(ag.ratio - 1, 0.2) + '">' + sgn((ag.ratio - 1) * 100, 0) + '%</b><span>' + T('change in attention') + ' ' + momentumTag(ag.k) + '</span></div></div>' + spark(ag.series, 'var(--info)');
+      var eff = !A.live || A.sigOff.momentum ? T('Live adjustment is switched off, so the chance of success is unchanged.') :
+        ag.k === 'rising' ? T('Attention to this subject is up by a quarter or more, so decision-makers have reason and cover to act: chance of success raised from {0} to {1}.', pct(base), pct(m.ps)) :
+        ag.k === 'fading' ? T('Attention to this subject has dropped by a fifth or more, so an initiative has less to carry it: chance of success lowered from {0} to {1}.', pct(base), pct(m.ps)) :
+        T('Attention is steady: chance of success unchanged at {0}.', pct(m.ps));
+      h += '<p style="margin-top:8px"><b>' + T('Effect on the result:') + '</b> ' + eff + '</p>';
+    } else h += '<p class="help">' + T('Readership figures for this subject are not available yet; the chance of success is unchanged.') + '</p>';
+    function items(f, n) { return rp.filter(f).slice(0, n).map(function (a) { return '<li><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.title) + '</a> <span class="help">' + esc(a.domain) + ' · ' + esc(a.date) + '</span></li>'; }).join(''); }
     var said = items(function (a) { return a.said; }, 3), meet = items(function (a) { return a.meet && !a.said; }, 3), rest = items(function (a) { return !a.said && !a.meet; }, 3);
-    h += '<div class="kv"><div><b>' + o.n21 + '</b><span>' + T('reports in 21 days') + '</span></div><div><b>' + o.n7 + '</b><span>' + T('in the last 7 days') + '</span></div><div><b style="font-size:1rem">' + momentumTag(k) + '</b><span>' + T('place on the agenda') + '</span></div></div>';
-    var eff = !A.live || A.sigOff.momentum ? T('Live adjustment is switched off, so the chance of success is unchanged.') :
-      k === 'rising' ? T('The subject is climbing the agenda, so decision-makers have attention and cover to act: chance of success raised from {0} to {1}.', pct(base), pct(m.ps)) :
-      k === 'steady' ? T('Coverage is steady: chance of success unchanged at {0}.', pct(m.ps)) :
-      k === 'quiet' ? T('There is little or no current coverage, which says nothing either way: chance of success unchanged at {0}.', pct(m.ps)) :
-      T('The subject is slipping off the agenda, so an initiative has less to carry it: chance of success lowered from {0} to {1}.', pct(base), pct(m.ps));
-    h += '<p style="margin-top:8px"><b>' + T('Effect on the result:') + '</b> ' + eff + '</p>';
     if (said) h += '<h3>' + T('What is being said') + '</h3><ul class="news">' + said + '</ul>';
     if (meet) h += '<h3>' + T('Meetings and conferences') + '</h3><ul class="news">' + meet + '</ul>';
     if (rest) h += '<h3>' + T('Other current reports') + '</h3><ul class="news">' + rest + '</ul>';
-    if (!said && !meet && !rest) h += '<p class="help">' + T('No reports on this subject in the last 21 days.') + '</p>';
-    return h + '<p class="help">' + T('Fetched {0}. Headlines are in English, as published.', new Date(o.t).toLocaleString(locale())) + '</p></section>';
+    if (!rp.length) h += '<p class="help">' + (tp.own && L.pending(id) ? T('Looking for current headlines on this subject…') : T('No headlines plainly on this subject in the last 21 days.')) + '</p>';
+    else h += '<p class="help">' + T('{0} headlines on this subject in the last 21 days. Headlines are in English, as published.', rp.length) + '</p>';
+    return h + '</section>';
   }
   function M0move(id) { var r = M.moves.filter(function (x) { return x.id === id; })[0]; return r && r.ps !== undefined ? r.ps : 0.8; }
   function locale() { return I18N.lang === 'en' ? 'en-GB' : I18N.lang; }
@@ -585,7 +585,6 @@
 
   /* ---------- live ---------- */
   function viewLive() {
-    var got0 = Object.keys(M.topics).filter(function (t) { return L.topic(t); });
     var d = L.get() || {}, st = d.status || {}, loc = I.lang === 'en' ? undefined : I.lang;
     var h = intro(T('Live intelligence'), T('Real, current data from public sources, so the board starts from today\'s situation rather than a fixed snapshot. Your device fetches it directly whenever the app is open and online, and keeps the last copy for offline use.'), [
       T('<b>Sources</b> shows where each kind of data comes from and whether the last fetch worked.'),
@@ -594,7 +593,7 @@
       '<section class="card"><div class="row between"><h2>' + T('Sources') + '</h2><button class="btn accent small" data-a="refresh"' + (L.busy ? ' disabled' : '') + '>' + (L.busy ? T('Updating…') : T('Refresh now')) + '</button></div>' +
       '<p class="help">' + T('Nothing passes through a private server: this device asks each source directly.') + '</p>' +
       '<div class="tblwrap"><table><thead><tr><th>' + T('Source') + '</th><th>' + T('Provides') + '</th><th>' + T('Status') + '</th></tr></thead><tbody>' + L.sources().map(function (s) {
-        var x = s.id === 'topics' ? (got0.length ? { ok: true, t: Math.max.apply(null, got0.map(function (t) { return L.topic(t).t; })) } : null) : st[s.id];
+        var x = st[s.id];
         return '<tr><td><a href="' + s.url + '" target="_blank" rel="noopener">' + esc(s.name) + '</a></td><td>' + esc(s.what) + '</td><td>' + (!x ? '<span class="tag">' + T('not yet fetched') + '</span>' : x.ok ? '<span class="tag good">' + T('ok') + '</span> ' + new Date(x.t).toLocaleString(loc) : '<span class="tag warn">' + T('unreachable') + '</span> ' + (x.kept ? T('showing last saved copy') : T('no data'))) + '</td></tr>';
       }).join('') + '</tbody></table></div></section>';
 
@@ -606,13 +605,13 @@
     }).join('') + '</tbody></table></div><p class="help">' + T('Adjustments are deliberately small and capped. They move the starting position of a new game; a game in progress is replayed from the adjusted start.') + '</p>' : '<p class="help">' + T('No signals yet. They appear after the first successful refresh.') + '</p>';
     h += '</section>';
 
-    var tids = Object.keys(M.topics), got = tids.filter(function (t) { return L.topic(t); });
-    h += '<section class="card"><div class="row between"><h2>' + T('Evidence by subject') + '</h2><label class="row help"><input type="checkbox" data-c="sig" data-v="momentum"' + (A.sigOff.momentum ? '' : ' checked') + (A.live ? '' : ' disabled') + '> ' + T('Let the agenda adjust each move') + '</label></div>' +
-      '<p class="help">' + T('Every move belongs to a subject. For each subject your device fetches the last 21 days of world coverage, one subject every few seconds, and renews it every six hours. A subject that is rising raises the chance of success of its moves by 5 points; one that is fading lowers it by 3; a steady or quiet one changes nothing. Only headlines plainly about the subject are counted. The same evidence, with the statements and meetings found, is shown beside every move on the board. {0} of {1} subjects fetched so far.', got.length, tids.length) + '</p>' +
-      '<div class="tblwrap"><table><thead><tr><th>' + T('Subject') + '</th><th>' + T('Reports, 21 days') + '</th><th>' + T('Last 7 days') + '</th><th>' + T('Statements') + '</th><th>' + T('Meetings') + '</th><th>' + T('Agenda') + '</th></tr></thead><tbody>' +
+    var tids = Object.keys(M.topics);
+    h += '<section class="card"><div class="row between"><h2>' + T('Evidence by subject') + '</h2><label class="row help"><input type="checkbox" data-c="sig" data-v="momentum"' + (A.sigOff.momentum ? '' : ' checked') + (A.live ? '' : ' disabled') + '> ' + T('Let attention adjust each move') + '</label></div>' +
+      '<p class="help">' + T('Every move belongs to a subject. For each subject the tool measures world attention by the number of people reading its reference articles on Wikipedia each day, comparing the last 7 days with the 4 weeks before, and sorts the current headlines by subject. When attention to a subject is up by a quarter or more, the chance of success of its moves rises by 5 points; when it is down by a fifth or more, it falls by 3; otherwise nothing changes. The same evidence, with the statements and meetings found, is shown beside every move on the board.') + '</p>' +
+      '<div class="tblwrap"><table><thead><tr><th>' + T('Subject') + '</th><th>' + T('Readers a day, last 7 days') + '</th><th>' + T('4 weeks before') + '</th><th>' + T('Change') + '</th><th>' + T('Headlines, 21 days') + '</th><th>' + T('Attention') + '</th></tr></thead><tbody>' +
       tids.map(function (t) {
-        var o = L.topic(t);
-        return '<tr><td>' + esc(M.topics[t].name) + '</td>' + (o ? '<td class="c">' + o.n21 + '</td><td class="c">' + o.n7 + '</td><td class="c">' + (o.said || 0) + '</td><td class="c">' + (o.meet || 0) + '</td><td class="c">' + momentumTag(L.momentum(o)) + '</td>' : '<td class="c mute" colspan="5">' + (L.pending(t) ? T('in the queue') : L.failed(t) ? T('no answer yet, will retry') : T('not yet fetched')) + '</td>') + '</tr>';
+        var ag = L.agenda(t), n = L.reports(t, M.topics[t]).length;
+        return '<tr><td>' + esc(M.topics[t].name) + '</td>' + (ag ? '<td class="c">' + ag.r7.toLocaleString(loc) + '</td><td class="c">' + ag.r28.toLocaleString(loc) + '</td><td class="c ' + cls(ag.ratio - 1, 0.2) + '">' + sgn((ag.ratio - 1) * 100, 0) + '%</td>' : '<td class="c mute" colspan="3">' + T('not yet fetched') + '</td>') + '<td class="c">' + n + '</td><td class="c">' + (ag ? momentumTag(ag.k) : '') + '</td></tr>';
       }).join('') + '</tbody></table></div></section>';
 
     h += '<div class="grid two">';
@@ -871,7 +870,9 @@
   /* ---------- live refresh loop ---------- */
   function refresh(manual) {
     if (navigator.onLine === false) { if (manual) toast(T('You are offline. Showing the last saved data.')); return; }
-    L.refresh(M.precedents.map(function (p) { return p.wiki; }).filter(Boolean)).then(function () { if (manual) toast(T('Live data updated.')); });
+    var pv = {};
+    Object.keys(M.topics).forEach(function (t) { pv[t] = M.topics[t].pv || []; });
+    L.refresh(M.precedents.map(function (p) { return p.wiki; }).filter(Boolean), pv).then(function () { if (manual) toast(T('Live data updated.')); });
     wantTopics(A.sel && C.moves[A.sel] ? C.moves[A.sel].src.topic : null);
   }
   /* Evidence arriving for a subject changes the odds of its moves: recalculate,
@@ -889,8 +890,12 @@
   var lastSig = '';
   L.onChange(function (d, busy) {
     net();
-    var sig = JSON.stringify((d && d.signals) || []);
-    if (sig !== lastSig) { lastSig = sig; if (C) { build(); if (A.tab === 'live' || (A.tab === 'board' && !A.sel)) render(); } }
+    var sig = JSON.stringify((d && d.signals) || []) + Object.keys((d && d.attn) || {}).map(function (t) { return t + ((L.agenda(t) || {}).k || ''); }).join(',') + ((d && d.feed) || []).length;
+    if (sig !== lastSig) {
+      lastSig = sig;
+      var el = document.activeElement, busyEl = el && (el.tagName === 'SELECT' || el.tagName === 'INPUT');
+      if (C) { build(); if (!busyEl && (A.tab === 'live' || A.tab === 'board' || A.tab === 'analysis')) render(); }
+    }
     else if (A.tab === 'live') render();
   });
   window.addEventListener('online', function () { net(); refresh(); });

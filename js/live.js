@@ -44,13 +44,13 @@
   var GQ2 = encodeURIComponent('cyprus (turkish OR reunification OR UNFICYP OR talks) sourcelang:english');
 
   function articles(q) {
-    return get('https://api.gdeltproject.org/api/v2/doc/doc?query=' + q + '&mode=artlist&maxrecords=150&timespan=21d&sort=datedesc&format=json', 20000).then(function (j) {
+    return get('https://api.gdeltproject.org/api/v2/doc/doc?query=' + q + '&mode=artlist&maxrecords=250&timespan=21d&sort=datedesc&format=json', 25000).then(function (j) {
       var seen = {};
       return (j.articles || []).filter(function (a) {
         var k = (a.title || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').slice(0, 60);
         if (!a.title || seen[k] || !ABOUT.test(a.title)) return false;
         seen[k] = 1; return true;
-      }).slice(0, 40).map(function (a) {
+      }).slice(0, 150).map(function (a) {
         var themes = Object.keys(THEMES).filter(function (k) { return THEMES[k].test(a.title); });
         var d = a.seendate || '';
         return { title: a.title, url: a.url, domain: a.domain, country: a.sourcecountry,
@@ -63,6 +63,39 @@
   function news() {
     function broad() { return gate().then(function () { return articles(GQ2); }); }
     return articles(GQ).then(function (list) { return list.length >= 5 ? list : broad().then(function (l2) { return l2.length > list.length ? l2 : list; }, function () { return list; }); }, broad);
+  }
+
+  /* A second, wider sweep for the practical subjects: energy, defence, partners. */
+  var GQ3 = encodeURIComponent('cyprus (gas OR energy OR interconnector OR defence OR defense OR "national guard" OR israel OR egypt OR "united states" OR sanctions OR bases OR crossing OR property OR referendum) sourcelang:english');
+  function feed() { return articles(GQ3); }
+
+  /* Attention: daily readers of each subject's reference articles on Wikipedia,
+     last five weeks. Returns { subject: { r7, r28, series } }. */
+  function attention(map) {
+    var end = new Date(Date.now() - 864e5), start = new Date(end.getTime() - 34 * 864e5);
+    function ymd(d) { return iso(d).replace(/-/g, ''); }
+    var titles = [], views = {};
+    Object.keys(map).forEach(function (t) { map[t].forEach(function (a) { if (titles.indexOf(a) < 0) titles.push(a); }); });
+    function one(a) {
+      return get('https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user/' + encodeURIComponent(a.replace(/ /g, '_')) + '/daily/' + ymd(start) + '/' + ymd(end)).then(function (j) {
+        views[a] = (j.items || []).map(function (i) { return i.views; });
+      }).catch(function () {});
+    }
+    /* a few at a time */
+    var i = 0;
+    function worker() { return i < titles.length ? one(titles[i++]).then(worker) : Promise.resolve(); }
+    return Promise.all([worker(), worker(), worker(), worker()]).then(function () {
+      var out = {};
+      Object.keys(map).forEach(function (t) {
+        var series = [];
+        map[t].forEach(function (a) { (views[a] || []).forEach(function (v, k) { series[k] = (series[k] || 0) + v; }); });
+        if (series.length < 21) return;
+        function avg(x) { return x.reduce(function (p, c) { return p + c; }, 0) / x.length; }
+        out[t] = { r7: Math.round(avg(series.slice(-7))), r28: Math.round(avg(series.slice(0, -7))), series: series };
+      });
+      if (!Object.keys(out).length) throw new Error('no readership data');
+      return out;
+    });
   }
 
   function tone() {
@@ -137,18 +170,41 @@
     });
   }
 
-  /* Recent scholarly work on the Cyprus question, newest first. */
+  /* Recent scholarly work on the Cyprus question, newest first: OpenAlex,
+     with Crossref as a second source if it is unreachable or thin. */
+  var RTOPIC = /cyprus (conflict|problem|issue|question|dispute|talks|peace|policy)|reunif|peace (process|negotiat|initiative)|negotiat|partition|federa|unficyp|buffer zone|bi-?communal|geopolit|occupation|sovereign|guarantor|maritime|\beez\b|natural gas|hydrocarbon|refugee|displace|the missing|nationalis|referendum|annan|green line|divided|division|security|foreign policy|europeani[sz]|turkish[- ]cypriots?|greek[- ]cypriots?|memory|identity/i;
+  var ROFF = /beetle|species|coleoptera|genotype|archaeo|bronze age|romantic|nursing|students|patients|clinical|tourism|gastronom|melon|soil|covid|prevalence|hotel|marketing|teachers|school principals|food|dental|surgery|cancer|implant|banking sector/i;
   function research() {
-    var from = iso(new Date(Date.now() - 3 * 366 * 864e5));
-    return get('https://api.openalex.org/works?search=' + encodeURIComponent('Cyprus reunification OR "Cyprus problem" OR "Cyprus conflict" OR "Turkish Cypriot"') + '&filter=from_publication_date:' + from + ',type:article&sort=publication_date:desc&per-page=40&select=id,title,publication_date,doi,primary_location').then(function (j) {
+    var from = iso(new Date(Date.now() - 3 * 366 * 864e5)), today = iso(new Date());
+    function tidy(list) {
       var seen = {};
-      return (j.results || []).filter(function (w) {
-        var k = (w.title || '').toLowerCase().slice(0, 50);
-        if (!w.title || seen[k] || !/cypr/i.test(w.title) || w.publication_date > iso(new Date())) return false;
+      return list.filter(function (w) {
+        var k = (w.title || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').slice(0, 50);
+        if (!w.title || seen[k] || !/cypr|kıbrıs|kibris/i.test(w.title) || !RTOPIC.test(w.title) || ROFF.test(w.title) || (w.date || '') > today) return false;
         seen[k] = 1; return true;
-      }).slice(0, 12).map(function (w) {
-        var src = (w.primary_location || {}).source || {};
-        return { title: String(w.title).replace(/<[^>]+>/g, ''), date: w.publication_date, venue: src.display_name || '', url: w.doi || w.id };
+      }).sort(function (x, y) { return x.date < y.date ? 1 : -1; }).slice(0, 15);
+    }
+    var terms = ['cyprus conflict', 'cyprus reunification', 'cyprus problem', 'cyprus issue', 'cyprus question', 'cyprus dispute', 'cyprus peace', 'cyprus negotiations', 'cyprus settlement', 'cyprus partition', 'cyprus federation', 'turkish cypriots', 'greek cypriots', 'cyprus turkey', 'cyprus geopolitics', 'cyprus energy', 'cyprus security', 'divided cyprus', 'cyprus buffer zone'];
+    function openalex() {
+      return get('https://api.openalex.org/works?filter=' + encodeURIComponent('title.search:' + terms.join('|') + ',from_publication_date:' + from) + '&sort=publication_date:desc&per-page=200&select=id,title,publication_date,doi,primary_location', 25000).then(function (j) {
+        return (j.results || []).map(function (w) { return { title: String(w.title || '').replace(/<[^>]+>/g, ''), date: w.publication_date || '', venue: ((w.primary_location || {}).source || {}).display_name || '', url: w.doi || w.id }; });
+      });
+    }
+    function crossref() {
+      return get('https://api.crossref.org/works?query.title=' + encodeURIComponent('Cyprus conflict reunification Turkish Cypriot') + '&filter=from-pub-date:' + from + '&sort=published&order=desc&rows=200&select=title,DOI,published,container-title', 25000).then(function (j) {
+        return (((j.message || {}).items) || []).map(function (w) {
+          var dp = ((w.published || {})['date-parts'] || [[]])[0] || [];
+          return { title: String((w.title || [''])[0]).replace(/<[^>]+>/g, ''), date: dp.length ? dp[0] + '-' + ('0' + (dp[1] || 1)).slice(-2) + '-' + ('0' + (dp[2] || 1)).slice(-2) : '', venue: (w['container-title'] || [''])[0], url: w.DOI ? 'https://doi.org/' + w.DOI : '' };
+        });
+      });
+    }
+    return openalex().catch(function () { return []; }).then(function (a) {
+      var list = tidy(a);
+      if (list.length >= 8) return list;
+      return crossref().catch(function () { return []; }).then(function (b) {
+        var both = tidy(a.concat(b));
+        if (!both.length) throw new Error('no research found');
+        return both;
       });
     });
   }
@@ -180,8 +236,7 @@
         if (date && new Date(date).getTime() >= week) n7 += 1;
         return { title: a.title, url: a.url, domain: a.domain, date: date, said: SAID.test(a.title), meet: MEET.test(a.title) };
       });
-      var keep = items.filter(function (a) { return a.said; }).slice(0, 4).concat(items.filter(function (a) { return a.meet && !a.said; }).slice(0, 4), items.filter(function (a) { return !a.said && !a.meet; }).slice(0, 5));
-      return { t: Date.now(), n7: n7, n21: items.length, said: items.filter(function (a) { return a.said; }).length, meet: items.filter(function (a) { return a.meet; }).length, items: keep };
+      return { t: Date.now(), items: items.slice(0, 20) };
     });
   }
 
@@ -216,14 +271,25 @@
   };
   L.failed = function (id) { var o = tload()[id]; return !!(o && !o.t && o.fail); };
   L.pending = function (id) { return queue.some(function (x) { return x.id === id; }); };
-  /* Is the subject climbing the world's agenda, holding, fading or absent? */
-  L.momentum = function (o) {
-    if (!o) return null;
-    var prev = (o.n21 - o.n7) / 2;
-    if (o.n21 < 3) return 'quiet';
-    if (o.n7 >= 3 && o.n7 >= 1.5 * Math.max(prev, 1)) return 'rising';
-    if (o.n21 >= 6 && o.n7 <= 0.5 * prev) return 'fading';
-    return 'steady';
+  /* Is the subject climbing the world's agenda, holding or fading? Judged from
+     readership in the last week against the four weeks before. */
+  L.agenda = function (id) {
+    var d = load(), o = d && d.attn ? d.attn[id] : null;
+    if (!o || !o.r28) return null;
+    var ratio = o.r7 / o.r28;
+    return { r7: o.r7, r28: o.r28, ratio: ratio, series: o.series, k: ratio >= 1.25 ? 'rising' : ratio <= 0.8 ? 'fading' : 'steady' };
+  };
+  /* Current headlines on a subject: the general feeds sorted on the device,
+     plus the subject's own search where it has one. */
+  L.reports = function (id, def) {
+    var d = load() || {}, own = tload()[id], seen = {}, about = def.must ? new RegExp(def.must, 'i') : null, on = def.sub ? new RegExp(def.sub, 'i') : null;
+    var all = (d.news || []).concat(d.feed || [], own && own.items ? own.items : []);
+    return all.filter(function (a) {
+      var k = (a.title || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').slice(0, 60);
+      if (!a.title || seen[k] || (about && !about.test(a.title)) || (on && !on.test(a.title))) return false;
+      seen[k] = 1; return true;
+    }).map(function (a) { return { title: a.title, url: a.url, domain: a.domain, date: a.date, said: SAID.test(a.title), meet: MEET.test(a.title) }; })
+      .sort(function (x, y) { return x.date < y.date ? 1 : x.date > y.date ? -1 : 0; });
   };
 
   /* Convert raw feeds into small, capped, transparent adjustments of the model.
@@ -282,7 +348,7 @@
   L.stale = function () { var d = load(); return !d || Date.now() - d.t > MAX_AGE; };
 
   /* Each source succeeds or fails on its own; old values are kept on failure. */
-  L.refresh = function (wikiTitles) {
+  L.refresh = function (wikiTitles, pvMap) {
     if (L.busy) return Promise.resolve(load());
     if (typeof navigator !== 'undefined' && navigator.onLine === false) return Promise.resolve(load());
     L.busy = true; emit();
@@ -296,7 +362,7 @@
     /* GDELT asks for at most one request every five seconds. */
     function retry(f) { return gate().then(f).catch(function () { return gate().then(f); }); }
     var gd = part('news', retry(news)).then(function () { return part('tone', retry(tone)); });
-    return Promise.all([gd, part('fx', lira()), part('wb', worldBank()), part('wiki', wiki(wikiTitles || [])), part('research', research())]).then(function () {
+    return Promise.all([gd, part('fx', lira()), part('wb', worldBank()), part('wiki', wiki(wikiTitles || [])), part('research', research()), part('attn', attention(pvMap || {})), gd.then(function () { return part('feed', retry(feed)); })]).then(function () {
       var ok = Object.keys(d.status).some(function (k) { return d.status[k].ok && Date.now() - d.status[k].t < 60000; });
       if (ok) d.t = Date.now();
       L.data = d; L.busy = false; save(); emit();
@@ -307,7 +373,8 @@
   L.sources = function () {
     return [
       { id: 'research', name: 'OpenAlex', what: T('Recent scholarly articles on the Cyprus question'), url: 'https://openalex.org/' },
-      { id: 'topics', name: T('GDELT Project'), what: T('Current coverage, statements and meetings on the subject of each move (last 21 days)'), url: 'https://www.gdeltproject.org/' },
+      { id: 'attn', name: T('Wikimedia pageviews'), what: T('Daily readership of the reference articles for each subject: a measure of world attention (last five weeks)'), url: 'https://wikimedia.org/api/rest_v1/' },
+      { id: 'feed', name: T('GDELT Project'), what: T('Current headlines, statements and meetings sorted by the subject of each move (last 21 days)'), url: 'https://www.gdeltproject.org/' },
       { id: 'news', name: T('GDELT Project'), what: T('Worldwide news index: headlines mentioning the Cyprus question (last 21 days)'), url: 'https://www.gdeltproject.org/' },
       { id: 'tone', name: T('GDELT Project'), what: T('Average tone of Cyprus–Türkiye coverage (four months)'), url: 'https://www.gdeltproject.org/' },
       { id: 'fx', name: T('Frankfurter (ECB reference rates)'), what: T('Euro–lira and euro–dollar exchange rates'), url: 'https://frankfurter.dev/' },

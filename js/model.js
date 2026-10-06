@@ -556,13 +556,13 @@
   M.topics.greeceturkey.must = 'gree|athens|mitsotakis|aegean'; M.topics.russia.must = 'russia|putin|kremlin|moscow|akkuyu';
   M.topics.maritime.must = CY + '|' + TK;
   var SUB = {
-    talks: 'talks|negotiat|settlement|solution|reunif|federa|peace|envoy|two-state', security: 'guarant|troop|peacekeep|unficyp|neutral|security|withdraw',
-    troops: 'troop|army|military|base|occup|soldier', property: 'refugee|restitut|compensat|missing persons|the missing|displaced|immovable|property (claim|commission|right|issue|dispute)|usurp',
-    cbm: 'crossing|confidence|buffer|bi-?communal|checkpoint', trade: 'trade|econom|invest|\\baid\\b|flight|halloumi|green line|export',
+    talks: 'talks|negotiat|settlement|solution|reunif|federa|peace|envoy|two-state|cyprus problem|holgu|three-way|informal meeting|window of opportunity', security: 'guarant|peacekeep|unficyp|neutrality|security (guarantee|arrangement|council)|troop withdraw|withdrawal of',
+    troops: 'troop|turkish army|turkish military|turkish forces|occup|soldier|garrison', property: 'refugee|restitut|compensat|missing persons|the missing|displaced|immovable|property (claim|commission|right|issue|dispute)|usurp',
+    cbm: 'crossing|confidence|buffer|bi-?communal|checkpoint', trade: 'green line|\\btrade|halloumi|direct flights?|ercan|turkish cypriot (econom|business|chamber)|north.{0,20}econom',
     gas: 'gas|drill|aphrodite|cronos|exxon|chevron|eez|hydrocarbon', grid: 'interconnector|cable|electric|hydrogen|grid|power link',
     euturkey: 'customs|visa|accession|\\beu\\b|european|brussels|membership', sanctions: 'sanction|restrictive|caatsa|designat|embargo',
     uscyprus: '\\bu\\.?s\\.?\\b|united states|washington|american|pentagon|congress|visa waiver', usturkey: 'f-?35|f-?16|caatsa|s-?400|washington|\\bu\\.?s\\.?\\b|congress',
-    courts: 'court|echr|ruling|lawsuit|arbitrat|judg|legal|council of europe', maritime: 'maritime|warship|navtex|naval|navy|vessel|\\bsea\\b',
+    courts: 'court|echr|ruling|lawsuit|arbitrat|judg|legal action|council of europe', maritime: 'maritime|warship|navtex|naval|navy|vessel|\\bsea\\b',
     varosha: 'varosha|mara[sş]', recognition: 'two-state|trnc|recogni|sovereign|turkic|direct flight',
     defence: 'defen[cs]e|guard|military|exercise|nato|missile|frontex|\\barms\\b|army', regional: 'israel|egypt|emirates|\\buae\\b|saudi|india|trilateral|imec|gulf|jordan|leban',
     greeceturkey: 'turk|türk|erdo[gğ]an|ankara', britain: 'brit|\\buk\\b|bases|akrotiri|dhekelia|\\braf\\b|london',
@@ -570,6 +570,23 @@
     society: 'referendum|poll|opinion|diaspora|civil society|education|heritage|youth|school'
   };
   Object.keys(SUB).forEach(function (t) { M.topics[t].sub = SUB[t]; });
+  /* Reference articles on Wikipedia whose daily readership shows how much
+     attention the world is paying to each subject. */
+  var PV = {
+    talks: ['Cyprus problem', 'Annan Plan'], security: ['Treaty of Guarantee (1960)', 'United Nations Peacekeeping Force in Cyprus'],
+    troops: ['Turkish invasion of Cyprus', 'Cyprus Turkish Peace Force Command'], property: ['Civilian casualties and displacements during the Cyprus conflict', 'Loizidou v. Turkey'],
+    cbm: ['United Nations Buffer Zone in Cyprus', 'Ledra Street'], trade: ['Economy of Northern Cyprus', 'Ercan International Airport'],
+    gas: ['Cyprus–Turkey maritime zones dispute', 'Aphrodite gas field'], grid: ['Great Sea Interconnector'],
+    euturkey: ['Accession of Turkey to the European Union', 'European Union–Turkey Customs Union'], sanctions: ['Countering America\'s Adversaries Through Sanctions Act'],
+    uscyprus: ['Cyprus–United States relations'], usturkey: ['Turkey–United States relations'], courts: ['Cyprus v Turkey', 'Loizidou v. Turkey'],
+    maritime: ['Blue Homeland', 'Cyprus–Turkey maritime zones dispute'], varosha: ['Varosha, Famagusta'], recognition: ['Northern Cyprus', 'Organization of Turkic States'],
+    defence: ['Cypriot National Guard', 'Cypriot S-300 crisis'], regional: ['Cyprus–Israel relations', 'EastMed pipeline', 'Cyprus–Egypt relations'],
+    greeceturkey: ['Greece–Turkey relations', 'Aegean dispute'], britain: ['Akrotiri and Dhekelia'], un: ['United Nations Peacekeeping Force in Cyprus', 'Cyprus problem'],
+    russia: ['Cyprus–Russia relations', 'Akkuyu Nuclear Power Plant'], society: ['Greek Cypriots', 'Turkish Cypriots', '2004 Cypriot Annan Plan referendums']
+  };
+  Object.keys(PV).forEach(function (t) { M.topics[t].pv = PV[t]; });
+  /* Subjects that reach beyond Cyprus need a news search of their own. */
+  ['euturkey', 'sanctions', 'usturkey', 'greeceturkey', 'russia'].forEach(function (t) { M.topics[t].own = true; });
 
   var TOPIC = {
     talks: ['roc.talks', 'roc.blueprint', 'roc.mediators', 'roc.gulf', 'roc.hardline', 'tr.talks', 'tr.accept', 'tc.federal', 'us.offramp', 'us.mediate', 'reg.mediate', 'eu.envoy'],
