@@ -50,7 +50,7 @@
       energy: {
         name: 'Doğu Akdeniz enerjisi',
         short: 'Enerji',
-        lo: 'Zor kullanılarak ihtilaf konusu',
+        lo: 'Güç kullanılarak çekişilen',
         hi: 'Paylaşılan ve gelire dönüşen',
         desc: 'Açık deniz doğal gazının ve enterkonneksiyonun iş birliği içinde gelişip gelişmediği.',
         basis: 'Keşifler arasında Afrodit, Calypso, Glaucus ve Cronos var; hiçbirinde henüz üretim yok. Mısır üzerinden ihracat müzakere ediliyor. Türkiye, Cumhuriyet\'in MEB\'inin (münhasır ekonomik bölge) bazı bölümlerine itiraz ediyor ve 2018–2020\'de sondajı engelledi. Great Sea Interconnector projesinde gecikmeler yaşanıyor.'
@@ -76,7 +76,7 @@
         short: 'İstikrar',
         lo: 'Silahlı kriz',
         hi: 'Sakin',
-        desc: 'Askerî olayların ve uçurumun kenarında siyasetin bulunmaması.',
+        desc: 'Askerî olayların ve uçurumun kenarı siyasetinin bulunmaması.',
         basis: '1974\'ten beri devletler arası çatışma yok, ancak sürtüşmeler yineleniyor: 2020\'deki deniz gerginliği, Ağustos 2023\'te Pile\'deki gibi ara bölge olayları ve hava sahası ihlalleri.'
       },
       trwest: {
@@ -108,7 +108,7 @@
       ROC: {
         name: 'Kıbrıs Cumhuriyeti',
         short: 'KC',
-        role: 'Kıbrıslı Rum toplumunun yönettiği, uluslararası alanda tanınan hükümet. Konsey\'de veto hakkı bulunan AB üyesi.',
+        role: 'Kıbrıslı Rum toplumunun yönettiği, uluslararası alanda tanınan hükûmet. Konsey\'de veto hakkı bulunan AB üyesi.',
         interests: ['İşgalin sona ermesi, toprağın ve mülklerin iadesi', 'Tek egemenlik, tek vatandaşlık ve tek uluslararası kişilik', 'Açık deniz enerji kaynaklarını geliştirme serbestisi', 'Yabancı garantörlük hakları olmadan güvenlik'],
         redlines: ['İki devletli sonuca veya ikinci bir devletin tanınmasına hayır', 'Kalıcı Türk askerine veya tek taraflı müdahale hakkına hayır'],
         leverage: ['AB üyeliği: oybirliği kuralı, AB–Türkiye ilişkilerindeki her ilerlemede söz hakkı veriyor', 'Uluslararası hukuk ve BM kararları ondan yana', 'Açık deniz doğal gazı ve ortakların ihtiyaç duyduğu bir konum', 'AB\'nin sağladığı imkânları Kıbrıslı Türklere açabilme gücü'],
@@ -129,8 +129,8 @@
         role: 'Kuzeyde askeri bulunan garantör güç; "KKTC"yi tanıyan tek devlet. NATO üyesi ve AB adayı.',
         interests: ['Stratejik derinlik ve Anadolu\'nun güneyinde askerî dayanak', 'Doğu Akdeniz enerjisinden ve deniz yetki alanlarından pay', 'Kıbrıslı Türklerin güvenliği ve statüsü', 'Avrupa\'ya kendi koşullarıyla ekonomik erişim'],
         redlines: ['Yenilgi veya zorla çekilme olarak sunulan sonuca hayır', 'Doğu Akdeniz enerjisinden dışlanmaya hayır'],
-        leverage: ['Yerel düzeyde ezici askerî üstünlük', 'NATO üyeliği ve NATO–AB iş birliği üzerinde veto', 'AB\'ye yönelen göç akınlarının denetimi', 'Kuzeyin mali can damarı'],
-        vuln: ['Liranın zayıflığı, Batı sermayesine ve pazarlarına bağımlılık', 'Savunma sanayisi Batılı bileşenlere bağımlı', 'Kuzeyi sübvanse etmenin maliyeti', 'İşgalci güç olarak itibar kaybı ve hukuki sorumluluk']
+        leverage: ['Yerel düzeyde ezici askerî üstünlük', 'NATO üyeliği ve NATO–AB iş birliği üzerinde veto', 'AB\'ye yönelen göç akışlarının denetimi', 'Kuzeyin mali can damarı'],
+        vuln: ['Liranın zayıflığı, Batı sermayesine ve pazarlarına bağımlılık', 'Savunma sanayisi Batılı bileşenlere bağımlı', 'Kuzeyi sübvanse etmenin maliyeti', 'İşgalci güç sıfatıyla itibar ve hukuki sorumluluk']
       },
       GR: {
         name: 'Yunanistan',
@@ -145,7 +145,7 @@
         name: 'Avrupa Birliği',
         short: 'AB',
         role: 'Kıbrıs\'ın üyesi, Türkiye\'nin adayı olduğu Birlik; başlıca ekonomik teşvikler onun elinde.',
-        interests: ['Güneydoğu sınırında istikrar', 'Ticaret, göç ve savunma alanlarında Ankara ile işleyen bir ilişki', 'Enerjide çeşitlendirme', 'AB hukukunun AB toprağında askıda olması aykırılığına son verilmesi'],
+        interests: ['Güneydoğu sınırında istikrar', 'Ticaret, göç ve savunma alanlarında Ankara ile işleyen bir ilişki', 'Enerjide çeşitlendirme', 'AB hukukunun AB toprağında askıda olması anormalliğine son verilmesi'],
         redlines: ['AB hukuku ve değerleriyle bağdaşmayan çözüme hayır'],
         leverage: ['Gümrük birliğinin güncellenmesi, vize serbestisi, savunma fonlarına erişim', 'Kıbrıslı Türklere mali yardım', 'Oybirliğiyle alınan yaptırımlar'],
         vuln: ['Oybirliği: Türkiye konusunda çıkarları farklı 27 başkent', 'Göç konusunda Ankara\'ya bağımlılık']
@@ -232,11 +232,11 @@
       },
       'roc.consensus': {
         name: 'Kıbrıslı Rumlar arasında uzlaşı için ulusal diyalog',
-        desc: 'Partileri, göçmen derneklerini ve sendikaları teklifin şekillendirilmesine kat; böylece anlaşma oylanmadan önce sahiplenilmiş olur.'
+        desc: 'Partileri, mülteci derneklerini ve sendikaları teklifin şekillendirilmesine kat; böylece anlaşma oylanmadan önce sahiplenilmiş olur.'
       },
       'roc.tcbenefits': {
         name: 'AB imkânlarını Kıbrıslı Türklere şimdi aç',
-        desc: 'Çözümü beklemeden, vatandaş sıfatıyla Kıbrıslı Türkler için sağlık sistemine erişim, diplomaların tanınması, sporda bütünleşme, emekli aylıklarının taşınabilirliği ve AB programları.'
+        desc: 'Çözümü beklemeden, vatandaş sıfatıyla Kıbrıslı Türkler için sağlık sistemine erişim, yeterliliklerin tanınması, sporda bütünleşme, emekli aylıklarının taşınabilirliği ve AB programları.'
       },
       'roc.crossings': {
         name: 'Yeni geçiş kapıları aç, kontrol noktalarını rahatlat',
@@ -292,7 +292,7 @@
       },
       'roc.cgsp': {
         name: 'İstekli AB devletleriyle egemenlik ortaklığı',
-        desc: 'AB\'nin karşılıklı yardım hükmüne (madde 42.7) bir grup üye devletle birlikte uygulamada içerik kazandır: planlama, mevcudiyet, üzerinde anlaşılmış karşılıklar.'
+        desc: 'AB\'nin karşılıklı yardım hükmüne (madde 42.7) bir grup üye devletle birlikte uygulamada içerik kazandır: planlama, mevcudiyet, üzerinde anlaşılmış tepkiler.'
       },
       'roc.trilateral': {
         name: 'İsrail–Yunanistan–Kıbrıs mutabakatını derinleştir',
@@ -312,7 +312,7 @@
       },
       'roc.narrative': {
         name: 'Bölünmüşlüğün bedeli üzerine kamu diplomasisi',
-        desc: 'Kültürel miras kaybını, yerinden edilmeyi ve kayıpları belgele; yeniden birleşmenin iki topluma sağlayacağı ekonomik kazancı ortaya koy.'
+        desc: 'Kültürel miras kaybını, yerinden edilmeyi ve kayıp şahısları belgele; yeniden birleşmenin iki topluma sağlayacağı ekonomik kazancı ortaya koy.'
       },
       'roc.gulf': {
         name: 'Körfez ülkeleri üzerinden Ankara\'ya sessiz bir kanal aç',
@@ -324,7 +324,7 @@
       },
       'roc.nato': {
         name: 'NATO ortaklığı için başvur',
-        desc: 'Daha yakın bağlara doğru bir adım olarak Barış için Ortaklık\'a başvur. Oydaşma gerektirdiği için Türkiye engelleyebilir.'
+        desc: 'Daha yakın bağlara doğru bir adım olarak Barış için Ortaklık\'a başvur. Konsensüs gerektirdiği için Türkiye engelleyebilir.'
       },
       'roc.hardline': {
         name: 'Askerler çekilene kadar temasları askıya al',
@@ -425,7 +425,7 @@
       },
       'gr.linkage': {
         name: 'AB–Türkiye ilerlemesini Kıbrıs\'taki ilerlemeye bağla',
-        desc: 'Lefkoşa ile birlikte, savunma fonlarına erişimin ve gümrük birliğinin güncellenmesinin harekete bağlı olduğunda ısrar et.'
+        desc: 'Lefkoşa ile birlikte, savunma fonlarına erişimin ve gümrük birliğinin güncellenmesinin Kıbrıs konusunda hareket olmasına bağlı olduğunda ısrar et.'
       },
       'gr.guarantee': {
         name: 'Garantörlük haklarına son vermeyi ve asker azaltımına karşılık vermeyi öner',
@@ -453,7 +453,7 @@
       },
       'eu.defence': {
         name: 'Karşılıklı yardım hükmüne uygulamada içerik kazandır',
-        desc: 'Tehdit altındaki bir üye devlet için planlama, denizde mevcudiyet ve üzerinde anlaşılmış karşılıklar.'
+        desc: 'Tehdit altındaki bir üye devlet için planlama, denizde mevcudiyet ve üzerinde anlaşılmış tepkiler.'
       },
       'eu.energy': {
         name: 'Doğu Akdeniz enerji bağlarını finanse et',
@@ -529,7 +529,7 @@
       },
       'ru.north': {
         name: 'Kuzeydeki varlığını genişlet',
-        desc: 'Kuzeyde yaşayan Rusya vatandaşları için konsolosluk hizmetleri ve ticari bağlantılar.'
+        desc: 'Kuzeyde yaşayan Ruslar için konsolosluk hizmetleri ve ticari bağlantılar.'
       },
       'ru.support': {
         name: 'Kıbrıs\'ın bağlantısızlığı karşılığında BM parametrelerini destekle',
@@ -545,7 +545,7 @@
       },
       'reg.inclusive': {
         name: 'Türkiye\'yi koşullu olarak gaz forumuna davet et',
-        desc: 'Mevcut deniz yetki alanı anlaşmalarına saygı karşılığında bölgesel enerji iş birliğinde bir sandalye.'
+        desc: 'Mevcut deniz anlaşmalarına saygı karşılığında bölgesel enerji iş birliğinde bir sandalye.'
       },
       'reg.mediate': {
         name: 'Ankara ile Lefkoşa arasında arka kanal işlet',
@@ -643,7 +643,7 @@
       },
       helsinki: {
         name: 'Helsinki zirvesi ve deprem diplomasisi',
-        lesson: 'İnandırıcı bir AB üyelik perspektifi ve Türk–Yunan yakınlaşması, Türkiye\'nin Kıbrıs konusunda onlarca yılın en esnek tutumunu (2002–2004) doğurdu. Teşvikler, inanıldıklarında Ankara\'yı harekete geçirir.'
+        lesson: 'İnandırıcı bir AB üyelik perspektifi ve Yunan–Türk yakınlaşması, Türkiye\'nin Kıbrıs konusunda onlarca yılın en esnek tutumunu (2002–2004) doğurdu. Teşvikler, inanıldıklarında Ankara\'yı harekete geçirir.'
       },
       f16: {
         name: 'F-16 satışı ve İsveç\'in NATO\'ya katılımı',
@@ -663,7 +663,7 @@
       },
       baltic: {
         name: 'Rus askerlerinin Baltık devletlerinden çekilmesi',
-        lesson: 'Batı\'nın onlarca yıl süren tanımama politikası hukuki konumu korudu; çekilme, büyük güç Batı\'nın iş birliğini istediğinde ve konut yardımı ile itibar kurtaran koşullar elde ettiğinde gerçekleşti.'
+        lesson: 'Batı\'nın onlarca yıl süren tanımama politikası hukuki konumu korudu; çekilme, daha büyük güç Batı\'nın iş birliğini istediğinde ve konut yardımı ile itibar kurtaran koşullar elde ettiğinde gerçekleşti.'
       },
       camp: {
         name: 'Camp David ve Sina\'dan çekilme',
@@ -698,7 +698,7 @@
       talks: 'Çözüm görüşmeleri',
       security: 'Garantiler ve güvenlik düzenlemeleri',
       troops: 'Adadaki Türk kuvvetleri',
-      property: 'Mülkiyet ve göçmenler',
+      property: 'Mülkiyet ve mülteciler',
       cbm: 'Geçiş kapıları ve güven artırma',
       trade: 'Ticaret ve Kıbrıs Türk ekonomisi',
       gas: 'Açık deniz doğal gazı',
