@@ -48,13 +48,23 @@
   }
 
   /* ---------- page history: back and forward arrows, and the device's own back button ---------- */
-  var navI = 0, navMax = 0;
-  function navState() { return { i: navI, pid: A.pid, tab: A.tab, lib: A.lib }; }
-  function navPush() {
+  /* Each entry remembers the page, the library shelf, the move being looked at and how far down the reader was,
+     so going back returns to exactly where they were. Opening a move is an entry of its own: back closes it. */
+  var navI = 0, navMax = 0, navScroll = {}, navQuiet = false, games = {};
+  function navState(sp) { return { i: navI, pid: A.pid, tab: A.tab, lib: A.lib, sel: A.sel || null, sp: !!sp }; }
+  function navKeep() { try { sessionStorage.setItem(LS + '.nav', JSON.stringify({ i: navI, max: navMax, scroll: navScroll })); } catch (e) {} }
+  function navPush(sp) {
+    navScroll[navI] = window.pageYOffset || 0;
     navI += 1; navMax = navI;
-    try { history.pushState(navState(), '', location.href); } catch (e) {}
-    save(); navButtons();
+    Object.keys(navScroll).forEach(function (k) { if (+k >= navI) delete navScroll[k]; });
+    try { history.pushState(navState(sp), '', location.href); } catch (e) {}
+    save(); navButtons(); navKeep();
   }
+  /* the same entry, brought up to date (another move chosen, or the move closed) */
+  function navReplace(sp) { try { history.replaceState(navState(sp), '', location.href); } catch (e) {} navKeep(); }
+  function navSp() { return !!(history.state && history.state.sp); }
+  /* the move panel has gone (played, undone): step out of its entry without redrawing */
+  function selGone() { if (navSp()) { navQuiet = true; history.back(); } else navReplace(); }
   function navButtons() {
     var b = $('#navBack'), f = $('#navFwd');
     if (b) b.disabled = navI <= 0;
@@ -63,12 +73,23 @@
   window.addEventListener('popstate', function (e) {
     var st = e.state;
     if (!st || st.i === undefined) return;
-    navI = st.i;
-    if (st.pid !== A.pid) { A.pid = st.pid; if (st.pid) { A.own = []; replay(); } }
-    A.tab = st.tab || 'board'; A.lib = st.lib || 'players'; A.sel = null; A.manual = {};
+    if (navQuiet) { navQuiet = false; navI = st.i; save(); navButtons(); navKeep(); return; }
+    navScroll[navI] = window.pageYOffset || 0;
+    navI = st.i; if (navI > navMax) navMax = navI;
+    if (st.pid !== A.pid) {
+      if (A.pid) games[A.pid] = A.own.slice();
+      A.pid = st.pid; if (st.pid) { A.own = (games[st.pid] || []).slice(); replay(); }
+    }
+    A.tab = st.tab || 'board'; A.lib = st.lib || 'players'; A.manual = {};
+    A.sel = st.sel && A.pid && C.moves[st.sel] && C.moves[st.sel].p === A.pid && !E.blocked(C, S, C.moves[st.sel]) ? st.sel : null;
     $('#modal').hidden = true;
-    save(); render(); window.scrollTo(0, 0);
+    save(); render(); navKeep();
+    var y = navScroll[navI] || 0;
+    function put() { try { window.scrollTo({ top: y, behavior: 'instant' }); } catch (e2) { window.scrollTo(0, y); } }
+    put();
+    if (y) setTimeout(function () { if (Math.abs((window.pageYOffset || 0) - y) > 40) put(); }, 300);
   });
+  try { history.scrollRestoration = 'manual'; } catch (e) {}
 
   /* ---------- model assembly: defaults + user edits + live signals ---------- */
   function activeSignals() {
@@ -297,8 +318,8 @@
     $('#modal').hidden = true;
     var changed = A.tab !== tab || (lib && A.lib !== lib);
     A.tab = tab; if (lib) A.lib = lib;
-    A.sel = null;
-    if (changed) navPush();
+    var hadSel = A.sel; A.sel = null;
+    if (changed) navPush(); else if (hadSel) navReplace();
     render();
     setTimeout(function () {
       var hs = view.querySelectorAll('h2, summary'), hit = null, i;
@@ -426,9 +447,13 @@
       return '<button data-a="tab" data-v="' + t[0] + '"' + (A.tab === t[0] ? ' aria-current="page"' : '') + '><i>' + t[1] + '</i>' + t[2] + '</button>';
     }).join('') : '';
     $('#tabs').style.display = A.pid ? '' : 'none';
+    topH();
     var fb = $('#findBtn'); fb.title = T('Find anything'); fb.setAttribute('aria-label', T('Find anything'));
     net(); navButtons();
   }
+  /* the move panel on a phone opens beneath the header, so the arrows stay in reach */
+  function topH() { var h = $('.top').offsetHeight; if (h) document.documentElement.style.setProperty('--toph', h + 'px'); }
+  window.addEventListener('resize', topH);
   function net() {
     var d = L.get(), el = $('#net'), on = navigator.onLine !== false;
     var age = d && d.t ? Math.round((Date.now() - d.t) / 60000) : null;
@@ -998,6 +1023,13 @@
     viewSheet();
     if (keep) { var i = $('[data-c="q"]'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }
   }
+  /* Open a move's panel. From a board with no move open this is a new history entry, so back closes the panel. */
+  function openMove(v) {
+    var was = A.sel, sp = navSp();
+    A.sel = v; A.manual = {};
+    if (C.moves[v]) wantTopics(C.moves[v].src.topic);
+    if (!was && A.tab === 'board') navPush(true); else navReplace(sp);
+  }
   function go(tab) { if (A.tab === tab) return; A.tab = tab; A.sel = tab === 'board' ? A.sel : A.sel; navPush(); render(); window.scrollTo(0, 0); }
 
   function play(id) {
@@ -1006,7 +1038,7 @@
     var forced = A.play === 'manual' ? forcedMap() : null;
     var r = E.round(C, S, A.pid, id, { deep: true, forced: forced });
     r.manual = !!forced;
-    stack.push({ S: S, r: r }); S = r.state; A.sel = null; A.manual = {}; cache = {};
+    stack.push({ S: S, r: r }); S = r.state; A.sel = null; A.manual = {}; cache = {}; selGone();
     A.own.push(forced ? id + Object.keys(forced).map(function (k) { return '~' + k + '=' + forced[k]; }).join('') : id);
     save(); render(); window.scrollTo(0, 0);
     var card = $('#played'); if (card) card.scrollIntoView({ block: 'start' });
@@ -1031,7 +1063,7 @@
 
   /* ---------- events ---------- */
   var acts = {
-    home: function () { if (!A.pid && A.tab !== 'guide') return; A.pid = null; A.sel = null; A.tab = 'board'; navPush(); render(); window.scrollTo(0, 0); },
+    home: function () { if (!A.pid && A.tab !== 'guide') return; if (A.pid) games[A.pid] = A.own.slice(); A.pid = null; A.sel = null; A.tab = 'board'; navPush(); render(); window.scrollTo(0, 0); },
     start: function () { acts.home(); },
     guide: function () { A.tab = 'guide'; A.sel = null; navPush(); render(); window.scrollTo(0, 0); },
     gopen: function (v) { var all = view.querySelectorAll('details.guide-sec'); for (var i = 0; i < all.length; i++) all[i].open = v === '1'; },
@@ -1039,20 +1071,20 @@
     fwd: function () { history.forward(); },
     pick: function (v) { A.pid = v; A.own = []; A.sel = null; A.tab = 'board'; A.cat = 'all'; replay(); navPush(); render(); window.scrollTo(0, 0); wantTopics(null); },
     tab: function (v) { go(v); },
-    sel: function (v) { A.sel = A.sel === v ? null : v; A.manual = {}; if (A.sel && C.moves[A.sel]) wantTopics(C.moves[A.sel].src.topic); render(); },
+    sel: function (v) { if (A.sel === v) return acts.close(); openMove(v); render(); },
     playmode: function (v) { A.play = v; A.manual = {}; save(); render(); },
-    close: function () { A.sel = null; render(); },
+    close: function () { if (!A.sel) return; if (navSp()) return history.back(); A.sel = null; navReplace(); render(); },
     find: findOpen,
     jump: function (v) { var a = v.split('|'); jumpTo(a[0], a[1], a.slice(2).join('|')); },
-    selbest: function () { var b = recs()[0]; if (!b) return; A.sel = b.m.id; A.manual = {}; wantTopics(b.m.src.topic); render(); var el = view.querySelector('.mv.sel'); if (el && !document.body.classList.contains('has-sheet')) el.scrollIntoView({ block: 'center' }); },
-    findmove: function (v) { $('#modal').hidden = true; if (A.tab !== 'board') { A.tab = 'board'; navPush(); } A.cat = 'all'; A.sel = v; A.manual = {}; if (C.moves[v]) wantTopics(C.moves[v].src.topic); render(); },
+    selbest: function () { var b = recs()[0]; if (!b) return; if (A.sel !== b.m.id) openMove(b.m.id); render(); var el = view.querySelector('.mv.sel'); if (el && !document.body.classList.contains('has-sheet')) el.scrollIntoView({ block: 'center' }); },
+    findmove: function (v) { $('#modal').hidden = true; if (A.tab !== 'board') { A.tab = 'board'; A.sel = null; navPush(); } A.cat = 'all'; if (A.sel !== v) openMove(v); render(); },
     play: function () { play(A.sel); },
     playfirst: function () { var st = cache.path.p.steps[0]; A.tab = 'board'; navPush(); play(st.move.id); },
     analyse: function () { go('analysis'); },
     mode: function (v) { A.mode = v; cache = {}; save(); render(); },
     cat: function (v) { A.cat = v; render(); },
-    undo: function () { if (!stack.length) return; S = stack.pop().S; A.own.pop(); cache = {}; A.sel = null; save(); render(); },
-    reset: function () { A.own = []; A.sel = null; replay(); save(); render(); },
+    undo: function () { if (!stack.length) return; S = stack.pop().S; A.own.pop(); cache = {}; A.sel = null; selGone(); save(); render(); },
+    reset: function () { A.own = []; A.sel = null; selGone(); replay(); save(); render(); },
     share: function () {
       save(); var url = location.href;
       if (navigator.share) navigator.share({ title: T('Cyprus Strategy Board'), text: T('A line of play as {0}', P(A.pid).name), url: url }).catch(function () {});
@@ -1089,7 +1121,7 @@
     else if (c === 'opp') A.opp = t.value;
     else if (c === 'priv') { A.priv[v] = +t.value; build(); }
     else if (c === 'man') { A.manual[v] = t.value; render(); return; }
-    else if (c === 'sel') { A.sel = t.value; if (C.moves[A.sel]) wantTopics(C.moves[A.sel].src.topic); }
+    else if (c === 'sel') { A.sel = t.value; if (C.moves[A.sel]) wantTopics(C.moves[A.sel].src.topic); navReplace(); }
     else if (c === 'live') { A.live = t.checked; build(); }
     else if (c === 'sig') { A.sigOff[v] = !t.checked; build(); }
     else if (c === 'assumep') A.ap = t.value;
@@ -1184,6 +1216,10 @@
   L.setTopics(window.MODEL.topics);
   build(); installUI();
   setTimeout(liveArrived, 300);          /* read what is already stored, in the background */
+  try {
+    var ns = JSON.parse(sessionStorage.getItem(LS + '.nav') || 'null'), hs = history.state;
+    if (ns && hs && hs.i !== undefined && hs.i <= ns.max) { navI = hs.i; navMax = ns.max; navScroll = ns.scroll || {}; if (hs.lib) A.lib = hs.lib; if (hs.tab && A.pid === hs.pid) A.tab = hs.tab; }
+  } catch (e) {}
   try { history.replaceState(navState(), '', location.href); } catch (e) {}
   render();
   /* how well the reading rules did on the hand-checked set, measured at release */
