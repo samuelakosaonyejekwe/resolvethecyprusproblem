@@ -373,6 +373,7 @@
   "The strategies set out in the source blueprints by Samuel Akosa Onyejekwe, searchable. These are proposals, not established facts; figures and timings inside them are the author's planning estimates. The moves on the board are drawn from them.",
   "The strongest sequence of moves the computer can find for <b>{0}</b>, looking several rounds ahead with the app playing every other stakeholder. It is the critical path: the order matters, because early moves open later ones.",
   "Their dominant option: \"{0}\".",
+  "This device has not yet completed a live fetch for every source. Until it does, the gaps are filled from the snapshot shipped with this version, taken on {0}. Live data replaces it source by source.",
   "This is the engine's first choice under the \"{0}\" objective.",
   "Threats <small>from others</small>",
   "Three rounds out, the line that starts here is worth {0} more to you than waiting.",

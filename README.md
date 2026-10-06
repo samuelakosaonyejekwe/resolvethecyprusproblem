@@ -34,7 +34,7 @@ There is no build step and no server-side code. Serve the folder with any static
 python3 -m http.server 8080
 ```
 
-After changing files, regenerate the single-file copy with `node tools/build.js`.
+After changing files, regenerate the single-file copy with `node tools/build.js`. Before a release, `node tools/seed.js` refreshes the dated snapshot that a brand-new device starts from until its own live data arrives.
 
 Interface text lives in the code in English and is translated by the language packs in `js/lang/`. `node tools/strings.js` rebuilds the list of strings to translate, and `node tools/strings.js --check` reports anything a pack is missing.
 

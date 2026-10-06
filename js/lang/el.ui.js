@@ -574,6 +574,7 @@
     "more conciliatory this week than in the two weeks before": "πιο διαλλακτική αυτή την εβδομάδα σε σχέση με τις δύο προηγούμενες",
     "neither": "καμία από τις δύο",
     "none found in the last three weeks": "δεν βρέθηκε κανένα τις τελευταίες τρεις εβδομάδες",
-    "read as backing {0}": "θεωρήθηκε ότι στηρίζει: {0}"
+    "read as backing {0}": "θεωρήθηκε ότι στηρίζει: {0}",
+    "This device has not yet completed a live fetch for every source. Until it does, the gaps are filled from the snapshot shipped with this version, taken on {0}. Live data replaces it source by source.": "Η συσκευή αυτή δεν έχει ακόμη ολοκληρώσει ζωντανή άντληση για κάθε πηγή. Μέχρι τότε, τα κενά συμπληρώνονται από το στιγμιότυπο που συνοδεύει αυτή την έκδοση, με ημερομηνία {0}. Τα ζωντανά δεδομένα το αντικαθιστούν πηγή προς πηγή."
   };
 })(typeof self !== 'undefined' ? self : this);

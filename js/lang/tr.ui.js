@@ -574,6 +574,7 @@
     "more conciliatory this week than in the two weeks before": "bu hafta önceki iki haftaya göre daha uzlaşmacı",
     "neither": "ikisi de değil",
     "none found in the last three weeks": "son üç haftada bulunamadı",
-    "read as backing {0}": "şu paydaşı desteklediği biçiminde okundu: {0}"
+    "read as backing {0}": "şu paydaşı desteklediği biçiminde okundu: {0}",
+    "This device has not yet completed a live fetch for every source. Until it does, the gaps are filled from the snapshot shipped with this version, taken on {0}. Live data replaces it source by source.": "Bu cihaz henüz her kaynak için canlı veri alımını tamamlamadı. Tamamlanana kadar eksikler, bu sürümle birlikte gelen {0} tarihli anlık görüntüden doldurulur. Canlı veriler onun yerini kaynak kaynak alır."
   };
 })(typeof self !== 'undefined' ? self : this);

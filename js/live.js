@@ -133,12 +133,12 @@
       .replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
   }
   function press() {
-    var after = new Date(Date.now() - 21 * 864e5).toISOString().slice(0, 19), out = [], seen = {}, okSources = 0;
+    var after = new Date(Date.now() - 21 * 864e5).toISOString().slice(0, 19), far = new Date(Date.now() - 90 * 864e5).toISOString().slice(0, 19), out = [], seen = {}, okSources = 0;
     var jobs = [];
     PRESS.forEach(function (src) { src.q.forEach(function (q) { jobs.push({ src: src, q: q }); }); });
     var i = 0;
     function one(job) {
-      return get('https://' + job.src.host + '/wp-json/wp/v2/posts?per_page=50&_fields=title,link,date&after=' + after + '&search=' + encodeURIComponent(job.q), 20000).then(function (list) {
+      return get('https://' + job.src.host + '/wp-json/wp/v2/posts?per_page=50&_fields=title,link,date&after=' + (job.src.side === 'reg' || job.src.side === 'tr' && job.src.lang === 'en' ? far : after) + '&search=' + encodeURIComponent(job.q), 20000).then(function (list) {
         if (!Array.isArray(list)) return;
         job.src.ok = true;
         list.forEach(function (x) {
@@ -200,7 +200,7 @@
         return (j.results || []).filter(function (r) { return /cypr/i.test(r.title || '') && !/travel advice|living in|tax|visa|passport|consular|hospital|doctors|lawyers|funeral|prisoner/i.test(r.title || ''); }).map(function (r) { return { title: r.title, date: String(r.public_timestamp || '').slice(0, 10), url: 'https://www.gov.uk' + r.link, detail: r.description || '' }; });
       }); } },
     ukparl: { actor: 'UK', body: 'UK ministers\' written answers to Parliament', kind: 'answer', run: function () {
-      return get('https://questions-statements-api.parliament.uk/api/writtenquestions/questions?searchTerm=Cyprus&take=20&answered=Answered', 20000).then(function (j) {
+      return get('https://questions-statements-api.parliament.uk/api/writtenquestions/questions?searchTerm=Cyprus&take=20&answered=Answered', 40000).then(function (j) {
         return (j.results || []).map(function (r) { return r.value || {}; }).filter(function (v) { return v.answerText && /cypr/i.test(v.questionText || ''); }).map(function (v) {
           var d = String(v.dateTabled || '').slice(0, 10), ans = plain(v.answerText);
           return { title: plain(v.questionText).replace(/^To ask (His Majesty's Government|the Secretary of State[^,]*,)\s*/i, '').slice(0, 240), date: String(v.dateAnswered || v.dateTabled || '').slice(0, 10), body: v.answeringBodyName || '',
@@ -239,7 +239,7 @@
     function one(k) {
       var src = OFFICIAL[k];
       function attempt() { return src.run(); }
-      return attempt().catch(function () { return wait(2500).then(attempt); }).then(function (items) {
+      return attempt().catch(function () { return wait(2500).then(attempt); }).catch(function () { return wait(6000).then(attempt); }).then(function (items) {
         var seen = {};
         items = (items || []).filter(function (x) { var q = (x.title || '').toLowerCase().slice(0, 70); if (!x.title || seen[q]) return false; seen[q] = 1; return true; })
           .sort(function (a, b) { return String(a.date) < String(b.date) ? 1 : -1; }).slice(0, k === 'tcpio' ? 24 : 10)
@@ -619,6 +619,9 @@
       /* weight: deeds 2; a government's own statement 2; a leader quoted directly counts the same where the government publishes nothing we can read; anything else 1; +0.5 when several papers carry it */
       var w = deed || kind === 'official' ? 2 : (!o.official && QUOTE.test(a.title) ? 2 : 1);
       if ((a.outlets || []).length > 1) w += 0.5;
+      /* what was said or done longer ago counts for less */
+      var age = a.date ? (Date.now() - new Date(a.date).getTime()) / 864e5 : 0;
+      if (age > 60) w *= 0.25; else if (age > 21) w *= 0.5;
       var it = { title: a.title, url: a.url, domain: a.domain || a.body, date: a.date || '', lang: a.lang || 'en', tone: own || tone, deed: deed, official: kind === 'official' || kind === 'record', outlets: (a.outlets || []).length, w: w, set: !!own };
       o.n += 1; o.items.push(it);
       if (own) { if (own !== 'plain') count(o, it, 1); }
@@ -640,7 +643,8 @@
       else if (a.actor === 'TC' || a.actor === 'TR' || CYQ.test(a.title + ' ' + a.detail)) add(a.actor, a, 'official');
     });
     /* backing another's position takes that position's colour */
-    function lean(o) { return o.w >= 3 ? o.score / (o.w + 3) : 0; }
+    /* A tilt needs a clear balance: a near-even split is "mixed" and tilts nothing. */
+    function lean(o) { var l = o.w >= 3 ? o.score / (o.w + 3) : 0; return Math.abs(l) < 0.2 ? 0 : l; }
     var base = {}; Object.keys(out).forEach(function (pid) { base[pid] = lean(out[pid]); });
     pend.forEach(function (x) {
       var o = x[0], it = x[1], l = base[x[2]];
@@ -651,6 +655,7 @@
       var o = out[pid];
       o.items.sort(function (x, y) { return (y.deed - x.deed) || (y.official - x.official) || (x.date < y.date ? 1 : -1); });
       o.lean = lean(o);
+      o.mixed = !o.lean && o.w >= 3 && (o.says.soft + o.does.soft) > 0 && (o.says.hard + o.does.hard) > 0;
       var s = o.says.soft - o.says.hard, dd = o.does.soft - o.does.hard;
       o.gap = o.says.soft + o.says.hard >= 2 && o.does.soft + o.does.hard >= 2 && s * dd < 0;
       /* direction of travel: this week against the two weeks before, from the dates on the items themselves */
@@ -736,6 +741,16 @@
   function load() {
     if (L.data) return L.data;
     try { L.data = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { L.data = null; }
+    /* A device that has never fetched anything starts from the snapshot shipped
+       with this version, so no source is ever blank; live data replaces it
+       source by source as it arrives. */
+    if (!L.data && root.SEED) { L.data = JSON.parse(JSON.stringify(root.SEED)); L.data.seeded = L.data.t; L.data.status = {}; }
+    if (L.data && !L.data.seeded && root.SEED) {
+      /* fill in any source this device has never managed to reach */
+      ['press', 'attn', 'research'].forEach(function (k) { if (!L.data[k] && root.SEED[k]) L.data[k] = root.SEED[k]; });
+      var so = root.SEED.official || {}; L.data.official = L.data.official || {};
+      Object.keys(so).forEach(function (k) { if (!L.data.official[k] || !(L.data.official[k].items || []).length) L.data.official[k] = so[k]; });
+    }
     if (L.data) L.data.signals = signals(L.data); /* rebuilt, so copies saved by earlier versions carry no wording */
     return L.data;
   }
@@ -745,6 +760,8 @@
 
   L.onChange = function (f) { L.listeners.push(f); };
   L.get = load;
+  /* the snapshot may arrive after the page has started */
+  L.useSeed = function (seed) { root.SEED = seed; if (!L.data || !L.data.press) { L.data = null; load(); emit(); } };
   L.stale = function () { var d = load(); return !d || Date.now() - d.t > MAX_AGE; };
 
   /* Each source succeeds or fails on its own; old values are kept on failure. */
@@ -755,7 +772,7 @@
     var d = Object.assign({ status: {} }, load() || {});
     d.status = Object.assign({}, d.status);
     function part(name, p) {
-      return p.then(function (v) { d[name] = v; d.status[name] = { ok: true, t: Date.now() }; })
+      return p.then(function (v) { d[name] = v; d.status[name] = { ok: true, t: Date.now() }; d.seeded = 0; })
         .catch(function (e) { d.status[name] = { ok: false, t: Date.now(), err: String(e && e.message || e), kept: !!d[name] }; })
         .then(function () { d.signals = signals(d); if (d.status[name].ok) d.t = Date.now(); L.data = d; save(); emit(); });
     }

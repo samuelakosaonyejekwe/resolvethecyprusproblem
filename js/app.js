@@ -613,10 +613,11 @@
   /* ---------- live ---------- */
   function viewLive() {
     var d = L.get() || {}, st = d.status || {}, loc = I.lang === 'en' ? undefined : I.lang;
+    var seedNote = d.seeded ? '<section class="card" style="border-left:5px solid var(--warn)"><p style="margin:0">' + T('This device has not yet completed a live fetch for every source. Until it does, the gaps are filled from the snapshot shipped with this version, taken on {0}. Live data replaces it source by source.', new Date(d.seeded).toLocaleDateString(loc)) + '</p></section>' : '';
     var h = intro(T('Live intelligence'), T('Real, current data from public sources, so the board starts from today\'s situation rather than a fixed snapshot. Your device fetches it directly whenever the app is open and online, and keeps the last copy for offline use.'), [
       T('<b>Sources</b> shows where each kind of data comes from and whether the last fetch worked.'),
       T('<b>Signals feeding the model</b> shows exactly how the data nudges the starting position. Untick any signal you do not want used.'),
-      T('The charts, table and headlines below are the raw material, for your own reading.')]) +
+      T('The charts, table and headlines below are the raw material, for your own reading.')]) + seedNote +
       '<section class="card"><div class="row between"><h2>' + T('Sources') + '</h2><button class="btn accent small" data-a="refresh"' + (L.busy ? ' disabled' : '') + '>' + (L.busy ? T('Updating…') : T('Refresh now')) + '</button></div>' +
       '<p class="help">' + T('Nothing passes through a private server: this device asks each source directly.') + '</p>' +
       '<div class="tblwrap"><table><thead><tr><th>' + T('Source') + '</th><th>' + T('Provides') + '</th><th>' + T('Status') + '</th></tr></thead><tbody>' + L.sources().map(function (s) {
@@ -647,7 +648,7 @@
       (any ? '<div class="tblwrap"><table><thead><tr><th>' + T('Stakeholder') + '</th><th>' + T('Says') + '</th><th>' + T('Does') + '</th><th>' + T('Tilt') + '</th><th>' + T('Your own assessment') + '</th><th>' + T('Latest') + '</th></tr></thead><tbody>' + M.players.map(function (pl) {
         var v = vs[pl.id] || { says: { soft: 0, hard: 0 }, does: { soft: 0, hard: 0 }, n: 0, lean: 0, items: [] }, it = v.items[0], pv = +A.priv[pl.id] || 0;
         function pair(o) { return o.soft + o.hard ? '<span class="good">' + o.soft + '</span> / <span class="bad">' + o.hard + '</span>' : '<span class="mute">–</span>'; }
-        return '<tr><td>' + esc(pl.name) + '</td><td class="c">' + pair(v.says) + '</td><td class="c">' + pair(v.does) + '</td><td class="c">' + (v.lean > 0.05 ? '<span class="tag good">' + T('conciliatory') + '</span>' : v.lean < -0.05 ? '<span class="tag bad">' + T('hard-line') + '</span>' : '<span class="tag">' + T('no tilt') + '</span>') + (v.gap ? '<br><span class="tag warn">' + T('words and deeds differ') + '</span>' : '') + (v.trend !== null && v.trend !== undefined && Math.abs(v.trend) >= 0.15 ? '<br><span class="help">' + (v.trend > 0 ? T('more conciliatory this week than in the two weeks before') : T('harder this week than in the two weeks before')) + '</span>' : '') + '</td><td class="c"><select data-c="priv" data-v="' + pl.id + '" aria-label="' + esc(T('Your own assessment')) + '">' +
+        return '<tr><td>' + esc(pl.name) + '</td><td class="c">' + pair(v.says) + '</td><td class="c">' + pair(v.does) + '</td><td class="c">' + (v.lean > 0 ? '<span class="tag good">' + T('conciliatory') + '</span>' : v.lean < 0 ? '<span class="tag bad">' + T('hard-line') + '</span>' : v.mixed ? '<span class="tag warn">' + T('mixed') + '</span>' : '<span class="tag">' + T('no tilt') + '</span>') + (v.gap ? '<br><span class="tag warn">' + T('words and deeds differ') + '</span>' : '') + (v.trend !== null && v.trend !== undefined && Math.abs(v.trend) >= 0.15 ? '<br><span class="help">' + (v.trend > 0 ? T('more conciliatory this week than in the two weeks before') : T('harder this week than in the two weeks before')) + '</span>' : '') + '</td><td class="c"><select data-c="priv" data-v="' + pl.id + '" aria-label="' + esc(T('Your own assessment')) + '">' +
           [[-2, T('much harder')], [-1, T('harder')], [0, T('as the record shows')], [1, T('more open')], [2, T('much more open')]].map(function (o) { return '<option value="' + o[0] + '"' + (pv === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></td><td>' +
           (it ? (it.official ? '<span class="tag info">' + T('official') + '</span> ' : it.deed ? '<span class="tag">' + T('deed') + '</span> ' : '') + '<a href="' + esc(it.url) + '" target="_blank" rel="noopener" lang="' + (it.lang || '') + '">' + esc(it.title) + '</a> <span class="help">' + esc(it.domain) + (it.outlets > 1 ? ' ' + T('and {0} more', it.outlets - 1) : '') + ' · ' + esc(it.date) + '</span> ' + hideBtn(it.title) : '<span class="mute">' + T('none found in the last three weeks') + '</span>') + '</td></tr>' +
           (v.items.length ? '<tr><td colspan="6"><details class="explain"><summary>' + T('All {0} items counted for {1}: check and correct them', v.items.length, esc(pl.name)) + '</summary><ul class="news">' + v.items.slice(0, 40).map(function (x) {
@@ -977,6 +978,8 @@
   build(); installUI();
   try { history.replaceState(navState(), '', location.href); } catch (e) {}
   render();
+  /* first run on this device: start from the snapshot shipped with this version */
+  if (!L.get() && !window.SEED && location.protocol !== 'file:') fetch('data/seed.json').then(function (r) { return r.json(); }).then(function (j) { L.useSeed(j); if (C) { build(); render(); } }).catch(function () {});
   if (L.stale()) setTimeout(refresh, 800);
   setTimeout(function () { wantTopics(null); }, 2500);
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
